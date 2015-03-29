@@ -17,7 +17,7 @@ class MongoDBImplementationTest extends BaseImplementationTest
 
     protected function setUp()
     {
-        $mongo = new \MongoClient();
+        $mongo = new \Mongo();
         $this->users = $mongo->selectDb('test')->selectCollection('users');
 
         $this->users->drop();
