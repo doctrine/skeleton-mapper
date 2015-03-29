@@ -22,6 +22,7 @@ namespace Doctrine\SkeletonMapper;
 
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 
 /**
@@ -121,6 +122,16 @@ class ObjectManager implements ObjectManagerInterface
     public function remove($object)
     {
         $this->getPersister(get_class($object))->remove($object);
+    }
+
+    /**
+     * Tells the ObjectManager to execute the object action on flush.
+     *
+     * @param ObjectAction $objectAction The object instance to execute the action for.
+     */
+    public function action(ObjectAction $objectAction)
+    {
+        $this->getPersister(get_class($objectAction->getObject()))->action($objectAction);
     }
 
     /**

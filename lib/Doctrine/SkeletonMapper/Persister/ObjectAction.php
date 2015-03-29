@@ -18,25 +18,58 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper;
+namespace Doctrine\SkeletonMapper\Persister;
 
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
-use Doctrine\SkeletonMapper\Persister\ObjectAction;
-
-/**
- * Interface that object managers must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+class ObjectAction
 {
     /**
-     * @param object $object
+     * @var object
      */
-    public function update($object);
+    private $object;
 
     /**
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectAction $objectAction
+     * @var string
      */
-    public function action(ObjectAction $objectAction);
+    private $name;
+
+    /**
+     * @var array
+     */
+    private $params;
+
+    /**
+     * @param object $object
+     * @param string $name
+     * @param array $params
+     */
+    public function __construct($object, $name, array $params = array())
+    {
+        $this->object = $object;
+        $this->name = $name;
+        $this->params = $params;
+    }
+
+    /**
+     * @return object
+     */
+    public function getObject()
+    {
+        return $this->object;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
 }

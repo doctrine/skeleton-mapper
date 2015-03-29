@@ -104,6 +104,11 @@ interface ObjectPersisterInterface
     public function removeObject($object);
 
     /**
+     * @param \Doctrine\SkeletonMapper\Persister $objectAction
+     */
+    public function executeObjectAction(ObjectAction $objectAction);
+
+    /**
      * Clears any changes scheduled in the persister.
      */
     public function clear();

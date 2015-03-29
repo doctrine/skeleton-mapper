@@ -50,6 +50,11 @@ abstract class ObjectPersister implements ObjectPersisterInterface
     protected $objectsToRemove = array();
 
     /**
+     * @var array
+     */
+    protected $objectActionsToExecute = array();
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectIdentityMap $objectIdentityMap
      */
     public function __construct(ObjectIdentityMap $objectIdentityMap)
@@ -62,7 +67,7 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function persist($object)
     {
-        $this->objectsToPersist[] = $object;
+        $this->objectsToPersist[spl_object_hash($object)] = $object;
     }
 
     /**
@@ -70,7 +75,7 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function update($object)
     {
-        $this->objectsToUpdate[] = $object;
+        $this->objectsToUpdate[spl_object_hash($object)] = $object;
     }
 
     /**
@@ -78,21 +83,41 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function remove($object)
     {
-        $this->objectsToRemove[] = $object;
+        $this->objectsToRemove[spl_object_hash($object)] = $object;
     }
 
     /**
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectAction $objectAction
+     */
+    public function action(ObjectAction $objectAction)
+    {
+        $this->objectActionsToExecute[] = $objectAction;
+    }
+
+    /**
+     * Clear scheduled changes in persister.
+     *
+     * @return void
      */
     public function clear()
     {
         $this->objectsToPersist = array();
+        $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
+        $this->objectActionsToExecute = array();
     }
 
     /**
+     * Commit scheduled changes in persister.
+     *
+     * @return void
      */
     public function commit()
     {
+        foreach ($this->objectActionsToExecute  as $objectAction) {
+            $this->executeObjectAction($objectAction);
+        }
+
         foreach ($this->objectsToPersist as $object) {
             $objectData = $this->persistObject($object);
 
@@ -119,7 +144,7 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function isScheduledForPersist($object)
     {
-        return in_array($object, $this->objectsToPersist);
+        return isset($this->objectsToPersist[spl_object_hash($object)]);
     }
 
     /**
@@ -129,7 +154,7 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function isScheduledForUpdate($object)
     {
-        return in_array($object, $this->objectsToUpdate);
+        return isset($this->objectsToUpdate[spl_object_hash($object)]);
     }
 
     /**
@@ -139,6 +164,6 @@ abstract class ObjectPersister implements ObjectPersisterInterface
      */
     public function isScheduledForRemove($object)
     {
-        return in_array($object, $this->objectsToRemove);
+        return isset($this->objectsToRemove[spl_object_hash($object)]);
     }
 }
