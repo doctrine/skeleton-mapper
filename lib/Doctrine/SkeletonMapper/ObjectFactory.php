@@ -2,17 +2,17 @@
 
 namespace Doctrine\SkeletonMapper;
 
-class ObjectFactory implements ObjectFactoryInterface
+class ObjectFactory
 {
     /**
      * @var object
      */
-    protected $prototype;
+    private $prototype;
 
     /**
      * @var array
      */
-    protected $reflectionClasses = array();
+    private $reflectionClasses = array();
 
     /**
      * @param string $className
@@ -37,7 +37,7 @@ class ObjectFactory implements ObjectFactoryInterface
      *
      * @return \ReflectionClass
      */
-    protected function getReflectionClass($className)
+    private function getReflectionClass($className)
     {
         if (!isset($this->reflectionClasses[$className])) {
             $this->reflectionClasses[$className] = new \ReflectionClass($className);

@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper;
 
-class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
+class ObjectRepositoryFactory
 {
     /**
      * @var array

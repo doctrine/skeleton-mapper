@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper;
 
-class ObjectIdentityMap implements ObjectIdentityMapInterface
+class ObjectIdentityMap
 {
     /**
      * @var array
@@ -10,14 +10,14 @@ class ObjectIdentityMap implements ObjectIdentityMapInterface
     private $identityMap = array();
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactoryInterface
+     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepositoryFactoryInterface $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\ObjectRepositoryFactory $objectRepositoryFactory
      */
-    public function __construct(ObjectRepositoryFactoryInterface $objectRepositoryFactory)
+    public function __construct(ObjectRepositoryFactory $objectRepositoryFactory)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
     }

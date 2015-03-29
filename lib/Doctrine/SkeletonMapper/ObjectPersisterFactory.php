@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper;
 
-class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
+class ObjectPersisterFactory
 {
     /**
      * @var array

@@ -7,17 +7,17 @@ use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 class ObjectManager implements ObjectManagerInterface
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactoryInterface
+     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectPersisterFactoryInterface
+     * @var \Doctrine\SkeletonMapper\ObjectPersisterFactory
      */
     private $objectPersisterFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\UnitOfWorkInterface
+     * @var \Doctrine\SkeletonMapper\UnitOfWork
      */
     private $unitOfWork;
 
@@ -27,15 +27,15 @@ class ObjectManager implements ObjectManagerInterface
     private $metadataFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepositoryFactoryInterface $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\ObjectPersisterFactoryInterface  $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\ObjectRepositoryFactory          $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\ObjectPersisterFactory           $objectPersisterFactory
      * @param \Doctrine\SkeletonMapper\UnitOfWorkInterface              $unitOfWork
      * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory     $metadataFactory
      */
     public function __construct(
-        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
-        ObjectPersisterFactoryInterface $objectPersisterFactory,
-        UnitOfWorkInterface $unitOfWork,
+        ObjectRepositoryFactory $objectRepositoryFactory,
+        ObjectPersisterFactory $objectPersisterFactory,
+        UnitOfWork $unitOfWork,
         ClassMetadataFactory $metadataFactory)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;

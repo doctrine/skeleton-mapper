@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper;
 
-class UnitOfWork implements UnitOfWorkInterface
+class UnitOfWork
 {
     /**
      * @var \Doctrine\SkeletonMapper\ObjectPersisterFactory

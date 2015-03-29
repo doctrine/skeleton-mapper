@@ -7,10 +7,10 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * @var \Doctrine\SkeletonMapper\ObjectDataRepositoryInterface
      */
-    private $objectDataRepository;
+    protected $objectDataRepository;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectFactoryInterface
+     * @var \Doctrine\SkeletonMapper\ObjectFactory
      */
     protected $objectFactory;
 
@@ -20,21 +20,21 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $objectHydrator;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectIdentityMapInterface
+     * @var \Doctrine\SkeletonMapper\ObjectIdentityMap
      */
     protected $objectIdentityMap;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectDataRepositoryInterface $objectDataRepository
-     * @param \Doctrine\SkeletonMapper\ObjectFactoryInterface        $objectFactory
+     * @param \Doctrine\SkeletonMapper\ObjectFactory        $objectFactory
      * @param \Doctrine\SkeletonMapper\ObjectHydratorInterface       $objectHydrator
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMapInterface    $objectIdentityMap
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap    $objectIdentityMap
      */
     public function __construct(
         ObjectDataRepositoryInterface $objectDataRepository,
-        ObjectFactoryInterface $objectFactory,
+        ObjectFactory $objectFactory,
         ObjectHydratorInterface $objectHydrator,
-        ObjectIdentityMapInterface $objectIdentityMap)
+        ObjectIdentityMap $objectIdentityMap)
     {
         $this->objectDataRepository = $objectDataRepository;
         $this->objectFactory = $objectFactory;
