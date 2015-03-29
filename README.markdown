@@ -130,6 +130,7 @@ User persister:
 ```php
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
+use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersister;
 
 class UserPersister extends ObjectPersister
@@ -166,6 +167,17 @@ class UserPersister extends ObjectPersister
     public function removeObject($object)
     {
         unset($this->users[$object->id]);
+    }
+
+    public function executeObjectAction(ObjectAction $objectAction)
+    {
+        $object = $objectAction->getObject();
+        $name = $objectAction->getName();
+        $params = $objectAction->getParams();
+
+        // do something
+
+        $objectAction->setResult(array('success' => true));
     }
 
     public function objectToArray($object)
