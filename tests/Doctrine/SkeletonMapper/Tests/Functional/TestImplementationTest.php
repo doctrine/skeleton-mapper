@@ -20,28 +20,40 @@ class TestImplementationTest extends BaseImplementationTest
     {
         $this->users = new ArrayCollection(array(
             1 => array(
-                'id' => 1,
+                '_id' => 1,
                 'username' => 'jwage',
                 'password' => 'password',
             ),
             2 => array(
-                'id' => 2,
+                '_id' => 2,
                 'username' => 'romanb',
                 'password' => 'password',
             ),
         ));
 
+        $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $objectFactory = new SkeletonMapper\ObjectFactory();
         $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
         $objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
-        $objectIdentityMap = new SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
+        $objectIdentityMap = new SkeletonMapper\ObjectIdentityMap(
+            $objectRepositoryFactory, $classMetadataFactory
+        );
 
         // user class metadata
         $userClassMetadata = new SkeletonMapper\Mapping\ClassMetadata($this->testClassName);
-        $userClassMetadata->identifier = array('id');
-        $userClassMetadata->autoMapFields();
+        $userClassMetadata->identifier = array('_id');
+        $userClassMetadata->identifierFieldNames = array('id');
+        $userClassMetadata->mapField(array(
+            'name' => '_id',
+            'fieldName' => 'id',
+        ));
+        $userClassMetadata->mapField(array(
+            'fieldName' => 'username',
+        ));
+        $userClassMetadata->mapField(array(
+            'fieldName' => 'password',
+        ));
 
-        $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $classMetadataFactory->setMetadataFor($this->testClassName, $userClassMetadata);
 
         // user data repo

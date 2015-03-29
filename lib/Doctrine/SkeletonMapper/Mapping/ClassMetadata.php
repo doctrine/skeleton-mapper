@@ -40,6 +40,11 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * @var array
      */
+    public $identifierFieldNames = array();
+
+    /**
+     * @var array
+     */
     public $fieldNames = array();
 
     /**
@@ -78,6 +83,10 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function mapField(array $mapping)
     {
+        if (!isset($mapping['name'])) {
+            $mapping['name'] = $mapping['fieldName'];
+        }
+
         $this->fieldMappings[$mapping['fieldName']] = $mapping;
         $this->fieldNames[] = $mapping['fieldName'];
     }
@@ -167,6 +176,6 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getIdentifierFieldNames()
     {
-        return $this->identifier;
+        return $this->identifierFieldNames;
     }
 }

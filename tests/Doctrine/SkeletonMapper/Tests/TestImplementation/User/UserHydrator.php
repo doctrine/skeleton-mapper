@@ -8,8 +8,8 @@ class UserHydrator extends ObjectHydrator
 {
     public function hydrate($object, array $data)
     {
-        if (isset($data['id'])) {
-            $object->id = (int) $data['id'];
+        if (isset($data['_id'])) {
+            $object->id = (int) $data['_id'];
         }
 
         if (isset($data['username'])) {

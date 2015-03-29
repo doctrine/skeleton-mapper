@@ -13,12 +13,7 @@ class UserRepository extends ObjectRepository
 
     public function getObjectIdentifier($object)
     {
-        return array('id' => $object->id);
-    }
-
-    public function getIdentifierFieldNames()
-    {
-        return array('id');
+        return array('_id' => $object->id);
     }
 
     public function merge($object)

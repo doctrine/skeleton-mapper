@@ -44,13 +44,6 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
     public function getObjectIdentifier($object);
 
     /**
-     * Returns the classes identifier field names.
-     *
-     * @return array
-     */
-    public function getIdentifierFieldNames();
-
-    /**
      * @param object $object
      */
     public function merge($object);

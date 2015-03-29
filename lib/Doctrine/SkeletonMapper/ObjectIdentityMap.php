@@ -20,6 +20,7 @@
 
 namespace Doctrine\SkeletonMapper;
 
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
 
 /**
@@ -40,11 +41,20 @@ class ObjectIdentityMap
     private $objectRepositoryFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory
      */
-    public function __construct(ObjectRepositoryFactory $objectRepositoryFactory)
+    private $classMetadataFactory;
+
+    /**
+     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory       $classMetadataFactory
+     */
+    public function __construct(
+        ObjectRepositoryFactory $objectRepositoryFactory,
+        ClassMetadataFactory $classMetadataFactory)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
+        $this->classMetadataFactory = $classMetadataFactory;
     }
 
     /**
@@ -132,9 +142,9 @@ class ObjectIdentityMap
      */
     private function extractIdentifierFromData($className, array $data)
     {
-        $identifierFieldNames = $this->objectRepositoryFactory
-            ->getRepository($className)
-            ->getIdentifierFieldNames();
+        $identifierFieldNames = $this->classMetadataFactory
+            ->getMetadataFor($className)
+            ->getIdentifier();
 
         $identifier = array();
         foreach ($identifierFieldNames as $identifierFieldName) {

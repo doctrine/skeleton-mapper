@@ -16,18 +16,21 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $fieldMappings = array(
             'id' => array(
+                'name' => '_id',
                 'fieldName' => 'id',
             ),
             'username' => array(
+                'name' => 'username',
                 'fieldName' => 'username',
             ),
             'password' => array(
+                'name' => 'password',
                 'fieldName' => 'password',
             ),
         );
 
         $this->assertEquals($this->testClassName, $class->getName());
-        $this->assertEquals(array('id'), $class->getIdentifier());
+        $this->assertEquals(array('_id'), $class->getIdentifier());
         $this->assertEquals(array('id'), $class->getIdentifierFieldNames());
         $this->assertInstanceOf('ReflectionClass', $class->getReflectionClass());
 

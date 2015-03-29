@@ -16,11 +16,6 @@ class UserRepository extends ObjectRepository
         return array('_id' => $object->id);
     }
 
-    public function getIdentifierFieldNames()
-    {
-        return array('_id');
-    }
-
     public function merge($object)
     {
         $user = $this->find($object->id);
