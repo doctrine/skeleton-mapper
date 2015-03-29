@@ -17,7 +17,10 @@ class MongoDBImplementationTest extends BaseImplementationTest
 
     protected function setUp()
     {
-        $mongo = new \Mongo();
+        $mongo = version_compare(phpversion('mongo'), '1.3.0', '<')
+            ? new \Mongo()
+            : new \MongoClient();
+
         $this->users = $mongo->selectDb('test')->selectCollection('users');
 
         $this->users->drop();
