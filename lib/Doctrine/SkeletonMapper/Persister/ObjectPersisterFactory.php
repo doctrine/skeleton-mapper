@@ -17,19 +17,48 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-namespace Doctrine\SkeletonMapper;
-
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+namespace Doctrine\SkeletonMapper\Persister;
 
 /**
- * Interface that object managers must implement.
+ * Class responsible for retrieving ObjectPersister instances.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+class ObjectPersisterFactory
 {
     /**
-     * @param object $object
+     * @var array
      */
-    public function update($object);
+    private $persisters = array();
+
+    /**
+     * @param string                                                $className
+     * @param \Doctrine\Common\Persistence\ObjectPersisterInterface $objectPersister
+     */
+    public function addObjectPersister($className, $objectPersister)
+    {
+        $this->persisters[$className] = $objectPersister;
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return \Doctrine\Common\Persistence\ObjectPersisterInterface
+     */
+    public function getPersister($className)
+    {
+        if (!isset($this->persisters[$className])) {
+            throw new \InvalidArgumentException(sprintf('ObjectPersister with class name %s was not found', $className));
+        }
+
+        return $this->persisters[$className];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPersisters()
+    {
+        return $this->persisters;
+    }
 }

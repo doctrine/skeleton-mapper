@@ -1,11 +1,37 @@
 <?php
 
-namespace Doctrine\SkeletonMapper;
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license. For more information, see
+ * <http://www.doctrine-project.org>.
+ */
+namespace Doctrine\SkeletonMapper\Repository;
 
+use Doctrine\SkeletonMapper\ObjectFactory;
+use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
+use Doctrine\SkeletonMapper\ObjectIdentityMap;
+
+/**
+ * Base class for object repositories to extend from.
+ *
+ * @author Jonathan H. Wage <jonwage@gmail.com>
+ */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectDataRepositoryInterface
+     * @var \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface
      */
     protected $objectDataRepository;
 
@@ -15,7 +41,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $objectFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectHydratorInterface
+     * @var \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface
      */
     protected $objectHydrator;
 
@@ -25,10 +51,10 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $objectIdentityMap;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectDataRepositoryInterface $objectDataRepository
-     * @param \Doctrine\SkeletonMapper\ObjectFactory        $objectFactory
-     * @param \Doctrine\SkeletonMapper\ObjectHydratorInterface       $objectHydrator
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap    $objectIdentityMap
+     * @param \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface $objectDataRepository
+     * @param \Doctrine\SkeletonMapper\ObjectFactory                            $objectFactory
+     * @param \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface         $objectHydrator
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
      */
     public function __construct(
         ObjectDataRepositoryInterface $objectDataRepository,

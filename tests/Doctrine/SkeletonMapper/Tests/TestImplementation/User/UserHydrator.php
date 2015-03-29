@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
 
-use Doctrine\SkeletonMapper\ObjectHydrator;
+use Doctrine\SkeletonMapper\Hydrator\ObjectHydrator;
 
 class UserHydrator extends ObjectHydrator
 {

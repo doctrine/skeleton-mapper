@@ -17,19 +17,40 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-namespace Doctrine\SkeletonMapper;
+namespace Doctrine\SkeletonMapper\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
 
 /**
- * Interface that object managers must implement.
+ * Interface that object repositories must implement.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {
+    /**
+     * Returns the class name of the object managed by the repository.
+     *
+     * @return string
+     */
+    public function getClassName();
+
+    /**
+     * Returns the objects identifier.
+     *
+     * @return array
+     */
+    public function getObjectIdentifier($object);
+
+    /**
+     * Returns the classes identifier field names.
+     *
+     * @return array
+     */
+    public function getIdentifierFieldNames();
+
     /**
      * @param object $object
      */
-    public function update($object);
+    public function merge($object);
 }

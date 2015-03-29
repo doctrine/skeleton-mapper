@@ -17,19 +17,18 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-namespace Doctrine\SkeletonMapper;
-
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+namespace Doctrine\SkeletonMapper\Hydrator;
 
 /**
- * Interface that object managers must implement.
+ * Interface that object hydrators must implement.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+interface ObjectHydratorInterface
 {
     /**
      * @param object $object
+     * @param array  $data
      */
-    public function update($object);
+    public function hydrate($object, array $data);
 }

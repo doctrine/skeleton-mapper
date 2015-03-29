@@ -4,7 +4,7 @@ namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
-use Doctrine\SkeletonMapper\ObjectPersister;
+use Doctrine\SkeletonMapper\Persister\ObjectPersister;
 
 class UserPersister extends ObjectPersister
 {

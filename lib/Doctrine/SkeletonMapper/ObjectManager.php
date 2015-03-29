@@ -1,18 +1,42 @@
 <?php
 
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license. For more information, see
+ * <http://www.doctrine-project.org>.
+ */
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
+use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 
+/**
+ * Class for managing the persistence of objects.
+ *
+ * @author Jonathan H. Wage <jonwage@gmail.com>
+ */
 class ObjectManager implements ObjectManagerInterface
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectPersisterFactory
+     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory
      */
     private $objectPersisterFactory;
 
@@ -27,10 +51,10 @@ class ObjectManager implements ObjectManagerInterface
     private $metadataFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepositoryFactory          $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\ObjectPersisterFactory           $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\UnitOfWorkInterface              $unitOfWork
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory     $metadataFactory
+     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\UnitOfWorkInterface                $unitOfWork
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory       $metadataFactory
      */
     public function __construct(
         ObjectRepositoryFactory $objectRepositoryFactory,

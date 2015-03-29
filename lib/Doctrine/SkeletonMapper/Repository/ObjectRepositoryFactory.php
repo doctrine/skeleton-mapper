@@ -17,19 +17,40 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
-namespace Doctrine\SkeletonMapper;
-
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+namespace Doctrine\SkeletonMapper\Repository;
 
 /**
- * Interface that object managers must implement.
+ * Class responsible for retrieving ObjectRepository instances.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+class ObjectRepositoryFactory
 {
     /**
-     * @param object $object
+     * @var array
      */
-    public function update($object);
+    private $repositories = array();
+
+    /**
+     * @param string                                                 $className
+     * @param \Doctrine\Common\Repository\ObjectRepositoryInterface  $objectRepository
+     */
+    public function addObjectRepository($className, ObjectRepositoryInterface $objectRepository)
+    {
+        $this->repositories[$className] = $objectRepository;
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return \Doctrine\Common\Persistence\ObjectRepositoryInterface
+     */
+    public function getRepository($className)
+    {
+        if (!isset($this->repositories[$className])) {
+            throw new \InvalidArgumentException(sprintf('ObjectRepository with class name %s was not found', $className));
+        }
+
+        return $this->repositories[$className];
+    }
 }

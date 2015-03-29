@@ -33,8 +33,8 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
         ));
 
         $objectFactory = new SkeletonMapper\ObjectFactory();
-        $objectRepositoryFactory = new SkeletonMapper\ObjectRepositoryFactory();
-        $objectPersisterFactory = new SkeletonMapper\ObjectPersisterFactory();
+        $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
+        $objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
         $objectIdentityMap = new SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
 
         // user class metadata
