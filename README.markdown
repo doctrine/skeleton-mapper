@@ -25,11 +25,11 @@ class User
      */
     public $password;
 }
+```
 
 User data repository class that just stores the users in memory in an ArrayCollection instance:
 
 ```php
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\ObjectDataRepository;
 
@@ -95,6 +95,7 @@ class UserDataRepository extends ObjectDataRepository
         }
     }
 }
+```
 
 User hydrator:
 
@@ -118,6 +119,7 @@ class UserHydrator extends ObjectHydrator
         }
     }
 }
+```
 
 User persister:
 
@@ -171,6 +173,7 @@ class UserPersister extends ObjectPersister
         );
     }
 }
+```
 
 User repository:
 
@@ -202,6 +205,7 @@ class UserRepository extends ObjectRepository
         $user->password = $object->password;
     }
 }
+```
 
 Now put it all together:
 
@@ -262,6 +266,7 @@ $objectManager = new \Doctrine\SkeletonMapper\ObjectManager(
     $unitOfWork,
     $classMetadataFactory
 );
+```
 
 Now manage User instances:
 
@@ -284,3 +289,4 @@ $objectManager->flush();
 // remove the user
 $objectManager->remove($user);
 $objectManager->flush();
+```
