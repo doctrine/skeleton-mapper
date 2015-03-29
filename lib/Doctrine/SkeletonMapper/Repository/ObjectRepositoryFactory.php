@@ -17,6 +17,7 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+
 namespace Doctrine\SkeletonMapper\Repository;
 
 /**
@@ -32,8 +33,8 @@ class ObjectRepositoryFactory
     private $repositories = array();
 
     /**
-     * @param string                                                 $className
-     * @param \Doctrine\Common\Repository\ObjectRepositoryInterface  $objectRepository
+     * @param string                                                $className
+     * @param \Doctrine\Common\Repository\ObjectRepositoryInterface $objectRepository
      */
     public function addObjectRepository($className, ObjectRepositoryInterface $objectRepository)
     {

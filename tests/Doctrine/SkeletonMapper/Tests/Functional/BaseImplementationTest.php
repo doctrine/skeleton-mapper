@@ -2,81 +2,13 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\User;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserHydrator;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserPersister;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserRepository;
 use PHPUnit_Framework_TestCase;
 
-class FunctionalTest extends PHPUnit_Framework_TestCase
+abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 {
     protected $objectManager;
     protected $users;
-    protected $testClassName = 'Doctrine\SkeletonMapper\Tests\TestImplementation\User\User';
-
-    protected function setUp()
-    {
-        $this->users = new ArrayCollection(array(
-            1 => array(
-                'id' => 1,
-                'username' => 'jwage',
-                'password' => 'password',
-            ),
-            2 => array(
-                'id' => 2,
-                'username' => 'romanb',
-                'password' => 'password',
-            ),
-        ));
-
-        $objectFactory = new SkeletonMapper\ObjectFactory();
-        $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
-        $objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
-        $objectIdentityMap = new SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
-
-        // user class metadata
-        $userClassMetadata = new SkeletonMapper\Mapping\ClassMetadata($this->testClassName);
-        $userClassMetadata->identifier = array('id');
-        $userClassMetadata->autoMapFields();
-
-        $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
-        $classMetadataFactory->setMetadataFor($this->testClassName, $userClassMetadata);
-
-        // user data repo
-        $userDataRepository = new UserDataRepository($this->users);
-
-        // user hydrator
-        $userHydrator = new UserHydrator();
-
-        // user repo
-        $userRepository = new UserRepository(
-            $userDataRepository,
-            $objectFactory,
-            $userHydrator,
-            $objectIdentityMap
-        );
-        $objectRepositoryFactory->addObjectRepository($this->testClassName, $userRepository);
-
-        // user persister
-        $userPersister = new UserPersister($objectIdentityMap, $this->users);
-        $objectPersisterFactory->addObjectPersister($this->testClassName, $userPersister);
-
-        $unitOfWork = new SkeletonMapper\UnitOfWork(
-            $objectPersisterFactory,
-            $objectRepositoryFactory,
-            $objectIdentityMap
-        );
-
-        $this->objectManager = new SkeletonMapper\ObjectManager(
-            $objectRepositoryFactory,
-            $objectPersisterFactory,
-            $unitOfWork,
-            $classMetadataFactory
-        );
-    }
+    protected $testClassName;
 
     public function testGetClassMetadata()
     {
@@ -163,17 +95,17 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
 
     public function testPersist()
     {
-        $user = new User();
+        $user = $this->createTestObject();
         $user->id = 3;
         $user->username = 'benjamin';
         $user->password = 'password';
 
-        $this->assertCount(2, $this->users);
+        $this->assertEquals(2, $this->users->count());
 
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $this->assertCount(3, $this->users);
+        $this->assertEquals(3, $this->users->count());
         $this->assertSame($user, $this->objectManager->find($this->testClassName, 3));
     }
 
@@ -198,7 +130,7 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
         $this->objectManager->remove($user);
         $this->objectManager->flush();
 
-        $this->assertCount(1, $this->users);
+        $this->assertEquals(1, $this->users->count());
 
         $this->assertNull($this->objectManager->find($this->testClassName, 2));
     }
@@ -207,13 +139,11 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
     {
         $user = $this->objectManager->find($this->testClassName, 1);
 
-        $userData = $this->users[1];
-        $userData['password'] = 'changed';
-        $this->users[1] = $userData;
+        $user->password = 'yeehaw';
 
         $this->objectManager->refresh($user);
 
-        $this->assertEquals('changed', $user->password);
+        $this->assertEquals('password', $user->password);
     }
 
     public function testClear()
@@ -232,7 +162,7 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
 
         $this->assertNotSame($user2, $user3);
 
-        $user = new User();
+        $user = $this->createTestObject();
         $user->id = 10;
 
         $this->objectManager->persist($user);
@@ -241,7 +171,7 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
 
         $this->assertNull($this->objectManager->find($this->testClassName, 10));
 
-        $user = new User();
+        $user = $this->createTestObject();
         $user->id = 10;
 
         $this->objectManager->persist($user);
@@ -264,7 +194,7 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
 
     public function testMerge()
     {
-        $user1 = new User();
+        $user1 = $this->createTestObject();
         $user1->id = 1;
         $user1->username = 'jonwage';
         $user1->password = 'password';
@@ -278,30 +208,28 @@ class FunctionalTest extends PHPUnit_Framework_TestCase
 
     public function testContains()
     {
-        $user = new User();
-        $user->id = 1;
+        $user = $this->createTestObject();
+        $user->id = 3;
 
         $this->assertFalse($this->objectManager->contains($user));
 
         $this->objectManager->persist($user);
+
+        $this->assertTrue($this->objectManager->contains($user));
+
+        $this->objectManager->flush();
 
         $this->assertTrue($this->objectManager->contains($user));
 
         $this->objectManager->clear();
 
         $this->assertFalse($this->objectManager->contains($user));
+    }
 
-        $this->objectManager->persist($user);
-        $this->objectManager->flush();
+    private function createTestObject()
+    {
+        $className = $this->testClassName;
 
-        $this->assertTrue($this->objectManager->contains($user));
-
-        $this->objectManager->remove($user);
-
-        $this->assertTrue($this->objectManager->contains($user));
-
-        $this->objectManager->flush();
-
-        $this->assertFalse($this->objectManager->contains($user));
+        return new $className();
     }
 }
