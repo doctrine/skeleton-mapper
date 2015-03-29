@@ -11,14 +11,14 @@
          bootstrap="tests/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="Doctrine ORMLess Test Suite">
+        <testsuite name="Doctrine SkeletonMapper Test Suite">
             <directory>./tests/Doctrine/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./lib/Doctrine/ORMLess</directory>
+            <directory suffix=".php">./lib/Doctrine/SkeletonMapper</directory>
         </whitelist>
     </filter>
 </phpunit>

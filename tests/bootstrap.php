@@ -6,4 +6,4 @@ if (!file_exists($file = __DIR__.'/../vendor/autoload.php')) {
 
 $loader = require $file;
 
-$loader->add('Doctrine\ORMLess\Tests', __DIR__.'/../tests');
+$loader->add('Doctrine\SkeletonMapper\Tests', __DIR__.'/../tests');

@@ -1,12 +1,13 @@
-Doctrine ORMLess
-================
+Doctrine SkeletonMapper
+=======================
+
+[![Build Status](https://travis-ci.org/doctrine/skeleton-mapper.png)](https://travis-ci.org/doctrine/skeleton-mapper)
 
 ## Example Implemenation
 
 Model class:
 
-    <?php
-
+    ```php
     class User
     {
         /**
@@ -27,10 +28,10 @@ Model class:
 
 User data repository class that just stores the users in memory in an ArrayCollection instance:
 
-    <?php
+    ```php
 
     use Doctrine\Common\Collections\ArrayCollection;
-    use Doctrine\ORMLess\ObjectDataRepository;
+    use Doctrine\SkeletonMapper\ObjectDataRepository;
 
     class UserDataRepository extends ObjectDataRepository
     {
@@ -97,9 +98,8 @@ User data repository class that just stores the users in memory in an ArrayColle
 
 User hydrator:
 
-    <?php
-
-    use Doctrine\ORMLess\ObjectHydrator;
+    ```php
+    use Doctrine\SkeletonMapper\ObjectHydrator;
 
     class UserHydrator extends ObjectHydrator
     {
@@ -121,11 +121,10 @@ User hydrator:
 
 User persister:
 
-    <?php
-
+    ```php
     use Doctrine\Common\Collections\ArrayCollection;
-    use Doctrine\ORMLess\ObjectIdentityMap;
-    use Doctrine\ORMLess\ObjectPersister;
+    use Doctrine\SkeletonMapper\ObjectIdentityMap;
+    use Doctrine\SkeletonMapper\ObjectPersister;
 
     class UserPersister extends ObjectPersister
     {
@@ -175,9 +174,8 @@ User persister:
 
 User repository:
 
-    <?php
-
-    use Doctrine\ORMLess\ObjectRepository;
+    ```php
+    use Doctrine\SkeletonMapper\ObjectRepository;
 
     class UserRepository extends ObjectRepository
     {
@@ -207,16 +205,15 @@ User repository:
 
 Now put it all together:
 
-    <?php
-
-    $objectFactory = \Doctrine\ORMLess\ObjectFactory();
-    $objectRepositoryFactory = new \Doctrine\ORMLess\ObjectRepositoryFactory();
-    $objectPersisterFactory = new \Doctrine\ORMLess\ObjectPersisterFactory();
-    $objectIdentityMap = new \Doctrine\ORMLess\ObjectIdentityMap($objectRepositoryFactory);
-    $classMetadataFactory = new \Doctrine\ORMLess\Mapping\ClassMetadataFactory();
+    ```php
+    $objectFactory = \Doctrine\SkeletonMapper\ObjectFactory();
+    $objectRepositoryFactory = new \Doctrine\SkeletonMapper\ObjectRepositoryFactory();
+    $objectPersisterFactory = new \Doctrine\SkeletonMapper\ObjectPersisterFactory();
+    $objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
+    $classMetadataFactory = new \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory();
 
     // user class metadata
-    $userClassMetadata = new \Doctrine\ORMLess\Mapping\ClassMetadata('User');
+    $userClassMetadata = new \Doctrine\SkeletonMapper\Mapping\ClassMetadata('User');
     $userClassMetadata->identifier = array('id');
     $userClassMetadata->autoMapFields();
 
@@ -253,23 +250,22 @@ Now put it all together:
     $userPersister = new UserPersister($objectIdentityMap, $users);
     $objectPersisterFactory->addObjectPersister('User', $userPersister);
 
-    $unitOfWork = new \Doctrine\ORMLess\UnitOfWork(
+    $unitOfWork = new \Doctrine\SkeletonMapper\UnitOfWork(
         $objectPersisterFactory,
         $objectRepositoryFactory,
         $objectIdentityMap
     );
 
-    $objectManager = new \Doctrine\ORMLess\ObjectManager(
+    $objectManager = new \Doctrine\SkeletonMapper\ObjectManager(
         $objectRepositoryFactory,
         $objectPersisterFactory,
         $unitOfWork,
         $classMetadataFactory
     );
 
-Now manager User instances:
+Now manage User instances:
 
-    <?php
-
+    ```php
     // create and persist a new user
     $user = new User();
     $user->id = 1;

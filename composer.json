@@ -1,7 +1,7 @@
 {
     "name": "doctrine/ormless",
     "type": "library",
-    "description": "Doctrine ORMLess",
+    "description": "Doctrine SkeletonMapper",
     "keywords": ["database", "persistence", "object"],
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",
@@ -14,7 +14,7 @@
         "doctrine/common": "~2.4"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\ORMLess": "lib/" }
+        "psr-0": { "Doctrine\\SkeletonMapper": "lib/" }
     },
     "minimum-stability": "dev",
     "extra": {
