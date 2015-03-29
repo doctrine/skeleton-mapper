@@ -214,11 +214,13 @@ class UserRepository extends ObjectRepository
 Now put it all together:
 
 ```php
+$classMetadataFactory = new \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory();
 $objectFactory = \Doctrine\SkeletonMapper\ObjectFactory();
 $objectRepositoryFactory = new \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory();
 $objectPersisterFactory = new \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory();
-$objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
-$classMetadataFactory = new \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory();
+$objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap(
+    $objectRepositoryFactory, $classMetadataFactory
+);
 
 // user class metadata
 $userClassMetadata = new \Doctrine\SkeletonMapper\Mapping\ClassMetadata('User');
