@@ -35,7 +35,12 @@ class ObjectAction
     /**
      * @var array
      */
-    private $params;
+    private $params = array();
+
+    /**
+     * @var array
+     */
+    private $result = array();
 
     /**
      * @param object $object
@@ -71,5 +76,21 @@ class ObjectAction
     public function getParams()
     {
         return $this->params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param array $result
+     */
+    public function setResult(array $result)
+    {
+        $this->result = $result;
     }
 }

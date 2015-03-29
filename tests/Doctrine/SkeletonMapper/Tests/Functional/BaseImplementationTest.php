@@ -246,6 +246,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
 
         $this->assertEquals(md5('password'), $user->password);
+        $this->assertEquals(array('success' => true), $action->getResult());
     }
 
     private function createTestObject()

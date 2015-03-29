@@ -52,6 +52,8 @@ class UserPersister extends ObjectPersister
                 $object->password = md5($object->password);
             break;
         }
+
+        $objectAction->setResult(array('success' => true));
     }
 
     public function objectToArray($object)
