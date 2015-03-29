@@ -232,6 +232,7 @@ $objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap(
 // user class metadata
 $userClassMetadata = new \Doctrine\SkeletonMapper\Mapping\ClassMetadata('User');
 $userClassMetadata->identifier = array('id');
+$userClassMetadata->identifierFieldNames = array('id');
 $userClassMetadata->autoMapFields();
 
 $classMetadataFactory->setMetadataFor('User', $userClassMetadata);
