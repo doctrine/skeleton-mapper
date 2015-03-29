@@ -163,7 +163,6 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * @param mixed $id
      * @param array $data
      *
      * @return object
