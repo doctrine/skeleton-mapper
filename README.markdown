@@ -31,7 +31,7 @@ User data repository class that just stores the users in memory in an ArrayColle
 
 ```php
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\ObjectDataRepository;
+use Doctrine\SkeletonMapper\Repository\ObjectDataRepository;
 
 class UserDataRepository extends ObjectDataRepository
 {
@@ -100,7 +100,7 @@ class UserDataRepository extends ObjectDataRepository
 User hydrator:
 
 ```php
-use Doctrine\SkeletonMapper\ObjectHydrator;
+use Doctrine\SkeletonMapper\Hydrator\ObjectHydrator;
 
 class UserHydrator extends ObjectHydrator
 {
@@ -126,7 +126,7 @@ User persister:
 ```php
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
-use Doctrine\SkeletonMapper\ObjectPersister;
+use Doctrine\SkeletonMapper\Persister\ObjectPersister;
 
 class UserPersister extends ObjectPersister
 {
@@ -178,7 +178,7 @@ class UserPersister extends ObjectPersister
 User repository:
 
 ```php
-use Doctrine\SkeletonMapper\ObjectRepository;
+use Doctrine\SkeletonMapper\Repository\ObjectRepository;
 
 class UserRepository extends ObjectRepository
 {
@@ -211,8 +211,8 @@ Now put it all together:
 
 ```php
 $objectFactory = \Doctrine\SkeletonMapper\ObjectFactory();
-$objectRepositoryFactory = new \Doctrine\SkeletonMapper\ObjectRepositoryFactory();
-$objectPersisterFactory = new \Doctrine\SkeletonMapper\ObjectPersisterFactory();
+$objectRepositoryFactory = new \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory();
+$objectPersisterFactory = new \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory();
 $objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap($objectRepositoryFactory);
 $classMetadataFactory = new \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory();
 
