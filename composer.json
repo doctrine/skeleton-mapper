@@ -1,5 +1,5 @@
 {
-    "name": "doctrine/ormless",
+    "name": "doctrine/skeleton-mapper",
     "type": "library",
     "description": "Doctrine SkeletonMapper",
     "keywords": ["database", "persistence", "object"],
