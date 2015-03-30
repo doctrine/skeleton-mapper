@@ -17,47 +17,35 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+namespace Doctrine\SkeletonMapper\Event;
 
-namespace Doctrine\SkeletonMapper\Repository;
-
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use Doctrine\Common\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;
 
 /**
- * Interface that object repositories must implement.
+ * Provides event arguments for the onClear event.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
+class OnClearEventArgs extends BaseOnClearEventArgs
 {
     /**
-     * Returns the class name of the object managed by the repository.
+     * Returns the name of the object class that is cleared, or null if all
+     * are cleared.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName();
+    public function getObjectClass()
+    {
+        return $this->getEntityClass();
+    }
 
     /**
-     * Returns the objects identifier.
+     * Returns whether this event clears all objects.
      *
-     * @return array
+     * @return bool
      */
-    public function getObjectIdentifier($object);
-
-    /**
-     * @param object $object
-     */
-    public function merge($object);
-
-    /**
-     * @param object $object
-     * @param array $data
-     */
-    public function hydrate($object, array $data);
-
-    /**
-     * @param string $className
-     *
-     * @return object
-     */
-    public function create($className);
+    public function clearsAllObjects()
+    {
+        return $this->clearsAllEntities();
+    }
 }

@@ -20,6 +20,8 @@
 
 namespace Doctrine\SkeletonMapper;
 
+use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper\ObjectIdentityMap;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
@@ -43,6 +45,11 @@ class ObjectManager implements ObjectManagerInterface
     private $objectPersisterFactory;
 
     /**
+     * @var \Doctrine\SkeletonMapper\ObjectIdentityMap
+     */
+    private $objectIdentityMap;
+
+    /**
      * @var \Doctrine\SkeletonMapper\UnitOfWork
      */
     private $unitOfWork;
@@ -55,19 +62,30 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
      * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\UnitOfWorkInterface                $unitOfWork
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                  $objectIdentityMap
      * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory       $metadataFactory
+     * @param \Doctrine\Common\EventManager                               $eventManager
      */
     public function __construct(
         ObjectRepositoryFactory $objectRepositoryFactory,
         ObjectPersisterFactory $objectPersisterFactory,
-        UnitOfWork $unitOfWork,
-        ClassMetadataFactory $metadataFactory)
+        ObjectIdentityMap $objectIdentityMap,
+        ClassMetadataFactory $metadataFactory,
+        EventManager $eventManager = null)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
         $this->objectPersisterFactory = $objectPersisterFactory;
-        $this->unitOfWork = $unitOfWork;
+        $this->objectIdentityMap = $objectIdentityMap;
         $this->metadataFactory = $metadataFactory;
+        $this->eventManager = $eventManager ?: new EventManager();
+
+        $this->unitOfWork = new UnitOfWork(
+            $this,
+            $this->objectRepositoryFactory,
+            $this->objectPersisterFactory,
+            $this->objectIdentityMap,
+            $this->eventManager
+        );
     }
 
     /**
@@ -97,7 +115,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function persist($object)
     {
-        $this->getPersister(get_class($object))->persist($object);
+        $this->unitOfWork->persist($object);
     }
 
     /**
@@ -109,7 +127,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function update($object)
     {
-        $this->getPersister(get_class($object))->update($object);
+        $this->unitOfWork->update($object);
     }
 
     /**
@@ -121,7 +139,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function remove($object)
     {
-        $this->getPersister(get_class($object))->remove($object);
+        $this->unitOfWork->remove($object);
     }
 
     /**
@@ -131,7 +149,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function action(ObjectAction $objectAction)
     {
-        $this->getPersister(get_class($objectAction->getObject()))->action($objectAction);
+        $this->unitOfWork->action($objectAction);
     }
 
     /**
@@ -207,18 +225,6 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Gets the repository for a class.
-     *
-     * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    public function getPersister($className)
-    {
-        return $this->objectPersisterFactory->getPersister($className);
-    }
-
-    /**
      * Returns the ClassMetadata descriptor for a class.
      *
      * The class name must be the fully-qualified class name without a leading backslash
@@ -265,5 +271,27 @@ class ObjectManager implements ObjectManagerInterface
     public function contains($object)
     {
         return $this->unitOfWork->contains($object);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return object
+     */
+    public function getOrCreateObject($className, array $data)
+    {
+        $object = $this->objectIdentityMap->tryGetById($className, $data);
+
+        if (!$object) {
+            $repository = $this->getRepository($className);
+
+            $object = $repository->create($className);
+
+            $repository->hydrate($object, $data);
+
+            $this->objectIdentityMap->addToIdentityMap($object, $data);
+        }
+
+        return $object;
     }
 }

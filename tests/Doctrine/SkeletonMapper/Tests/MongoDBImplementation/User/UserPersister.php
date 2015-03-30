@@ -11,11 +11,8 @@ class UserPersister extends ObjectPersister
 {
     private $mongoCollection;
 
-    public function __construct(
-        ObjectIdentityMap $objectIdentityMap,
-        MongoCollection $mongoCollection)
+    public function __construct(MongoCollection $mongoCollection)
     {
-        parent::__construct($objectIdentityMap);
         $this->mongoCollection = $mongoCollection;
     }
 

@@ -2,6 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
+use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\User;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserDataRepository;
@@ -11,8 +12,6 @@ use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserRepository;
 
 class MongoDBImplementationTest extends BaseImplementationTest
 {
-    protected $objectManager;
-    protected $users;
     protected $testClassName = 'Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\User';
 
     protected function setUp()
@@ -38,6 +37,7 @@ class MongoDBImplementationTest extends BaseImplementationTest
             ),
         ));
 
+        $eventManager = new EventManager();
         $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $objectFactory = new SkeletonMapper\ObjectFactory();
         $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
@@ -63,6 +63,14 @@ class MongoDBImplementationTest extends BaseImplementationTest
 
         $classMetadataFactory->setMetadataFor($this->testClassName, $userClassMetadata);
 
+        $this->objectManager = new SkeletonMapper\ObjectManager(
+            $objectRepositoryFactory,
+            $objectPersisterFactory,
+            $objectIdentityMap,
+            $classMetadataFactory,
+            $eventManager
+        );
+
         // user data repo
         $userDataRepository = new UserDataRepository($this->users);
 
@@ -71,28 +79,16 @@ class MongoDBImplementationTest extends BaseImplementationTest
 
         // user repo
         $userRepository = new UserRepository(
+            $this->objectManager,
             $userDataRepository,
             $objectFactory,
             $userHydrator,
-            $objectIdentityMap
+            $eventManager
         );
         $objectRepositoryFactory->addObjectRepository($this->testClassName, $userRepository);
 
         // user persister
-        $userPersister = new UserPersister($objectIdentityMap, $this->users);
+        $userPersister = new UserPersister($this->users);
         $objectPersisterFactory->addObjectPersister($this->testClassName, $userPersister);
-
-        $unitOfWork = new SkeletonMapper\UnitOfWork(
-            $objectPersisterFactory,
-            $objectRepositoryFactory,
-            $objectIdentityMap
-        );
-
-        $this->objectManager = new SkeletonMapper\ObjectManager(
-            $objectRepositoryFactory,
-            $objectPersisterFactory,
-            $unitOfWork,
-            $classMetadataFactory
-        );
     }
 }

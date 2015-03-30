@@ -135,6 +135,14 @@ class ObjectIdentityMap
     }
 
     /**
+     * @return integer
+     */
+    public function count()
+    {
+        return count($this->identityMap);
+    }
+
+    /**
      * @param string $className
      * @param array  $data
      *

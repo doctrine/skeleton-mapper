@@ -17,47 +17,15 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+namespace Doctrine\SkeletonMapper\Event;
 
-namespace Doctrine\SkeletonMapper\Repository;
-
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use Doctrine\Common\Persistence\Event\ManagerEventArgs;
 
 /**
- * Interface that object repositories must implement.
+ * Provides event arguments for the preFlush event.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
+class PreFlushEventArgs extends ManagerEventArgs
 {
-    /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    public function getClassName();
-
-    /**
-     * Returns the objects identifier.
-     *
-     * @return array
-     */
-    public function getObjectIdentifier($object);
-
-    /**
-     * @param object $object
-     */
-    public function merge($object);
-
-    /**
-     * @param object $object
-     * @param array $data
-     */
-    public function hydrate($object, array $data);
-
-    /**
-     * @param string $className
-     *
-     * @return object
-     */
-    public function create($className);
 }

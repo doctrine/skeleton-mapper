@@ -39,4 +39,11 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
      * @param \Doctrine\SkeletonMapper\Persister\ObjectAction $objectAction
      */
     public function action(ObjectAction $objectAction);
+
+    /**
+     * @param array $data
+     *
+     * @return object
+     */
+    public function getOrCreateObject($className, array $data);
 }

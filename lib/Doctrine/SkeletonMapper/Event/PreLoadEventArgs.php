@@ -17,47 +17,42 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+namespace Doctrine\SkeletonMapper\Event;
 
-namespace Doctrine\SkeletonMapper\Repository;
-
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 /**
- * Interface that object repositories must implement.
+ * Class that holds event arguments for a preLoad event.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
+class PreLoadEventArgs extends LifecycleEventArgs
 {
     /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
+     * @var array
      */
-    public function getClassName();
+    private $data;
 
     /**
-     * Returns the objects identifier.
+     * Constructor.
+     *
+     * @param object                   $object
+     * @param ObjectManagerInterface   $objectManager
+     * @param array                    $data     Array of data to be loaded and hydrated
+     */
+    public function __construct($object, ObjectManagerInterface $objectManager, array &$data)
+    {
+        parent::__construct($object, $objectManager);
+        $this->data = & $data;
+    }
+
+    /**
+     * Get the array of data to be loaded and hydrated.
      *
      * @return array
      */
-    public function getObjectIdentifier($object);
-
-    /**
-     * @param object $object
-     */
-    public function merge($object);
-
-    /**
-     * @param object $object
-     * @param array $data
-     */
-    public function hydrate($object, array $data);
-
-    /**
-     * @param string $className
-     *
-     * @return object
-     */
-    public function create($className);
+    public function &getData()
+    {
+        return $this->data;
+    }
 }

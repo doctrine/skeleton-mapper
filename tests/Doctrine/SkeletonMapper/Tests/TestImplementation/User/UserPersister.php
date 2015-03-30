@@ -11,11 +11,8 @@ class UserPersister extends ObjectPersister
 {
     private $users;
 
-    public function __construct(
-        ObjectIdentityMap $objectIdentityMap,
-        ArrayCollection $users)
+    public function __construct(ArrayCollection $users)
     {
-        parent::__construct($objectIdentityMap);
         $this->users = $users;
     }
 

@@ -8,6 +8,7 @@ use PHPUnit_Framework_TestCase;
 abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 {
     protected $objectManager;
+    protected $objectIdentityMap;
     protected $users;
     protected $testClassName;
 

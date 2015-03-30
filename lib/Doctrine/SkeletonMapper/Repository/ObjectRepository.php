@@ -20,7 +20,12 @@
 
 namespace Doctrine\SkeletonMapper\Repository;
 
+use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
+use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
+use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectFactory;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
 
@@ -31,6 +36,11 @@ use Doctrine\SkeletonMapper\ObjectIdentityMap;
  */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {
+    /**
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
+     */
+    protected $objectManager;
+
     /**
      * @var \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface
      */
@@ -47,26 +57,29 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $objectHydrator;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectIdentityMap
+     * @var \Doctrine\Common\EventManager 
      */
-    protected $objectIdentityMap;
+    protected $eventManager;
 
     /**
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                   $objectManager
      * @param \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface $objectDataRepository
      * @param \Doctrine\SkeletonMapper\ObjectFactory                            $objectFactory
      * @param \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface         $objectHydrator
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
+     * @param \Doctrine\Common\EventManager                                     $eventManager
      */
     public function __construct(
+        ObjectManagerInterface $objectManager,
         ObjectDataRepositoryInterface $objectDataRepository,
         ObjectFactory $objectFactory,
         ObjectHydratorInterface $objectHydrator,
-        ObjectIdentityMap $objectIdentityMap)
+        EventManager $eventManager)
     {
+        $this->objectManager = $objectManager;
         $this->objectDataRepository = $objectDataRepository;
         $this->objectFactory = $objectFactory;
         $this->objectHydrator = $objectHydrator;
-        $this->objectIdentityMap = $objectIdentityMap;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -84,7 +97,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
             return;
         }
 
-        return $this->getOrCreateObject($data);
+        return $this->objectManager->getOrCreateObject($this->getClassName(), $data);
     }
 
     /**
@@ -94,11 +107,12 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function findAll()
     {
+        $className = $this->getClassName();
         $objectsData = $this->objectDataRepository->findAll();
 
         $objects = array();
         foreach ($objectsData as $objectData) {
-            $objects[] = $this->getOrCreateObject($objectData);
+            $objects[] = $this->objectManager->getOrCreateObject($className, $objectData);
         }
 
         return $objects;
@@ -122,13 +136,15 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
+        $className = $this->getClassName();
+
         $objectsData = $this->objectDataRepository->findBy(
             $criteria, $orderBy, $limit, $offset
         );
 
         $objects = array();
         foreach ($objectsData as $objectData) {
-            $objects[] = $this->getOrCreateObject($objectData);
+            $objects[] = $this->objectManager->getOrCreateObject($className, $objectData);
         }
 
         return $objects;
@@ -149,7 +165,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
             return;
         }
 
-        return $this->getOrCreateObject($data);
+        return $this->objectManager->getOrCreateObject($this->getClassName(), $data);
     }
 
     /**
@@ -159,26 +175,39 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     {
         $data = $this->objectDataRepository->findByObject($object);
 
-        $this->objectHydrator->hydrate($object, $data);
+        $this->hydrate($object, $data);
     }
 
     /**
+     * @param object $object
      * @param array $data
+     */
+    public function hydrate($object, array $data)
+    {
+        if ($this->eventManager->hasListeners(Events::preLoad)) {
+            $this->eventManager->dispatchEvent(
+                Events::preLoad,
+                new PreLoadEventArgs($object, $this->objectManager, $data)
+            );
+        }
+
+        $this->objectHydrator->hydrate($object, $data);
+
+        if ($this->eventManager->hasListeners(Events::postLoad)) {
+            $this->eventManager->dispatchEvent(
+                Events::postLoad,
+                new LifecycleEventArgs($object, $this->objectManager)
+            );
+        }
+    }
+
+    /**
+     * @param string $className
      *
      * @return object
      */
-    private function getOrCreateObject(array $data)
+    public function create($className)
     {
-        $className = $this->getClassName();
-        $object = $this->objectIdentityMap->tryGetById($className, $data);
-
-        if (!$object) {
-            $object = $this->objectFactory->create($className);
-            $this->objectHydrator->hydrate($object, $data);
-
-            $this->objectIdentityMap->addToIdentityMap($object, $data);
-        }
-
-        return $object;
+        return $this->objectFactory->create($className);
     }
 }
