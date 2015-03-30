@@ -17,6 +17,7 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+
 namespace Doctrine\SkeletonMapper\Event;
 
 use Doctrine\Common\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;

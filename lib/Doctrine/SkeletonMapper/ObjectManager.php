@@ -21,7 +21,6 @@
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\ObjectIdentityMap;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;

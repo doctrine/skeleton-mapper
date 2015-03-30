@@ -18,4 +18,14 @@ class User
      * @var string
      */
     public $password;
+
+    /**
+     * @var array
+     */
+    public $called;
+
+    public function __call($method, $arguments)
+    {
+        $this->called[] = $method;
+    }
 }

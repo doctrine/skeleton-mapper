@@ -322,6 +322,61 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->eventTester->called);
     }
 
+    public function testLifecycleCallbacks()
+    {
+        $user = $this->createTestObject();
+        $user->id = 3;
+
+        $this->objectManager->persist($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::prePersist,
+            Events::preFlush,
+            Events::postPersist,
+        );
+
+        $this->assertEquals($expected, $user->called);
+
+        $user->called = array();
+
+        $user->username = 'jmikola';
+        $this->objectManager->update($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::preUpdate,
+            Events::preFlush,
+            Events::postUpdate,
+        );
+
+        $this->assertEquals($expected, $user->called);
+
+        $user->called = array();
+
+        $this->objectManager->remove($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::preRemove,
+            Events::preFlush,
+            Events::postRemove,
+        );
+
+        $this->assertEquals($expected, $user->called);
+
+        $user->called = array();
+
+        $user = $this->objectManager->find($this->testClassName, 1);
+
+        $expected = array(
+            Events::preLoad,
+            Events::postLoad,
+        );
+
+        $this->assertEquals($expected, $user->called);
+    }
+
     private function createTestObject()
     {
         $className = $this->testClassName;

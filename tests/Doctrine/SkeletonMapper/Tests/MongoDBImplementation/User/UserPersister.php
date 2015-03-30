@@ -2,7 +2,6 @@
 
 namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User;
 
-use Doctrine\SkeletonMapper\ObjectIdentityMap;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersister;
 use MongoCollection;

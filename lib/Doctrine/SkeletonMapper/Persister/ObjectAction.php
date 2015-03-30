@@ -45,7 +45,7 @@ class ObjectAction
     /**
      * @param object $object
      * @param string $name
-     * @param array $params
+     * @param array  $params
      */
     public function __construct($object, $name, array $params = array())
     {

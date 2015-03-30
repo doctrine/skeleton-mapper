@@ -50,7 +50,7 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 
     /**
      * @param object $object
-     * @param array $data
+     * @param array  $data
      */
     public function hydrate($object, array $data);
 

@@ -23,7 +23,6 @@ namespace Doctrine\SkeletonMapper;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
-use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
@@ -82,6 +81,11 @@ class UnitOfWork
     private $objectActionsToExecute = array();
 
     /**
+     * @var array
+     */
+    private $objectsWithAction = array();
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface             $objectManager
      * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
      * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
@@ -125,6 +129,13 @@ class UnitOfWork
      */
     public function persist($object)
     {
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (! empty($class->lifecycleCallbacks[Events::prePersist])) {
+            $class->invokeLifecycleCallbacks(Events::prePersist, $object);
+        }
+
         if ($this->eventManager->hasListeners(Events::prePersist)) {
             $this->eventManager->dispatchEvent(
                 Events::prePersist,
@@ -140,6 +151,13 @@ class UnitOfWork
      */
     public function update($object)
     {
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (! empty($class->lifecycleCallbacks[Events::preUpdate])) {
+            $class->invokeLifecycleCallbacks(Events::preUpdate, $object);
+        }
+
         if ($this->eventManager->hasListeners(Events::preUpdate)) {
             $this->eventManager->dispatchEvent(
                 Events::preUpdate,
@@ -155,6 +173,13 @@ class UnitOfWork
      */
     public function remove($object)
     {
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (! empty($class->lifecycleCallbacks[Events::preRemove])) {
+            $class->invokeLifecycleCallbacks(Events::preRemove, $object);
+        }
+
         if ($this->eventManager->hasListeners(Events::preRemove)) {
             $this->eventManager->dispatchEvent(
                 Events::preRemove,
@@ -171,6 +196,10 @@ class UnitOfWork
     public function action(ObjectAction $objectAction)
     {
         $this->objectActionsToExecute[] = $objectAction;
+
+        $object = $objectAction->getObject();
+
+        $this->objectsWithAction[spl_object_hash($object)] = $object;
     }
 
     /**
@@ -184,6 +213,7 @@ class UnitOfWork
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
         $this->objectActionsToExecute = array();
+        $this->objectsWithAction = array();
 
         if ($this->eventManager->hasListeners(Events::onClear)) {
             $this->eventManager->dispatchEvent(
@@ -232,6 +262,22 @@ class UnitOfWork
             );
         }
 
+        $objects = array_merge(
+            $this->objectsToPersist,
+            $this->objectsToUpdate,
+            $this->objectsToRemove,
+            $this->objectsWithAction
+        );
+
+        foreach ($objects as $object) {
+            $className = get_class($object);
+            $class = $this->objectManager->getClassMetadata($className);
+
+            if (! empty($class->lifecycleCallbacks[Events::preFlush])) {
+                $class->invokeLifecycleCallbacks(Events::preFlush, $object);
+            }
+        }
+
         if (! ($this->objectActionsToExecute ||
             $this->objectsToPersist ||
             $this->objectsToUpdate ||
@@ -274,6 +320,7 @@ class UnitOfWork
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
         $this->objectActionsToExecute = array();
+        $this->objectsWithAction = array();
     }
 
     /**
@@ -307,7 +354,16 @@ class UnitOfWork
     }
 
     /**
-     * @return void
+     * @param object $object
+     *
+     * @return bool
+     */
+    public function isScheduledForAction($object)
+    {
+        return isset($this->objectsWithAction[spl_object_hash($object)]);
+    }
+
+    /**
      */
     private function executeObjectActions()
     {
@@ -318,7 +374,6 @@ class UnitOfWork
     }
 
     /**
-     * @return void
      */
     private function executePersists()
     {
@@ -327,6 +382,13 @@ class UnitOfWork
                 ->persistObject($object);
 
             $this->objectIdentityMap->addToIdentityMap($object, $objectData);
+
+            $className = get_class($object);
+            $class = $this->objectManager->getClassMetadata($className);
+
+            if (! empty($class->lifecycleCallbacks[Events::postPersist])) {
+                $class->invokeLifecycleCallbacks(Events::postPersist, $object);
+            }
 
             if ($this->eventManager->hasListeners(Events::postPersist)) {
                 $this->eventManager->dispatchEvent(
@@ -338,13 +400,19 @@ class UnitOfWork
     }
 
     /**
-     * @return void
      */
     private function executeUpdates()
     {
         foreach ($this->objectsToUpdate as $object) {
             $this->getObjectPersister($object)
                 ->updateObject($object);
+
+            $className = get_class($object);
+            $class = $this->objectManager->getClassMetadata($className);
+
+            if (! empty($class->lifecycleCallbacks[Events::postUpdate])) {
+                $class->invokeLifecycleCallbacks(Events::postUpdate, $object);
+            }
 
             if ($this->eventManager->hasListeners(Events::postUpdate)) {
                 $this->eventManager->dispatchEvent(
@@ -356,7 +424,6 @@ class UnitOfWork
     }
 
     /**
-     * @return void
      */
     private function executeRemoves()
     {
@@ -365,6 +432,13 @@ class UnitOfWork
                 ->removeObject($object);
 
             $this->objectIdentityMap->detach($object);
+
+            $className = get_class($object);
+            $class = $this->objectManager->getClassMetadata($className);
+
+            if (! empty($class->lifecycleCallbacks[Events::postRemove])) {
+                $class->invokeLifecycleCallbacks(Events::postRemove, $object);
+            }
 
             if ($this->eventManager->hasListeners(Events::postRemove)) {
                 $this->eventManager->dispatchEvent(

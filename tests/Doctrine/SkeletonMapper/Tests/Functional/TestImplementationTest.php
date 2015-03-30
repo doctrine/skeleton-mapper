@@ -76,6 +76,10 @@ class TestImplementationTest extends BaseImplementationTest
             'fieldName' => 'password',
         ));
 
+        foreach ($events as $event) {
+            $userClassMetadata->addLifecycleCallback($event, $event);
+        }
+
         $classMetadataFactory->setMetadataFor($this->testClassName, $userClassMetadata);
 
         $this->objectManager = new SkeletonMapper\ObjectManager(

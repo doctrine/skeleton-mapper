@@ -135,7 +135,7 @@ class ObjectIdentityMap
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function count()
     {

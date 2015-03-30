@@ -17,6 +17,7 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  */
+
 namespace Doctrine\SkeletonMapper\Event;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -36,9 +37,9 @@ class PreLoadEventArgs extends LifecycleEventArgs
     /**
      * Constructor.
      *
-     * @param object                   $object
-     * @param ObjectManagerInterface   $objectManager
-     * @param array                    $data     Array of data to be loaded and hydrated
+     * @param object                 $object
+     * @param ObjectManagerInterface $objectManager
+     * @param array                  $data          Array of data to be loaded and hydrated
      */
     public function __construct($object, ObjectManagerInterface $objectManager, array &$data)
     {

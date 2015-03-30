@@ -20,7 +20,6 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
-use Doctrine\SkeletonMapper\ObjectIdentityMap;
 
 /**
  * Base class for object persisters to extend from.

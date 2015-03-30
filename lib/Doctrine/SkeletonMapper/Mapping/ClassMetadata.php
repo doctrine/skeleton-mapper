@@ -53,6 +53,13 @@ class ClassMetadata implements ClassMetadataInterface
     public $fieldMappings = array();
 
     /**
+     * The registered lifecycle callbacks for this class.
+     *
+     * @var array
+     */
+    public $lifecycleCallbacks = array();
+
+    /**
      * @var \ReflectionClass
      */
     public $reflClass;
@@ -167,6 +174,85 @@ class ClassMetadata implements ClassMetadataInterface
     public function getFieldMappings()
     {
         return $this->fieldMappings;
+    }
+
+    /**
+     * Dispatches the lifecycle event of the given object by invoking all
+     * registered callbacks.
+     *
+     * @param string $event     Lifecycle event
+     * @param object $object    Object on which the event occurred
+     * @param array  $arguments Arguments to pass to all callbacks
+     *
+     * @throws \InvalidArgumentException if object is not this class or
+     *                                   a Proxy of this class
+     */
+    public function invokeLifecycleCallbacks($event, $object, array $arguments = null)
+    {
+        if (!$object instanceof $this->name) {
+            throw new \InvalidArgumentException(sprintf('Expected class "%s"; found: "%s"', $this->name, get_class($object)));
+        }
+
+        foreach ($this->lifecycleCallbacks[$event] as $callback) {
+            if ($arguments !== null) {
+                call_user_func_array(array($object, $callback), $arguments);
+            } else {
+                $object->$callback();
+            }
+        }
+    }
+
+    /**
+     * Checks whether the class has callbacks registered for a lifecycle event.
+     *
+     * @param string $event Lifecycle event
+     *
+     * @return bool
+     */
+    public function hasLifecycleCallbacks($event)
+    {
+        return ! empty($this->lifecycleCallbacks[$event]);
+    }
+
+    /**
+     * Gets the registered lifecycle callbacks for an event.
+     *
+     * @param string $event
+     *
+     * @return array
+     */
+    public function getLifecycleCallbacks($event)
+    {
+        return isset($this->lifecycleCallbacks[$event]) ? $this->lifecycleCallbacks[$event] : array();
+    }
+
+    /**
+     * Adds a lifecycle callback for objects of this class.
+     *
+     * If the callback is already registered, this is a NOOP.
+     *
+     * @param string $callback
+     * @param string $event
+     */
+    public function addLifecycleCallback($callback, $event)
+    {
+        if (isset($this->lifecycleCallbacks[$event]) && in_array($callback, $this->lifecycleCallbacks[$event])) {
+            return;
+        }
+
+        $this->lifecycleCallbacks[$event][] = $callback;
+    }
+
+    /**
+     * Sets the lifecycle callbacks for objects of this class.
+     *
+     * Any previously registered callbacks are overwritten.
+     *
+     * @param array $callbacks
+     */
+    public function setLifecycleCallbacks(array $callbacks)
+    {
+        $this->lifecycleCallbacks = $callbacks;
     }
 
     /**
