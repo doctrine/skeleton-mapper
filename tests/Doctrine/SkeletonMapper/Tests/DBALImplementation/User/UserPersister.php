@@ -1,15 +1,20 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User;
+namespace Doctrine\SkeletonMapper\Tests\DBALImplementation\User;
 
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
-use Doctrine\SkeletonMapper\Persister\MongoDBObjectPersister;
+use Doctrine\SkeletonMapper\Persister\DBALObjectPersister;
 
-class UserPersister extends MongoDBObjectPersister
+class UserPersister extends DBALObjectPersister
 {
     public function getClassName()
     {
         return 'Doctrine\SkeletonMapper\Tests\Model\User';
+    }
+
+    public function getTableName()
+    {
+        return 'users';
     }
 
     public function executeObjectAction(ObjectAction $objectAction)

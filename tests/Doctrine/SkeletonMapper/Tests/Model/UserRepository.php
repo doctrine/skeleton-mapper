@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
+namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\SkeletonMapper\Repository\ObjectRepository;
 
@@ -13,7 +13,12 @@ class UserRepository extends ObjectRepository
 
     public function getObjectIdentifier($object)
     {
-        return array('_id' => $object->id);
+        return array('_id' => (int) $object->id);
+    }
+
+    public function getObjectIdentifierFromData(array $data)
+    {
+        return array('_id' => (int) $data['_id']);
     }
 
     public function merge($object)

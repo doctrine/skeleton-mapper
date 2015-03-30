@@ -20,7 +20,6 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
-
 /**
  * Base class for object persisters to extend from.
  *

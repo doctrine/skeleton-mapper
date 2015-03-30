@@ -102,7 +102,7 @@ class ObjectIdentityMap
             $this->identityMap[get_class($object)] = array();
         }
 
-        $serialized = serialize($this->extractIdentifierFromData($className, $data));
+        $serialized = serialize($this->getObjectIdentifier($object));
 
         $this->identityMap[get_class($object)][$serialized] = $object;
     }
@@ -143,6 +143,18 @@ class ObjectIdentityMap
     }
 
     /**
+     * @param object $object
+     *
+     * @return array $identifier
+     */
+    private function getObjectIdentifier($object)
+    {
+        return $this->objectRepositoryFactory
+            ->getRepository(get_class($object))
+            ->getObjectIdentifier($object);
+    }
+
+    /**
      * @param string $className
      * @param array  $data
      *
@@ -150,15 +162,8 @@ class ObjectIdentityMap
      */
     private function extractIdentifierFromData($className, array $data)
     {
-        $identifierFieldNames = $this->classMetadataFactory
-            ->getMetadataFor($className)
-            ->getIdentifier();
-
-        $identifier = array();
-        foreach ($identifierFieldNames as $identifierFieldName) {
-            $identifier[$identifierFieldName] = $data[$identifierFieldName];
-        }
-
-        return $identifier;
+        return $this->objectRepositoryFactory
+            ->getRepository($className)
+            ->getObjectIdentifierFromData($data);
     }
 }

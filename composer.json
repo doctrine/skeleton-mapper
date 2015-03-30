@@ -13,6 +13,9 @@
         "doctrine/collections": "~1.1",
         "doctrine/common": "~2.4"
     },
+    "require-dev": {
+        "doctrine/dbal": "~2.4"
+    },
     "autoload": {
         "psr-0": { "Doctrine\\SkeletonMapper": "lib/" }
     },

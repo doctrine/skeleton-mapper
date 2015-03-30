@@ -6,11 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Events;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\User;
+use Doctrine\SkeletonMapper\Tests\Model\User;
+use Doctrine\SkeletonMapper\Tests\Model\UserHydrator;
+use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserHydrator;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserPersister;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserRepository;
 
 class TestImplementationTest extends BaseImplementationTest
 {

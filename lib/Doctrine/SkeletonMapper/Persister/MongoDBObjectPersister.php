@@ -18,53 +18,45 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\Persister;
 
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use MongoCollection;
 
-/**
- * Interface that object repositories must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
+abstract class MongoDBObjectPersister extends ObjectPersister
 {
     /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
+     * @var \MongoCollection
      */
-    public function getClassName();
+    private $mongoCollection;
 
     /**
-     * Returns the objects identifier.
-     *
-     * @return array
+     * @param \MongoCollection $mongoCollection
      */
-    public function getObjectIdentifier($object);
+    public function __construct(MongoCollection $mongoCollection)
+    {
+        $this->mongoCollection = $mongoCollection;
+    }
 
-    /**
-     * Returns the identifier.
-     *
-     * @return array
-     */
-    public function getObjectIdentifierFromData(array $data);
+    public function persistObject($object)
+    {
+        $data = $this->objectToArray($object);
 
-    /**
-     * @param object $object
-     */
-    public function merge($object);
+        $this->mongoCollection->insert($data);
 
-    /**
-     * @param object $object
-     * @param array  $data
-     */
-    public function hydrate($object, array $data);
+        return $data;
+    }
 
-    /**
-     * @param string $className
-     *
-     * @return object
-     */
-    public function create($className);
+    public function updateObject($object)
+    {
+        $data = $this->objectToArray($object);
+
+        $this->mongoCollection->save($data);
+
+        return $data;
+    }
+
+    public function removeObject($object)
+    {
+        $this->mongoCollection->remove(array('_id' => $object->id));
+    }
 }

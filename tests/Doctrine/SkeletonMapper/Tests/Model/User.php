@@ -26,7 +26,7 @@ class User
 
     /**
      * @param string $method
-     * @param array $arguments
+     * @param array  $arguments
      */
     public function __call($method, $arguments)
     {

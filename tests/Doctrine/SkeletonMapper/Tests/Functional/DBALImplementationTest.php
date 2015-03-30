@@ -3,27 +3,41 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL;
 use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\Model\UserHydrator;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
-use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserDataRepository;
+use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserPersister;
 
-class MongoDBImplementationTest extends BaseImplementationTest
+class DBALImplementationTest extends BaseImplementationTest
 {
     protected function setUp()
     {
-        $mongo = version_compare(phpversion('mongo'), '1.3.0', '<')
-            ? new \Mongo()
-            : new \MongoClient();
+        $config = new DBAL\Configuration();
+        $connectionParams = array(
+            'dbname' => 'skeleton_mapper',
+            'user' => 'root',
+            'password' => '',
+            'host' => 'localhost',
+            'driver' => 'pdo_mysql',
+        );
+        $connection = DBAL\DriverManager::getConnection($connectionParams, $config);
 
-        $this->users = $mongo->selectDb('test')->selectCollection('users');
+        $schema = new DBAL\Schema\Schema();
+        $table = $schema->createTable('users');
+        $table->addColumn('_id', 'integer', array('unsigned' => true));
+        $table->addColumn('username', 'string', array('length' => 32, 'notnull' => false));
+        $table->addColumn('password', 'string', array('length' => 32, 'notnull' => false));
 
-        $this->users->drop();
+        $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
 
-        $this->users->batchInsert(array(
+        $connection = DBAL\DriverManager::getConnection($connectionParams, $config);
+        $connection->getSchemaManager()->createTable($table);
+
+        $users = array(
             array(
                 '_id' => 1,
                 'username' => 'jwage',
@@ -34,7 +48,13 @@ class MongoDBImplementationTest extends BaseImplementationTest
                 'username' => 'romanb',
                 'password' => 'password',
             ),
-        ));
+        );
+
+        foreach ($users as $user) {
+            $connection->insert('users', $user);
+        }
+
+        $this->users = new UsersTester($connection);
 
         $this->eventTester = new EventTester();
 
@@ -96,7 +116,9 @@ class MongoDBImplementationTest extends BaseImplementationTest
         );
 
         // user data repo
-        $userDataRepository = new UserDataRepository($this->users);
+        $userDataRepository = new UserDataRepository(
+            $this->objectManager, $connection
+        );
 
         // user hydrator
         $userHydrator = new UserHydrator();
@@ -112,7 +134,22 @@ class MongoDBImplementationTest extends BaseImplementationTest
         $objectRepositoryFactory->addObjectRepository($this->testClassName, $userRepository);
 
         // user persister
-        $userPersister = new UserPersister($this->users);
+        $userPersister = new UserPersister($this->objectManager, $connection);
         $objectPersisterFactory->addObjectPersister($this->testClassName, $userPersister);
+    }
+}
+
+class UsersTester
+{
+    private $connection;
+
+    public function __construct(DBAL\Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    public function count()
+    {
+        return $this->connection->fetchColumn('SELECT COUNT(1) FROM users');
     }
 }
