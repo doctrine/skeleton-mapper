@@ -24,13 +24,4 @@ class UserPersister extends MongoDBObjectPersister
 
         $objectAction->setResult(array('success' => true));
     }
-
-    public function objectToArray($object)
-    {
-        return array(
-            '_id' => (int) $object->id,
-            'username' => $object->username,
-            'password' => $object->password,
-        );
-    }
 }

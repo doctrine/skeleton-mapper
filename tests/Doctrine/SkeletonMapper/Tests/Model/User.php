@@ -3,8 +3,9 @@
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
+use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-class User implements HydratableInterface
+class User implements HydratableInterface, PersistableInterface
 {
     /**
      * @var int
@@ -36,6 +37,8 @@ class User implements HydratableInterface
     }
 
     /**
+     * @see HydratableInterface
+     *
      * @param array $data
      */
     public function hydrate(array $data)
@@ -51,5 +54,19 @@ class User implements HydratableInterface
         if (isset($data['password'])) {
             $this->password = (string) $data['password'];
         }
+    }
+
+    /**
+     * @see PersistableInterface
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return array(
+            '_id' => (int) $this->id,
+            'username' => $this->username,
+            'password' => $this->password,
+        );
     }
 }

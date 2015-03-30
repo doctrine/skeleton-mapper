@@ -21,27 +21,14 @@
 namespace Doctrine\SkeletonMapper\Persister;
 
 /**
- * Base class for object persisters to extend from.
+ * Interface persistable objects must implement.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-abstract class ObjectPersister implements ObjectPersisterInterface
+interface PersistableInterface
 {
-    /**
-     * Converts an object to an array.
-     *
-     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
-     *
-     * @return array
-     */
-    public function objectToArray($object)
-    {
-        if (!$object instanceof PersistableInterface) {
-            throw new \InvalidArgumentException(
-                sprintf('%s must implement PersistableInterface', get_class($object))
-            );
-        }
-
-        return $object->toArray();
-    }
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

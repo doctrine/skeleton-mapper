@@ -51,13 +51,4 @@ class UserPersister extends ObjectPersister
 
         $objectAction->setResult(array('success' => true));
     }
-
-    public function objectToArray($object)
-    {
-        return array(
-            '_id' => $object->id,
-            'username' => $object->username,
-            'password' => $object->password,
-        );
-    }
 }
