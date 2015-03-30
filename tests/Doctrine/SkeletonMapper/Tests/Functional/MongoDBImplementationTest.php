@@ -112,7 +112,7 @@ class MongoDBImplementationTest extends BaseImplementationTest
         $objectRepositoryFactory->addObjectRepository($this->testClassName, $userRepository);
 
         // user persister
-        $userPersister = new UserPersister($this->users);
+        $userPersister = new UserPersister($this->objectManager, $this->users);
         $objectPersisterFactory->addObjectPersister($this->testClassName, $userPersister);
     }
 }

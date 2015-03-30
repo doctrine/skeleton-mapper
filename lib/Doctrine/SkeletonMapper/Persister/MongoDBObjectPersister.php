@@ -20,20 +20,30 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use MongoCollection;
 
 abstract class MongoDBObjectPersister extends ObjectPersister
 {
+    /**
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
+     */
+    private $objectManager;
+
     /**
      * @var \MongoCollection
      */
     private $mongoCollection;
 
     /**
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      * @param \MongoCollection $mongoCollection
      */
-    public function __construct(MongoCollection $mongoCollection)
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        MongoCollection $mongoCollection)
     {
+        $this->objectManager = $objectManager;
         $this->mongoCollection = $mongoCollection;
     }
 
@@ -57,6 +67,18 @@ abstract class MongoDBObjectPersister extends ObjectPersister
 
     public function removeObject($object)
     {
-        $this->mongoCollection->remove(array('_id' => $object->id));
+        $this->mongoCollection->remove($this->getObjectIdentifier($object));
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return array $identifier
+     */
+    private function getObjectIdentifier($object)
+    {
+        return $this->objectManager
+            ->getRepository(get_class($object))
+            ->getObjectIdentifier($object);
     }
 }
