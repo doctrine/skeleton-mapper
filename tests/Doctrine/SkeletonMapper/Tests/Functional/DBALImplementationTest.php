@@ -18,7 +18,6 @@ class DBALImplementationTest extends BaseImplementationTest
     {
         $config = new DBAL\Configuration();
         $connectionParams = array(
-            'dbname' => 'skeleton_mapper',
             'user' => 'root',
             'password' => '',
             'host' => 'localhost',
@@ -34,6 +33,13 @@ class DBALImplementationTest extends BaseImplementationTest
 
         $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
 
+        $connectionParams = array(
+            'dbname' => 'skeleton_mapper',
+            'user' => 'root',
+            'password' => '',
+            'host' => 'localhost',
+            'driver' => 'pdo_mysql',
+        );
         $connection = DBAL\DriverManager::getConnection($connectionParams, $config);
         $connection->getSchemaManager()->createTable($table);
 
