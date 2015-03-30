@@ -5,6 +5,7 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
+use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\User;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserDataRepository;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserHydrator;
@@ -30,7 +31,28 @@ class TestImplementationTest extends BaseImplementationTest
             ),
         ));
 
+        $this->eventTester = new EventTester();
+
+        $events = array(
+            Events::preRemove,
+            Events::postRemove,
+            Events::prePersist,
+            Events::postPersist,
+            Events::preUpdate,
+            Events::postUpdate,
+            Events::preLoad,
+            Events::postLoad,
+            Events::preFlush,
+            Events::onFlush,
+            Events::postFlush,
+            Events::onClear,
+        );
+
         $eventManager = new EventManager();
+        foreach ($events as $event) {
+            $eventManager->addEventListener($event, $this->eventTester);
+        }
+
         $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $objectFactory = new SkeletonMapper\ObjectFactory();
         $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();

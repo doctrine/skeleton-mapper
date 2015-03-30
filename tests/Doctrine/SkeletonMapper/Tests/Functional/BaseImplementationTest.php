@@ -2,6 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
+use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use PHPUnit_Framework_TestCase;
 
@@ -11,6 +12,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     protected $objectIdentityMap;
     protected $users;
     protected $testClassName;
+    protected $eventTester;
 
     public function testGetClassMetadata()
     {
@@ -250,10 +252,90 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('success' => true), $action->getResult());
     }
 
+    public function testEvents()
+    {
+        $user = $this->createTestObject();
+        $user->id = 3;
+
+        $this->objectManager->persist($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::prePersist,
+            Events::preFlush,
+            Events::onFlush,
+            Events::postPersist,
+            Events::postFlush,
+        );
+
+        $this->assertEquals($expected, $this->eventTester->called);
+
+        $this->eventTester->called = array();
+
+        $user->username = 'jmikola';
+        $this->objectManager->update($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::preUpdate,
+            Events::preFlush,
+            Events::onFlush,
+            Events::postUpdate,
+            Events::postFlush,
+        );
+
+        $this->assertEquals($expected, $this->eventTester->called);
+
+        $this->eventTester->called = array();
+        $this->objectManager->clear();
+
+        $expected = array(
+            Events::onClear,
+        );
+
+        $this->assertEquals($expected, $this->eventTester->called);
+
+        $this->eventTester->called = array();
+
+        $this->objectManager->remove($user);
+        $this->objectManager->flush();
+
+        $expected = array(
+            Events::preRemove,
+            Events::preFlush,
+            Events::onFlush,
+            Events::postRemove,
+            Events::postFlush,
+        );
+
+        $this->assertEquals($expected, $this->eventTester->called);
+
+        $this->eventTester->called = array();
+
+        $user = $this->objectManager->find($this->testClassName, 1);
+
+        $expected = array(
+            Events::preLoad,
+            Events::postLoad,
+        );
+
+        $this->assertEquals($expected, $this->eventTester->called);
+    }
+
     private function createTestObject()
     {
         $className = $this->testClassName;
 
         return new $className();
+    }
+}
+
+class EventTester
+{
+    public $called = array();
+
+    public function __call($method, array $arguments)
+    {
+        $this->called[] = $method;
     }
 }
