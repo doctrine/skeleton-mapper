@@ -221,8 +221,22 @@ class UserRepository extends ObjectRepository
 Now put it all together:
 
 ```php
+$users = new ArrayCollection(array(
+    1 => array(
+        '_id' => 1,
+        'username' => 'jwage',
+        'password' => 'password',
+    ),
+    2 => array(
+        '_id' => 2,
+        'username' => 'romanb',
+        'password' => 'password',
+    ),
+));
+
+$eventManager = new \Doctrone\Common\EventManager();
 $classMetadataFactory = new \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory();
-$objectFactory = \Doctrine\SkeletonMapper\ObjectFactory();
+$objectFactory = new \Doctrine\SkeletonMapper\ObjectFactory();
 $objectRepositoryFactory = new \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory();
 $objectPersisterFactory = new \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory();
 $objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap(
@@ -231,25 +245,30 @@ $objectIdentityMap = new \Doctrine\SkeletonMapper\ObjectIdentityMap(
 
 // user class metadata
 $userClassMetadata = new \Doctrine\SkeletonMapper\Mapping\ClassMetadata('User');
-$userClassMetadata->identifier = array('id');
+$userClassMetadata->identifier = array('_id');
 $userClassMetadata->identifierFieldNames = array('id');
-$userClassMetadata->autoMapFields();
+$userClassMetadata->mapField(array(
+    'name' => '_id',
+    'fieldName' => 'id',
+));
+$userClassMetadata->mapField(array(
+    'fieldName' => 'username',
+));
+$userClassMetadata->mapField(array(
+    'fieldName' => 'password',
+));
 
 $classMetadataFactory->setMetadataFor('User', $userClassMetadata);
 
-// user data store in memory
-$users = new ArrayCollection(array(
-    1 => array(
-        'id' => 1,
-        'username' => 'jwage',
-        'password' => 'password',
-    ),
-    2 => array(
-        'id' => 2,
-        'username' => 'romanb',
-        'password' => 'password',
-    ),
-));
+$objectManager = new \Doctrine\SkeletonMapper\ObjectManager(
+    $objectRepositoryFactory,
+    $objectPersisterFactory,
+    $objectIdentityMap,
+    $classMetadataFactory,
+    $eventManager
+);
+
+// user data repo
 $userDataRepository = new UserDataRepository($users);
 
 // user hydrator
@@ -257,29 +276,17 @@ $userHydrator = new UserHydrator();
 
 // user repo
 $userRepository = new UserRepository(
+    $objectManager,
     $userDataRepository,
     $objectFactory,
     $userHydrator,
-    $objectIdentityMap
+    $eventManager
 );
 $objectRepositoryFactory->addObjectRepository('User', $userRepository);
 
 // user persister
-$userPersister = new UserPersister($objectIdentityMap, $users);
+$userPersister = new UserPersister($users);
 $objectPersisterFactory->addObjectPersister('User', $userPersister);
-
-$unitOfWork = new \Doctrine\SkeletonMapper\UnitOfWork(
-    $objectPersisterFactory,
-    $objectRepositoryFactory,
-    $objectIdentityMap
-);
-
-$objectManager = new \Doctrine\SkeletonMapper\ObjectManager(
-    $objectRepositoryFactory,
-    $objectPersisterFactory,
-    $unitOfWork,
-    $classMetadataFactory
-);
 ```
 
 Now manage User instances:
