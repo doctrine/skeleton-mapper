@@ -51,6 +51,7 @@ class TestImplementationTest extends BaseImplementationTest
             $eventManager->addEventListener($event, $this->eventTester);
         }
 
+        $basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator();
         $classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $objectFactory = new SkeletonMapper\ObjectFactory();
         $objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
@@ -91,15 +92,12 @@ class TestImplementationTest extends BaseImplementationTest
         // user data repo
         $userDataRepository = new UserDataRepository($this->users);
 
-        // user hydrator
-        $userHydrator = new UserHydrator();
-
         // user repo
         $userRepository = new UserRepository(
             $this->objectManager,
             $userDataRepository,
             $objectFactory,
-            $userHydrator,
+            $basicObjectHydrator,
             $eventManager
         );
         $objectRepositoryFactory->addObjectRepository($this->testClassName, $userRepository);

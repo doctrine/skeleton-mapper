@@ -2,7 +2,9 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
-class User
+use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
+
+class User implements HydratableInterface
 {
     /**
      * @var int
@@ -31,5 +33,23 @@ class User
     public function __call($method, $arguments)
     {
         $this->called[] = $method;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function hydrate(array $data)
+    {
+        if (isset($data['_id'])) {
+            $this->id = (int) $data['_id'];
+        }
+
+        if (isset($data['username'])) {
+            $this->username = (string) $data['username'];
+        }
+
+        if (isset($data['password'])) {
+            $this->password = (string) $data['password'];
+        }
     }
 }
