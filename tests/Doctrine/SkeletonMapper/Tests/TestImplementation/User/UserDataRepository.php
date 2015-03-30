@@ -21,7 +21,7 @@ class UserDataRepository extends ObjectDataRepository
 
     public function findByObject($object)
     {
-        return $this->find($object->id);
+        return $this->find($object->getId());
     }
 
     public function findAll()

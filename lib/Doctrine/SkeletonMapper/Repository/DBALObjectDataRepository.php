@@ -75,7 +75,7 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
 
     public function findByObject($object)
     {
-        return $this->find($object->id);
+        return $this->find($this->getObjectIdentifier($object));
     }
 
     public function findAll()
@@ -127,8 +127,6 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
     }
 
     /**
-     * @param object $object
-     *
      * @return array $identifier
      */
     private function getIdentifier()
@@ -136,5 +134,17 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
         return $this->objectManager
             ->getClassMetadata($this->getClassName())
             ->getIdentifier();
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return array
+     */
+    private function getObjectIdentifier($object)
+    {
+        return $this->objectManager
+            ->getRepository($this->getClassName())
+            ->getObjectIdentifier($object);
     }
 }

@@ -18,7 +18,7 @@ class UserPersister extends MongoDBObjectPersister
 
         switch ($objectAction->getName()) {
             case 'register':
-                $object->password = md5($object->password);
+                $object->setPassword(md5($object->getPassword()));
             break;
         }
 

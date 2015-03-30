@@ -54,9 +54,9 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf($this->testClassName, $user1);
 
-        $this->assertEquals(1, $user1->id);
-        $this->assertEquals('jwage', $user1->username);
-        $this->assertEquals('password', $user1->password);
+        $this->assertEquals(1, $user1->getId());
+        $this->assertEquals('jwage', $user1->getUsername());
+        $this->assertEquals('password', $user1->getPassword());
 
         $user2 = $this->objectManager->find($this->testClassName, 2);
 
@@ -64,9 +64,9 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($user2, $this->objectManager->find($this->testClassName, 2));
 
-        $this->assertEquals(2, $user2->id);
-        $this->assertEquals('romanb', $user2->username);
-        $this->assertEquals('password', $user2->password);
+        $this->assertEquals(2, $user2->getId());
+        $this->assertEquals('romanb', $user2->getUsername());
+        $this->assertEquals('password', $user2->getPassword());
     }
 
     public function testFindAll()
@@ -103,9 +103,9 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     public function testPersist()
     {
         $user = $this->createTestObject();
-        $user->id = 3;
-        $user->username = 'benjamin';
-        $user->password = 'password';
+        $user->setId(3);
+        $user->setUsername('benjamin');
+        $user->setPassword('password');
 
         $this->assertEquals(2, $this->users->count());
 
@@ -119,7 +119,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     public function testUpdates()
     {
         $user = $this->objectManager->find($this->testClassName, 1);
-        $user->username = 'jonwage';
+        $user->setUsername('jonwage');
 
         $this->objectManager->update($user);
         $this->objectManager->flush();
@@ -127,7 +127,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $user2 = $this->objectManager->find($this->testClassName, 1);
 
-        $this->assertEquals('jonwage', $user2->username);
+        $this->assertEquals('jonwage', $user2->getUsername());
     }
 
     public function testRemove()
@@ -146,11 +146,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     {
         $user = $this->objectManager->find($this->testClassName, 1);
 
-        $user->password = 'yeehaw';
+        $user->setPassword('yeehaw');
 
         $this->objectManager->refresh($user);
 
-        $this->assertEquals('password', $user->password);
+        $this->assertEquals('password', $user->getPassword());
     }
 
     public function testClear()
@@ -170,7 +170,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($user2, $user3);
 
         $user = $this->createTestObject();
-        $user->id = 10;
+        $user->setId(10);
 
         $this->objectManager->persist($user);
         $this->objectManager->clear($this->testClassName);
@@ -179,7 +179,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->objectManager->find($this->testClassName, 10));
 
         $user = $this->createTestObject();
-        $user->id = 10;
+        $user->setId(10);
 
         $this->objectManager->persist($user);
         $this->objectManager->clear();
@@ -202,21 +202,21 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     public function testMerge()
     {
         $user1 = $this->createTestObject();
-        $user1->id = 1;
-        $user1->username = 'jonwage';
-        $user1->password = 'password';
+        $user1->setId(1);
+        $user1->setUsername('jonwage');
+        $user1->setPassword('password');
 
         $user2 = $this->objectManager->find($this->testClassName, 1);
 
         $this->objectManager->merge($user1);
 
-        $this->assertEquals('jonwage', $user2->username);
+        $this->assertEquals('jonwage', $user2->getUsername());
     }
 
     public function testContains()
     {
         $user = $this->createTestObject();
-        $user->id = 3;
+        $user->setId(3);
 
         $this->assertFalse($this->objectManager->contains($user));
 
@@ -236,9 +236,9 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     public function testPersisterActions()
     {
         $user = $this->createTestObject();
-        $user->id = 3;
-        $user->username = 'jmikola';
-        $user->password = 'password';
+        $user->setId(3);
+        $user->setUsername('jmikola');
+        $user->setPassword('password');
 
         $action = new ObjectAction($user, 'register', array(
             'key' => 'value',
@@ -248,14 +248,14 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $this->assertEquals(md5('password'), $user->password);
+        $this->assertEquals(md5('password'), $user->getPassword());
         $this->assertEquals(array('success' => true), $action->getResult());
     }
 
     public function testEvents()
     {
         $user = $this->createTestObject();
-        $user->id = 3;
+        $user->setId(3);
 
         $this->objectManager->persist($user);
         $this->objectManager->flush();
@@ -272,7 +272,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $this->eventTester->called = array();
 
-        $user->username = 'jmikola';
+        $user->setUsername('jmikola');
         $this->objectManager->update($user);
         $this->objectManager->flush();
 
@@ -325,7 +325,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     public function testLifecycleCallbacks()
     {
         $user = $this->createTestObject();
-        $user->id = 3;
+        $user->setId(3);
 
         $this->objectManager->persist($user);
         $this->objectManager->flush();
@@ -340,7 +340,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $user->called = array();
 
-        $user->username = 'jmikola';
+        $user->setUsername('jmikola');
         $this->objectManager->update($user);
         $this->objectManager->flush();
 
@@ -375,6 +375,42 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($expected, $user->called);
+    }
+
+    public function testPropertyChangedListeners()
+    {
+        $user = $this->objectManager->find($this->testClassName, 1);
+        $user->setUsername('changed');
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user2 = $this->objectManager->find($this->testClassName, 1);
+
+        $this->assertEquals('changed', $user2->getUsername());
+
+        $user3 = $this->createTestObject();
+        $user3->setId(3);
+        $user3->setUsername('another');
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $this->assertNull($this->objectManager->find($this->testClassName, 3));
+
+        $this->objectManager->persist($user3);
+        $this->objectManager->flush();
+
+        $this->assertNotNull($this->objectManager->find($this->testClassName, 3));
+
+        $user3->setUsername('changed');
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user3 = $this->objectManager->find($this->testClassName, 3);
+
+        $this->assertEquals('changed', $user3->getUsername());
     }
 
     private function createTestObject()

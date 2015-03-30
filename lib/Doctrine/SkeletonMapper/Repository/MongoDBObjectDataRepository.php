@@ -20,31 +20,50 @@
 
 namespace Doctrine\SkeletonMapper\Repository;
 
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use MongoCollection;
 
 abstract class MongoDBObjectDataRepository extends ObjectDataRepository
 {
+    /**
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
+     */
+    private $objectManager;
+
     /**
      * @var \MongoCollection
      */
     private $mongoCollection;
 
     /**
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      * @param \MongoCollection $mongoCollection
      */
-    public function __construct(MongoCollection $mongoCollection)
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        MongoCollection $mongoCollection)
     {
+        $this->objectManager = $objectManager;
         $this->mongoCollection = $mongoCollection;
     }
 
+    /**
+     * @return string
+     */
+    abstract public function getClassName();
+
     public function find($id)
     {
-        return $this->mongoCollection->findOne(array('_id' => $id));
+        if (!is_array($id)) {
+            $id = array('_id' => $id);
+        }
+
+        return $this->mongoCollection->findOne($id);
     }
 
     public function findByObject($object)
     {
-        return $this->find($object->id);
+        return $this->find($this->getObjectIdentifier($object));
     }
 
     public function findAll()
@@ -74,5 +93,17 @@ abstract class MongoDBObjectDataRepository extends ObjectDataRepository
     public function findOneBy(array $criteria)
     {
         return $this->mongoCollection->findOne($criteria);
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return array
+     */
+    private function getObjectIdentifier($object)
+    {
+        return $this->objectManager
+            ->getRepository($this->getClassName())
+            ->getObjectIdentifier($object);
     }
 }

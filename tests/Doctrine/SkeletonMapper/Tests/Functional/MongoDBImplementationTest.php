@@ -97,8 +97,7 @@ class MongoDBImplementationTest extends BaseImplementationTest
         );
 
         // user data repo
-        $userDataRepository = new UserDataRepository($this->users);
-
+        $userDataRepository = new UserDataRepository($this->objectManager, $this->users);
 
         // user repo
         $userRepository = new UserRepository(

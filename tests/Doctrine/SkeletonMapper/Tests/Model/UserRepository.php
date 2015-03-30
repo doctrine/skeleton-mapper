@@ -13,7 +13,7 @@ class UserRepository extends ObjectRepository
 
     public function getObjectIdentifier($object)
     {
-        return array('_id' => (int) $object->id);
+        return array('_id' => (int) $object->getId());
     }
 
     public function getObjectIdentifierFromData(array $data)
@@ -23,9 +23,9 @@ class UserRepository extends ObjectRepository
 
     public function merge($object)
     {
-        $user = $this->find($object->id);
+        $user = $this->find($object->getId());
 
-        $user->username = $object->username;
-        $user->password = $object->password;
+        $user->setUsername($object->getUsername());
+        $user->setPassword($object->getPassword());
     }
 }

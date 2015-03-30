@@ -279,18 +279,6 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getOrCreateObject($className, array $data)
     {
-        $object = $this->objectIdentityMap->tryGetById($className, $data);
-
-        if (!$object) {
-            $repository = $this->getRepository($className);
-
-            $object = $repository->create($className);
-
-            $repository->hydrate($object, $data);
-
-            $this->objectIdentityMap->addToIdentityMap($object, $data);
-        }
-
-        return $object;
+        return $this->unitOfWork->getOrCreateObject($className, $data);
     }
 }

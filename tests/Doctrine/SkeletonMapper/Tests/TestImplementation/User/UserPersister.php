@@ -22,21 +22,21 @@ class UserPersister extends ObjectPersister
 
     public function persistObject($object)
     {
-        $this->users[$object->id] = $this->objectToArray($object);
+        $this->users[$object->getId()] = $this->objectToArray($object);
 
-        return $this->users[$object->id];
+        return $this->users[$object->getId()];
     }
 
     public function updateObject($object)
     {
-        $this->users[$object->id] = $this->objectToArray($object);
+        $this->users[$object->getId()] = $this->objectToArray($object);
 
-        return $this->users[$object->id];
+        return $this->users[$object->getId()];
     }
 
     public function removeObject($object)
     {
-        unset($this->users[$object->id]);
+        unset($this->users[$object->getId()]);
     }
 
     public function executeObjectAction(ObjectAction $objectAction)
@@ -45,7 +45,7 @@ class UserPersister extends ObjectPersister
 
         switch ($objectAction->getName()) {
             case 'register':
-                $object->password = md5($object->password);
+                $object->setPassword(md5($object->getPassword()));
             break;
         }
 

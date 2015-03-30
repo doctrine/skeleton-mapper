@@ -21,6 +21,8 @@
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
+use Doctrine\Common\NotifyPropertyChanged;
+use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
 use Doctrine\SkeletonMapper\Persister\ObjectAction;
@@ -33,7 +35,7 @@ use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class UnitOfWork
+class UnitOfWork implements PropertyChangedListener
 {
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
@@ -129,6 +131,12 @@ class UnitOfWork
      */
     public function persist($object)
     {
+        $oid = spl_object_hash($object);
+
+        if (isset($this->objectsToPersist[$oid])) {
+            return;
+        }
+
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
@@ -143,7 +151,11 @@ class UnitOfWork
             );
         }
 
-        $this->objectsToPersist[spl_object_hash($object)] = $object;
+        $this->objectsToPersist[$oid] = $object;
+
+        if ($object instanceof NotifyPropertyChanged) {
+            $object->addPropertyChangedListener($this);
+        }
     }
 
     /**
@@ -151,6 +163,12 @@ class UnitOfWork
      */
     public function update($object)
     {
+        $oid = spl_object_hash($object);
+
+        if (isset($this->objectsToUpdate[$oid])) {
+            return;
+        }
+
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
@@ -165,7 +183,7 @@ class UnitOfWork
             );
         }
 
-        $this->objectsToUpdate[spl_object_hash($object)] = $object;
+        $this->objectsToUpdate[$oid] = $object;
     }
 
     /**
@@ -173,6 +191,12 @@ class UnitOfWork
      */
     public function remove($object)
     {
+        $oid = spl_object_hash($object);
+
+        if (isset($this->objectsToRemove[$oid])) {
+            return;
+        }
+
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
@@ -187,7 +211,7 @@ class UnitOfWork
             );
         }
 
-        $this->objectsToRemove[spl_object_hash($object)] = $object;
+        $this->objectsToRemove[$oid] = $object;
     }
 
     /**
@@ -361,6 +385,65 @@ class UnitOfWork
     public function isScheduledForAction($object)
     {
         return isset($this->objectsWithAction[spl_object_hash($object)]);
+    }
+
+    /* PropertyChangedListener implementation */
+
+    /**
+     * Notifies this UnitOfWork of a property change in an object.
+     *
+     * @param object $object       The entity that owns the property.
+     * @param string $propertyName The name of the property that changed.
+     * @param mixed  $oldValue     The old value of the property.
+     * @param mixed  $newValue     The new value of the property.
+     *
+     * @return void
+     */
+    public function propertyChanged($object, $propertyName, $oldValue, $newValue)
+    {
+        if (!$this->isInIdentityMap($object)) {
+            return;
+        }
+
+        $this->update($object);
+    }
+
+    /**
+     * Checks whether an object is registered in the identity map of this UnitOfWork.
+     *
+     * @param object $object
+     *
+     * @return boolean
+     */
+    public function isInIdentityMap($object)
+    {
+        return $this->objectIdentityMap->contains($object);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return object
+     */
+    public function getOrCreateObject($className, array $data)
+    {
+        $object = $this->objectIdentityMap->tryGetById($className, $data);
+
+        if (!$object) {
+            $repository = $this->objectManager->getRepository($className);
+
+            $object = $repository->create($className);
+
+            if ($object instanceof NotifyPropertyChanged) {
+                $object->addPropertyChangedListener($this);
+            }
+
+            $repository->hydrate($object, $data);
+
+            $this->objectIdentityMap->addToIdentityMap($object, $data);
+        }
+
+        return $object;
     }
 
     /**

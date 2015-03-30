@@ -23,7 +23,7 @@ class UserPersister extends DBALObjectPersister
 
         switch ($objectAction->getName()) {
             case 'register':
-                $object->password = md5($object->password);
+                $object->setPassword(md5($object->getPassword()));
             break;
         }
 
