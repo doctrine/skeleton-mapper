@@ -94,7 +94,27 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
             $params[$key] = $value;
         }
 
-        $sql = sprintf('SELECT * FROM %s WHERE %s', $this->getTableName(), implode(' AND ', $where));
+        $sqlParts = array();
+        $sqlParts[] = sprintf('SELECT * FROM %s WHERE %s', $this->getTableName(), implode(' AND ', $where));
+
+        if ($orderBy !== null) {
+            $orderBySqlParts = array();
+            foreach ($orderBy as $fieldName => $orientation) {
+                $orderBySqlParts[] = sprintf('%s %s', $fieldName, $orientation);
+            }
+
+            $sqlParts[] = 'ORDER BY ' . implode(', ', $orderBySqlParts);
+        }
+
+        if ($limit !== null) {
+            $sqlParts[] = sprintf('LIMIT %s', $limit);
+        }
+
+        if ($offset !== null) {
+            $sqlParts[] = sprintf('OFFSET %s', $offset);
+        }
+
+        $sql = implode(' ', $sqlParts);
 
         return $this->connection
             ->executeQuery($sql, $params)
@@ -103,18 +123,7 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
 
     public function findOneBy(array $criteria)
     {
-        $where = array();
-        $params = array();
-        foreach ($criteria as $key => $value) {
-            $where[] = sprintf('%s = :%s', $key, $key);
-            $params[$key] = $value;
-        }
-
-        $sql = sprintf('SELECT * FROM %s WHERE %s', $this->getTableName(), implode(' AND ', $where));
-
-        return $this->connection
-            ->executeQuery($sql, $params)
-            ->fetch() ?: null;
+        return current($this->findBy($criteria)) ?: null;
     }
 
     /**
