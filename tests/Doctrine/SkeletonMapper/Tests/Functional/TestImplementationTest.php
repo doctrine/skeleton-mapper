@@ -14,8 +14,6 @@ use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserRepository;
 
 class TestImplementationTest extends BaseImplementationTest
 {
-    protected $testClassName = 'Doctrine\SkeletonMapper\Tests\TestImplementation\User\User';
-
     protected function setUp()
     {
         $this->users = new ArrayCollection(array(

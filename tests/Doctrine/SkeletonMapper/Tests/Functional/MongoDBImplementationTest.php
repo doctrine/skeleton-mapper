@@ -13,8 +13,6 @@ use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserRepository;
 
 class MongoDBImplementationTest extends BaseImplementationTest
 {
-    protected $testClassName = 'Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\User';
-
     protected function setUp()
     {
         $mongo = version_compare(phpversion('mongo'), '1.3.0', '<')

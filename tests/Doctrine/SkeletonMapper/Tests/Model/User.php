@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User;
+namespace Doctrine\SkeletonMapper\Tests\Model;
 
 class User
 {
@@ -24,6 +24,10 @@ class User
      */
     public $called;
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     */
     public function __call($method, $arguments)
     {
         $this->called[] = $method;

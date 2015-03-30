@@ -11,7 +11,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     protected $objectManager;
     protected $objectIdentityMap;
     protected $users;
-    protected $testClassName;
+    protected $testClassName = 'Doctrine\SkeletonMapper\Tests\Model\User';
     protected $eventTester;
 
     public function testGetClassMetadata()

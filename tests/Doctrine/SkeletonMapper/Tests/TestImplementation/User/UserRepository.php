@@ -8,7 +8,7 @@ class UserRepository extends ObjectRepository
 {
     public function getClassName()
     {
-        return 'Doctrine\SkeletonMapper\Tests\TestImplementation\User\User';
+        return 'Doctrine\SkeletonMapper\Tests\Model\User';
     }
 
     public function getObjectIdentifier($object)
