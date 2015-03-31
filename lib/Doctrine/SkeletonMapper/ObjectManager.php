@@ -87,6 +87,14 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * @return \Doctrine\SkeletonWrapper\UnitOfWork
+     */
+    public function getUnitOfWork()
+    {
+        return $this->unitOfWork;
+    }
+
+    /**
      * Finds an object by its identifier.
      *
      * This is just a convenient shortcut for getRepository($className)->find($id).

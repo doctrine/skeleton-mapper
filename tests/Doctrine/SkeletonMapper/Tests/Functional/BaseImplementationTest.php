@@ -20,6 +20,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     protected $userRepository;
     protected $userPersister;
     protected $objectManager;
+    protected $unitOfWork;
     protected $users;
     protected $testClassName = 'Doctrine\SkeletonMapper\Tests\Model\User';
     protected $eventTester;
@@ -102,6 +103,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->classMetadataFactory,
             $this->eventManager
         );
+        $this->unitOfWork = $this->objectManager->getUnitOfWork();
     }
 
     protected function registerServices()
@@ -463,8 +465,18 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user = $this->objectManager->find($this->testClassName, 1);
         $user->setUsername('changed');
 
+        $this->assertEquals(
+            array('username' => array('jwage', 'changed')),
+            $this->unitOfWork->getObjectChangeSet($user)
+        );
+
         $this->objectManager->flush();
         $this->objectManager->clear();
+
+        $this->assertEquals(
+            array(),
+            $this->unitOfWork->getObjectChangeSet($user)
+        );
 
         $user2 = $this->objectManager->find($this->testClassName, 1);
 
@@ -473,6 +485,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user3 = $this->createTestObject();
         $user3->setId(3);
         $user3->setUsername('another');
+
+        $this->assertEquals(
+            array(),
+            $this->unitOfWork->getObjectChangeSet($user3)
+        );
 
         $this->objectManager->flush();
         $this->objectManager->clear();
@@ -485,6 +502,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($this->objectManager->find($this->testClassName, 3));
 
         $user3->setUsername('changed');
+
+        $this->assertEquals(
+            array('username' => array('another', 'changed')),
+            $this->unitOfWork->getObjectChangeSet($user3)
+        );
 
         $this->objectManager->flush();
         $this->objectManager->clear();
