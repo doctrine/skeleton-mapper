@@ -110,8 +110,8 @@ class UserHydrator extends ObjectHydrator
 {
     public function hydrate($object, array $data)
     {
-        if (isset($data['id'])) {
-            $object->id = (int) $data['id'];
+        if (isset($data['_id'])) {
+            $object->id = (int) $data['_id'];
         }
 
         if (isset($data['username'])) {
@@ -171,7 +171,7 @@ class UserPersister extends ObjectPersister
     public function prepareChangeSet($object, array $changeSet = array())
     {
         return array(
-            'id' => $object->id,
+            '_id' => (int) $object->id,
             'username' => $object->username,
             'password' => $object->password,
         );
@@ -193,7 +193,12 @@ class UserRepository extends ObjectRepository
 
     public function getObjectIdentifier($object)
     {
-        return array('id' => $object->id);
+        return array('_id' => (int) $object->id);
+    }
+
+    public function getObjectIdentifierFromData(array $data)
+    {
+        return array('_id' => (int) $data['_id']);
     }
 
     public function merge($object)
