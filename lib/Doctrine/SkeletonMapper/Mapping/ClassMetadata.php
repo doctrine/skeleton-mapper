@@ -45,12 +45,12 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * @var array
      */
-    public $fieldNames = array();
+    public $fieldMappings = array();
 
     /**
      * @var array
      */
-    public $fieldMappings = array();
+    public $associationMappings = array();
 
     /**
      * The registered lifecycle callbacks for this class.
@@ -95,7 +95,6 @@ class ClassMetadata implements ClassMetadataInterface
         }
 
         $this->fieldMappings[$mapping['fieldName']] = $mapping;
-        $this->fieldNames[] = $mapping['fieldName'];
     }
 
     /**
@@ -151,7 +150,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function hasField($fieldName)
     {
-        return in_array($fieldName, $this->fieldNames);
+        return isset($this->fieldMappings[$fieldName]);
     }
 
     /**
@@ -163,7 +162,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getFieldNames()
     {
-        return $this->fieldNames;
+        return array_keys($this->fieldMappings);
     }
 
     /**
@@ -174,6 +173,123 @@ class ClassMetadata implements ClassMetadataInterface
     public function getFieldMappings()
     {
         return $this->fieldMappings;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAssociationNames()
+    {
+        return array_keys($this->associationMappings);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTypeOfField($fieldName)
+    {
+        return isset($this->fieldMappings[$fieldName]) ?
+            $this->fieldMappings[$fieldName]['type'] : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAssociationTargetClass($assocName)
+    {
+        if (! isset($this->associationMappings[$assocName])) {
+            throw new \InvalidArgumentException("Association name expected, '".$assocName."' is not an association.");
+        }
+
+        return $this->associationMappings[$assocName]['targetDocument'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAssociationMappedByTargetField($fieldName)
+    {
+        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Since MongoDB only allows exactly one identifier field this is a proxy
+     * to {@see getIdentifierValue()} and returns an array with the identifier
+     * field as a key.
+     */
+    public function getIdentifierValues($object)
+    {
+        return array($this->identifier => $this->getIdentifierValue($object));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAssociationInverseSide($fieldName)
+    {
+        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Checks whether the class has a mapped association (embed or reference) with the given field name.
+     */
+    public function hasAssociation($fieldName)
+    {
+        return $this->hasReference($fieldName);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Checks whether the class has a mapped reference or embed for the specified field and
+     * is a single valued association.
+     */
+    public function isSingleValuedAssociation($fieldName)
+    {
+        return $this->isSingleValuedReference($fieldName);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Checks whether the class has a mapped reference or embed for the specified field and
+     * is a collection valued association.
+     */
+    public function isCollectionValuedAssociation($fieldName)
+    {
+        return $this->isCollectionValuedReference($fieldName);
+    }
+
+    /**
+     * Checks whether the class has a mapped association for the specified field
+     * and if yes, checks whether it is a single-valued association (to-one).
+     *
+     * @param string $fieldName
+     *
+     * @return bool TRUE if the association exists and is single-valued, FALSE otherwise.
+     */
+    public function isSingleValuedReference($fieldName)
+    {
+        return isset($this->fieldMappings[$fieldName]['association']) &&
+            $this->fieldMappings[$fieldName]['association'] === 'one';
+    }
+
+    /**
+     * Checks whether the class has a mapped association for the specified field
+     * and if yes, checks whether it is a collection-valued association (to-many).
+     *
+     * @param string $fieldName
+     *
+     * @return bool TRUE if the association exists and is collection-valued, FALSE otherwise.
+     */
+    public function isCollectionValuedReference($fieldName)
+    {
+        return isset($this->fieldMappings[$fieldName]['association']) &&
+            $this->fieldMappings[$fieldName]['association'] === 'many';
     }
 
     /**
