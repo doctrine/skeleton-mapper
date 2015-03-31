@@ -25,6 +25,7 @@ use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
+use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
@@ -173,7 +174,11 @@ class UnitOfWork implements PropertyChangedListener
         if ($this->eventManager->hasListeners(Events::preUpdate)) {
             $this->eventManager->dispatchEvent(
                 Events::preUpdate,
-                new LifecycleEventArgs($object, $this->objectManager)
+                new PreUpdateEventArgs(
+                    $object,
+                    $this->objectManager,
+                    $this->objectChangeSets[$oid]
+                )
             );
         }
 
@@ -315,9 +320,6 @@ class UnitOfWork implements PropertyChangedListener
             );
         }
 
-        $this->objectsToPersist = array();
-        $this->objectsToUpdate = array();
-        $this->objectsToRemove = array();
         $this->objectChangeSets = array();
     }
 
@@ -452,6 +454,8 @@ class UnitOfWork implements PropertyChangedListener
                     new LifecycleEventArgs($object, $this->objectManager)
                 );
             }
+
+            unset($this->objectsToPersist[spl_object_hash($object)]);
         }
     }
 
@@ -478,6 +482,8 @@ class UnitOfWork implements PropertyChangedListener
                     new LifecycleEventArgs($object, $this->objectManager)
                 );
             }
+
+            unset($this->objectsToUpdate[spl_object_hash($object)]);
         }
     }
 
@@ -504,6 +510,8 @@ class UnitOfWork implements PropertyChangedListener
                     new LifecycleEventArgs($object, $this->objectManager)
                 );
             }
+
+            unset($this->objectsToRemove[spl_object_hash($object)]);
         }
     }
 
