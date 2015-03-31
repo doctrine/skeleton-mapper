@@ -54,16 +54,16 @@ abstract class DBALObjectPersister extends ObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object);
 
         $this->connection->insert($this->getTableName(), $data);
 
         return $data;
     }
 
-    public function updateObject($object)
+    public function updateObject($object, array $changeSet)
     {
-        $data = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object, $changeSet);
 
         $this->connection->update(
             $this->getTableName(),

@@ -514,6 +514,25 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user3 = $this->objectManager->find($this->testClassName, 3);
 
         $this->assertEquals('changed', $user3->getUsername());
+
+        $user3->setUsername('testing');
+
+        $this->assertEquals(
+            array('username' => array('changed', 'testing')),
+            $this->unitOfWork->getObjectChangeSet($user3)
+        );
+
+        $this->objectManager->clear();
+        $this->objectManager->flush();
+
+        $this->assertEquals(
+            array(),
+            $this->unitOfWork->getObjectChangeSet($user)
+        );
+
+        $user3 = $this->objectManager->find($this->testClassName, 3);
+
+        $this->assertEquals('changed', $user3->getUsername());
     }
 
     private function createTestObject()

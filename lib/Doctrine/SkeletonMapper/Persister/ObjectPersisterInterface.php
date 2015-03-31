@@ -35,13 +35,14 @@ interface ObjectPersisterInterface
     public function getClassName();
 
     /**
-     * Converts an object to an array.
+     * Prepares an object changeset for persistence.
      *
      * @param object $object
+     * @param array  $changeSet
      *
      * @return array
      */
-    public function objectToArray($object);
+    public function prepareChangeSet($object, array $changeSet = array());
 
     /**
      * Performs operation to write object to the database.
@@ -56,10 +57,11 @@ interface ObjectPersisterInterface
      * Performs operation to update object in the database.
      *
      * @param object $object
+     * @param array  $changeSet
      *
      * @return array $objectData
      */
-    public function updateObject($object);
+    public function updateObject($object, array $changeSet);
 
     /**
      * Performs operation to remove object in the database.

@@ -21,16 +21,25 @@ class UserPersister extends ObjectPersister
 
     public function persistObject($object)
     {
-        $this->users[$object->getId()] = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object);
 
-        return $this->users[$object->getId()];
+        $this->users[$object->getId()] = $data;
+
+        return $data;
     }
 
-    public function updateObject($object)
+    public function updateObject($object, array $changeSet)
     {
-        $this->users[$object->getId()] = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object, $changeSet);
 
-        return $this->users[$object->getId()];
+        foreach ($data as $key => $value) {
+            $user = $this->users[$object->getId()];
+            $user[$key] = $value;
+
+            $this->users[$object->getId()] = $user;
+        }
+
+        return $data;
     }
 
     public function removeObject($object)

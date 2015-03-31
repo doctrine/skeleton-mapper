@@ -151,14 +151,14 @@ class UserPersister extends ObjectPersister
 
     public function persistObject($object)
     {
-        $this->users[$object->id] = $this->objectToArray($object);
+        $this->users[$object->id] = $this->prepareChangeSet($object);
 
         return $this->users[$object->id];
     }
 
     public function updateObject($object)
     {
-        $this->users[$object->id] = $this->objectToArray($object);
+        $this->users[$object->id] = $this->prepareChangeSet($object);
 
         return $this->users[$object->id];
     }
@@ -168,7 +168,7 @@ class UserPersister extends ObjectPersister
         unset($this->users[$object->id]);
     }
 
-    public function objectToArray($object)
+    public function prepareChangeSet($object, array $changeSet = array())
     {
         return array(
             'id' => $object->id,

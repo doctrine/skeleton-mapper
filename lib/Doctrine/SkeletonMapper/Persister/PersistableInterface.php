@@ -28,7 +28,9 @@ namespace Doctrine\SkeletonMapper\Persister;
 interface PersistableInterface
 {
     /**
+     * @param array $changeSet
+     *
      * @return array
      */
-    public function toArray();
+    public function prepareChangeSet(array $changeSet);
 }

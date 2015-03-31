@@ -119,10 +119,22 @@ class User implements HydratableInterface, PersistableInterface, NotifyPropertyC
     /**
      * @see PersistableInterface
      *
+     * @param array $changeSet
+     *
      * @return array
      */
-    public function toArray()
+    public function prepareChangeSet(array $changeSet)
     {
+        if ($changeSet) {
+            $changeSet = array_map(function($change) {
+                return $change[1];
+            }, $changeSet);
+
+            $changeSet['_id'] = (int) $this->id;
+
+            return $changeSet;
+        }
+
         return array(
             '_id' => (int) $this->id,
             'username' => $this->username,

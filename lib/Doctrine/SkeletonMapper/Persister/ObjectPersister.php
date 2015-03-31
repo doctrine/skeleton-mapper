@@ -28,13 +28,14 @@ namespace Doctrine\SkeletonMapper\Persister;
 abstract class ObjectPersister implements ObjectPersisterInterface
 {
     /**
-     * Converts an object to an array.
+     * Prepares an object changeset for persistence.
      *
      * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
+     * @param array $changeSet
      *
      * @return array
      */
-    public function objectToArray($object)
+    public function prepareChangeSet($object, array $changeSet = array())
     {
         if (!$object instanceof PersistableInterface) {
             throw new \InvalidArgumentException(
@@ -42,6 +43,6 @@ abstract class ObjectPersister implements ObjectPersisterInterface
             );
         }
 
-        return $object->toArray();
+        return $object->prepareChangeSet($changeSet);
     }
 }

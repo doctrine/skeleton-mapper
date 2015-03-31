@@ -49,18 +49,23 @@ abstract class MongoDBObjectPersister extends ObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object);
 
         $this->mongoCollection->insert($data);
 
         return $data;
     }
 
-    public function updateObject($object)
+    public function updateObject($object, array $changeSet)
     {
-        $data = $this->objectToArray($object);
+        $data = $this->prepareChangeSet($object, $changeSet);
 
-        $this->mongoCollection->save($data);
+        unset($data['_id']);
+
+        $this->mongoCollection->update(
+            $this->getObjectIdentifier($object),
+            array('$set' => $data)
+        );
 
         return $data;
     }

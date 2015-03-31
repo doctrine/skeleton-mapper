@@ -460,8 +460,10 @@ class UnitOfWork implements PropertyChangedListener
     private function executeUpdates()
     {
         foreach ($this->objectsToUpdate as $object) {
+            $changeSet = $this->getObjectChangeSet($object);
+
             $this->getObjectPersister($object)
-                ->updateObject($object);
+                ->updateObject($object, $changeSet);
 
             $className = get_class($object);
             $class = $this->objectManager->getClassMetadata($className);
