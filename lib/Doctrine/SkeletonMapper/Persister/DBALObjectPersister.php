@@ -58,6 +58,12 @@ abstract class DBALObjectPersister extends ObjectPersister
 
         $this->connection->insert($this->getTableName(), $data);
 
+        $class = $this->objectManager->getClassMetadata(get_class($object));
+
+        if (!isset($data[$class->identifier[0]])) {
+            $data[$class->identifier[0]] = $this->connection->lastInsertId();
+        }
+
         return $data;
     }
 

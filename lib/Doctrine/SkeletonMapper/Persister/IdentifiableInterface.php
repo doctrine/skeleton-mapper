@@ -20,46 +20,12 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
-/**
- * Base class for object persisters to extend from.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-abstract class ObjectPersister implements ObjectPersisterInterface
+interface IdentifiableInterface
 {
-    /**
-     * Prepares an object changeset for persistence.
-     *
-     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
-     * @param array $changeSet
-     *
-     * @return array
-     */
-    public function prepareChangeSet($object, array $changeSet = array())
-    {
-        if (!$object instanceof PersistableInterface) {
-            throw new \InvalidArgumentException(
-                sprintf('%s must implement PersistableInterface', get_class($object))
-            );
-        }
-
-        return $object->prepareChangeSet($changeSet);
-    }
-
     /**
      * Assign identifier to object.
      *
-     * @param object $object
      * @param array $identifier
      */
-    public function assignIdentifier($object, array $identifier)
-    {
-        if (!$object instanceof IdentifiableInterface) {
-            throw new \InvalidArgumentException(
-                sprintf('%s must implement IdentifiableInterface', get_class($object))
-            );
-        }
-
-        return $object->assignIdentifier($identifier);
-    }
+	public function assignIdentifier(array $identifier);
 }

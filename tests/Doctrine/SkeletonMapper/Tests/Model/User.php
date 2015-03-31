@@ -5,9 +5,10 @@ namespace Doctrine\SkeletonMapper\Tests\Model;
 use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
+use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-class User implements HydratableInterface, PersistableInterface, NotifyPropertyChanged
+class User implements HydratableInterface, PersistableInterface, IdentifiableInterface, NotifyPropertyChanged
 {
     /**
      * @var array
@@ -33,6 +34,16 @@ class User implements HydratableInterface, PersistableInterface, NotifyPropertyC
      * @var array
      */
     public $called;
+
+    /**
+     * Assign identifier to object.
+     *
+     * @param array $identifier
+     */
+    public function assignIdentifier(array $identifier)
+    {
+        $this->id = (int) $identifier['_id'];
+    }
 
     public function getId()
     {
@@ -135,11 +146,16 @@ class User implements HydratableInterface, PersistableInterface, NotifyPropertyC
             return $changeSet;
         }
 
-        return array(
-            '_id' => (int) $this->id,
+        $changeSet = array(
             'username' => $this->username,
             'password' => $this->password,
         );
+
+        if ($this->id !== null) {
+            $changeSet['_id'] = (int) $this->id;
+        }
+
+        return $changeSet;
     }
 
     /**

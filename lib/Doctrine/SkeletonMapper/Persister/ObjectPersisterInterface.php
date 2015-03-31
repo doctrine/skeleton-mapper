@@ -54,6 +54,14 @@ interface ObjectPersisterInterface
     public function persistObject($object);
 
     /**
+     * Assign identifier to object.
+     *
+     * @param object $object
+     * @param array $identifier
+     */
+    public function assignIdentifier($object, array $identifier);
+
+    /**
      * Performs operation to update object in the database.
      *
      * @param object $object

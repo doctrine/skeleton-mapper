@@ -23,9 +23,10 @@ class DBALImplementationTest extends BaseImplementationTest
 
         $schema = new DBAL\Schema\Schema();
         $table = $schema->createTable('users');
-        $table->addColumn('_id', 'integer', array('unsigned' => true));
+        $table->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
         $table->addColumn('username', 'string', array('length' => 32, 'notnull' => false));
         $table->addColumn('password', 'string', array('length' => 32, 'notnull' => false));
+        $table->setPrimaryKey(array('_id'));
 
         $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
 

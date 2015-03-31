@@ -28,12 +28,12 @@ abstract class MongoDBObjectPersister extends ObjectPersister
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var \MongoCollection
      */
-    private $mongoCollection;
+    protected $mongoCollection;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager

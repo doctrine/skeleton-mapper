@@ -23,6 +23,16 @@ class UserPersister extends ObjectPersister
     {
         $data = $this->prepareChangeSet($object);
 
+        if (!isset($data['_id'])) {
+            $ids = array();
+            foreach ($this->users as $user) {
+                $ids[] = $user['_id'];
+            }
+            $nextId = max($ids) + 1;
+
+            $data['_id'] = $nextId;
+        }
+
         $this->users[$object->getId()] = $data;
 
         return $data;

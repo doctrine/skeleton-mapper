@@ -436,13 +436,17 @@ class UnitOfWork implements PropertyChangedListener
     private function executePersists()
     {
         foreach ($this->objectsToPersist as $object) {
-            $objectData = $this->getObjectPersister($object)
-                ->persistObject($object);
-
-            $this->objectIdentityMap->addToIdentityMap($object, $objectData);
-
             $className = get_class($object);
+
             $class = $this->objectManager->getClassMetadata($className);
+            $persister = $this->getObjectPersister($object);
+            $repository = $this->getObjectRepository($object);
+
+            $objectData = $persister->persistObject($object);
+            $identifier = $repository->getObjectIdentifierFromData($objectData);
+
+            $persister->assignIdentifier($object, $identifier);
+            $this->objectIdentityMap->addToIdentityMap($object, $objectData);
 
             if (! empty($class->lifecycleCallbacks[Events::postPersist])) {
                 $class->invokeLifecycleCallbacks(Events::postPersist, $object);
@@ -522,5 +526,14 @@ class UnitOfWork implements PropertyChangedListener
     {
         return $this->objectPersisterFactory
             ->getPersister(get_class($object));
+    }
+
+    /**
+     * @return \Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface
+     */
+    private function getObjectRepository($object)
+    {
+        return $this->objectManager
+            ->getRepository(get_class($object));
     }
 }
