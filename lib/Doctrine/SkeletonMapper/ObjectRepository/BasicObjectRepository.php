@@ -20,7 +20,7 @@
 
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
-class BasicObjectPersister extends ObjectPersister
+class BasicObjectRepository extends ObjectRepository
 {
     /**
      * @var string
@@ -85,18 +85,5 @@ class BasicObjectPersister extends ObjectPersister
     public function merge($object)
     {
         throw new \BadMethodCallException('Not implemented.');
-    }
-
-    /**
-     * @param object $object
-     * @param array  $data
-     */
-    public function hydrate($object, array $data)
-    {
-        $class = $this->objectManager->getClassMetadata(get_class($object));
-
-        foreach ($data as $key => $value) {
-            $class->reflFields[$key]->setValue($object, $value);
-        }
     }
 }

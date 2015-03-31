@@ -20,43 +20,132 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
-class BasicObjectPersister extends ObjectPersister
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+
+abstract class BasicObjectPersister extends ObjectPersister
 {
+    /**
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
+     */
+    protected $objectManager;
+
     /**
      * @var string
      */
     protected $className;
 
+    /**
+     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface
+     */
+    protected $class;
+
+    /**
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
+     */
+    public function __construct(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @return string
+     */
     public function getClassName()
     {
         return $this->className;
     }
 
+    /**
+     * @param string $className
+     */
     public function setClassName($className)
     {
         $this->className = $className;
     }
 
+    /**
+     * @return \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface
+     */
+    public function getClassMetadata()
+    {
+        if ($this->class === null) {
+            $this->class = $this->objectManager->getClassMetadata($this->getClassName());
+        }
+
+        return $this->class;
+    }
+
+    /**
+     * Prepares an object changeset for persistence.
+     *
+     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
+     * @param array                                                   $changeSet
+     *
+     * @return array
+     */
     public function prepareChangeSet($object, array $changeSet = array())
     {
+        if ($object instanceof PersistableInterface) {
+            return $object->prepareChangeSet($changeSet);
+        }
+
+        return $this->dynamicPrepareChangeSet($object, $changeSet);
+    }
+
+    /**
+     * Assign identifier to object.
+     *
+     * @param object $object
+     * @param array  $identifier
+     */
+    public function assignIdentifier($object, array $identifier)
+    {
+        if ($object instanceof IdentifiableInterface) {
+            return $object->assignIdentifier($identifier);
+        }
+
+        return $this->dynamicAssignIdentifier($object, $identifier);
+    }
+
+    /**
+     * Dynamically prepare a changeset using mapping information.
+     *
+     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
+     * @param array                                                   $changeSet
+     *
+     * @return array
+     */
+    private function dynamicPrepareChangeSet($object, array $changeSet = array())
+    {
         if ($changeSet) {
-            return array_map(function($change) {
+            return array_map(function ($change) {
                 return $change[1];
             }, $changeSet);
         }
 
-        $class = $this->objectManager->getClassMetadata($this->className);
+        $class = $this->getClassMetadata();
 
         $changeSet = array();
         foreach ($class->fieldMappings as $fieldMapping) {
-            $changeSet[$fieldMapping['name']] = $object->{'get'.ucfirst($fieldMapping['fieldName'])}();
+            $value = $class->reflFields[$fieldMapping['fieldName']]->getValue($object);
+
+            $changeSet[$fieldMapping['name']] = $value;
         }
 
         return $changeSet;
     }
 
-    public function assignIdentifier($object, array $identifier)
+    /**
+     * Dynamically assign identifier to object using mapping information.
+     *
+     * @param object $object
+     * @param array  $identifier
+     */
+    private function dynamicAssignIdentifier($object, array $identifier)
     {
-        $object->setId($identifier['id']);
+        $class = $this->getClassMetadata();
+
+        $class->reflFields[$class->identifierFieldNames[0]]
+            ->setValue($object, $identifier[$class->identifier[0]]);
     }
 }

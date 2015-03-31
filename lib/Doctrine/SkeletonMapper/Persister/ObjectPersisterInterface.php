@@ -57,7 +57,7 @@ interface ObjectPersisterInterface
      * Assign identifier to object.
      *
      * @param object $object
-     * @param array $identifier
+     * @param array  $identifier
      */
     public function assignIdentifier($object, array $identifier);
 

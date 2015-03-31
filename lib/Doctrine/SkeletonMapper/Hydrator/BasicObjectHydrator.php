@@ -20,26 +20,58 @@
 
 namespace Doctrine\SkeletonMapper\Hydrator;
 
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+
 /**
  * Basic object hydrator that delegates hydration
- * to a method on the object that is being hydrated.
+ * to a method on the object that is being hydrated
+ * or uses a dynamic hydration algorithm.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class BasicObjectHydrator extends ObjectHydrator
 {
     /**
-     * @param \Doctrine\SkeletonMapper\Hydrator\HydratableInterface $object
-     * @param array                                                 $data
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
+     */
+    public function __construct(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @param object $object
+     * @param array  $data
      */
     public function hydrate($object, array $data)
     {
-        if (!$object instanceof HydratableInterface) {
-            throw new \InvalidArgumentException(
-                sprintf('%s must implement HydratableInterface', get_class($object))
-            );
+        if ($object instanceof HydratableInterface) {
+            $object->hydrate($data);
+        } else {
+            $this->abstractHydrate($object, $data);
         }
+    }
 
-        $object->hydrate($data);
+    /**
+     * @param object $object
+     * @param array  $data
+     */
+    private function abstractHydrate($object, array $data)
+    {
+        $class = $this->objectManager->getClassMetadata(get_class($object));
+
+        foreach ($class->fieldMappings as $fieldMapping) {
+            if (!isset($data[$fieldMapping['name']])) {
+                continue;
+            }
+
+            $class->reflFields[$fieldMapping['fieldName']]
+                ->setValue($object, $data[$fieldMapping['name']]);
+        }
     }
 }

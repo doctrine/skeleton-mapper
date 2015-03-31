@@ -37,9 +37,9 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Constructor.
      *
-     * @param object          $object
-     * @param ObjectManager   $objectManager
-     * @param array           $changeSet
+     * @param object        $object
+     * @param ObjectManager $objectManager
+     * @param array         $changeSet
      */
     public function __construct(
         $object,

@@ -3,14 +3,18 @@
 namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\Persister\ObjectPersister;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\Persister\BasicObjectPersister;
 
-class UserPersister extends ObjectPersister
+class UserPersister extends BasicObjectPersister
 {
     private $users;
 
-    public function __construct(ArrayCollection $users)
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ArrayCollection $users)
     {
+        parent::__construct($objectManager);
         $this->users = $users;
     }
 

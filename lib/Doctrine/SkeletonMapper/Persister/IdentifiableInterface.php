@@ -27,5 +27,5 @@ interface IdentifiableInterface
      *
      * @param array $identifier
      */
-	public function assignIdentifier(array $identifier);
+    public function assignIdentifier(array $identifier);
 }

@@ -7,6 +7,7 @@ use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserDataRepository;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class DBALImplementationTest extends BaseImplementationTest
 {
@@ -57,7 +58,7 @@ class DBALImplementationTest extends BaseImplementationTest
             $this->connection->insert('users', $user);
         }
 
-        $this->users = new UsersTester($this->connection);
+        $this->usersTester = new DBALUsersTester($this->connection);
     }
 
     protected function createUserDataRepository()
@@ -86,13 +87,28 @@ class DBALImplementationTest extends BaseImplementationTest
     }
 }
 
-class UsersTester
+class DBALUsersTester implements UsersTesterInterface
 {
     private $connection;
 
     public function __construct(DBAL\Connection $connection)
     {
         $this->connection = $connection;
+    }
+
+    public function find($id)
+    {
+        return $this->connection
+            ->executeQuery('SELECT * FROM users WHERE _id = ?', array($id))
+            ->fetch();
+    }
+
+    public function set($id, $key, $value)
+    {
+        $this->connection->executeQuery(
+            sprintf('UPDATE users SET %s = ? WHERE _id = ?', $key),
+            array($value, $id)
+        );
     }
 
     public function count()

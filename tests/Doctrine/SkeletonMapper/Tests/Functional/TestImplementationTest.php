@@ -7,6 +7,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserDataRepository;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class TestImplementationTest extends BaseImplementationTest
 {
@@ -24,6 +25,8 @@ class TestImplementationTest extends BaseImplementationTest
                 'password' => 'password',
             ),
         ));
+
+        $this->usersTester = new TestUsersTester($this->users);
 
         $this->setUpCommon();
     }
@@ -49,7 +52,38 @@ class TestImplementationTest extends BaseImplementationTest
     protected function createUserPersister()
     {
         return new UserPersister(
-            $this->users
+            $this->objectManager, $this->users
         );
+    }
+}
+
+class TestUsersTester implements UsersTesterInterface
+{
+    private $users;
+
+    public function __construct(ArrayCollection $users)
+    {
+        $this->users = $users;
+    }
+
+    public function find($id)
+    {
+        foreach ($this->users as $user) {
+            if ($user['_id'] === $id) {
+                return $user;
+            }
+        }
+    }
+
+    public function set($id, $key, $value)
+    {
+        $user = $this->users[$id];
+        $user[$key] = $value;
+        $this->users[$id] = $user;
+    }
+
+    public function count()
+    {
+        return $this->users->count();
     }
 }

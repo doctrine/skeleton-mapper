@@ -2,9 +2,9 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepository;
+use Doctrine\SkeletonMapper\ObjectRepository\BasicObjectRepository;
 
-class UserRepository extends ObjectRepository
+class UserRepository extends BasicObjectRepository
 {
     public function getClassName()
     {

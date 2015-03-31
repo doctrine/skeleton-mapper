@@ -23,13 +23,8 @@ namespace Doctrine\SkeletonMapper\Persister;
 use Doctrine\DBAL\Connection;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
-abstract class DBALObjectPersister extends ObjectPersister
+abstract class DBALObjectPersister extends BasicObjectPersister
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * @var \Doctrine\DBAL\Connection
      */
@@ -43,7 +38,7 @@ abstract class DBALObjectPersister extends ObjectPersister
         ObjectManagerInterface $objectManager,
         Connection $connection)
     {
-        $this->objectManager = $objectManager;
+        parent::__construct($objectManager);
         $this->connection = $connection;
     }
 

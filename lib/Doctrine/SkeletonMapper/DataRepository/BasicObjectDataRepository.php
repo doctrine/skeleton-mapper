@@ -27,11 +27,17 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
      */
     protected $className;
 
+    /**
+     * @return string $className
+     */
     public function getClassName()
     {
         return $this->className;
     }
 
+    /**
+     * @param string $className
+     */
     public function setClassName($className)
     {
         $this->className = $className;

@@ -33,7 +33,7 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
     /**
      * @var array
      */
-    public $called;
+    public $called = array();
 
     /**
      * Assign identifier to object.
@@ -137,7 +137,7 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
     public function prepareChangeSet(array $changeSet)
     {
         if ($changeSet) {
-            $changeSet = array_map(function($change) {
+            $changeSet = array_map(function ($change) {
                 return $change[1];
             }, $changeSet);
 

@@ -6,6 +6,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserDataRepository;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class MongoDBImplementationTest extends BaseImplementationTest
 {
@@ -31,6 +32,8 @@ class MongoDBImplementationTest extends BaseImplementationTest
                 'password' => 'password',
             ),
         ));
+
+        $this->usersTester = new MongoDBUsersTester($this->users);
     }
 
     protected function createUserDataRepository()
@@ -56,5 +59,30 @@ class MongoDBImplementationTest extends BaseImplementationTest
         return new UserPersister(
             $this->objectManager, $this->users
         );
+    }
+}
+
+class MongoDBUsersTester implements UsersTesterInterface
+{
+    private $collection;
+
+    public function __construct(\MongoCollection $collection)
+    {
+        $this->collection = $collection;
+    }
+
+    public function find($id)
+    {
+        return $this->collection->findOne(array('_id' => $id));
+    }
+
+    public function set($id, $key, $value)
+    {
+        $this->collection->update(array('_id' => $id), array('$set' => array($key => $value)));
+    }
+
+    public function count()
+    {
+        return $this->collection->count();
     }
 }

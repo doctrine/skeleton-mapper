@@ -23,13 +23,8 @@ namespace Doctrine\SkeletonMapper\Persister;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use MongoCollection;
 
-abstract class MongoDBObjectPersister extends ObjectPersister
+abstract class MongoDBObjectPersister extends BasicObjectPersister
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * @var \MongoCollection
      */
@@ -43,7 +38,7 @@ abstract class MongoDBObjectPersister extends ObjectPersister
         ObjectManagerInterface $objectManager,
         MongoCollection $mongoCollection)
     {
-        $this->objectManager = $objectManager;
+        parent::__construct($objectManager);
         $this->mongoCollection = $mongoCollection;
     }
 
