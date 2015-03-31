@@ -77,6 +77,11 @@ class UnitOfWork implements PropertyChangedListener
     private $objectsToRemove = array();
 
     /**
+     * @var array
+     */
+    private $objectChangeSets = array();
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface             $objectManager
      * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
      * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
@@ -213,6 +218,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
+        $this->objectChangeSets = array();
 
         if ($this->eventManager->hasListeners(Events::onClear)) {
             $this->eventManager->dispatchEvent(
@@ -312,6 +318,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
+        $this->objectChangeSets = array();
     }
 
     /**
@@ -353,8 +360,6 @@ class UnitOfWork implements PropertyChangedListener
      * @param string $propertyName The name of the property that changed.
      * @param mixed  $oldValue     The old value of the property.
      * @param mixed  $newValue     The new value of the property.
-     *
-     * @return void
      */
     public function propertyChanged($object, $propertyName, $oldValue, $newValue)
     {
@@ -363,6 +368,27 @@ class UnitOfWork implements PropertyChangedListener
         }
 
         $this->update($object);
+
+        $oid = spl_object_hash($object);
+        $this->objectChangeSets[$oid][$propertyName] = array($oldValue, $newValue);
+    }
+
+    /**
+     * Gets the changeset for a object.
+     *
+     * @param object $object
+     *
+     * @return array array('property' => array(0 => mixed|null, 1 => mixed|null))
+     */
+    public function getObjectChangeSet($object)
+    {
+        $oid = spl_object_hash($object);
+
+        if (isset($this->objectChangeSets[$oid])) {
+            return $this->objectChangeSets[$oid];
+        }
+
+        return array();
     }
 
     /**
@@ -370,7 +396,7 @@ class UnitOfWork implements PropertyChangedListener
      *
      * @param object $object
      *
-     * @return boolean
+     * @return bool
      */
     public function isInIdentityMap($object)
     {

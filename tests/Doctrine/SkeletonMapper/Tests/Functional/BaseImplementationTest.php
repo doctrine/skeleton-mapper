@@ -2,16 +2,117 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
+use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Events;
 use PHPUnit_Framework_TestCase;
 
 abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 {
-    protected $objectManager;
+    protected $basicObjectHydrator;
+    protected $classMetadataFactory;
+    protected $objectFactory;
+    protected $objectRepositoryFactory;
+    protected $objectPersisterFactory;
     protected $objectIdentityMap;
+    protected $eventManager;
+    protected $userClassMetadata;
+    protected $userRepository;
+    protected $userPersister;
+    protected $objectManager;
     protected $users;
     protected $testClassName = 'Doctrine\SkeletonMapper\Tests\Model\User';
     protected $eventTester;
+
+    abstract protected function setUpImplementation();
+    abstract protected function createUserDataRepository();
+    abstract protected function createUserRepository();
+    abstract protected function createUserPersister();
+
+    protected function setUp()
+    {
+        $this->setUpImplementation();
+        $this->setUpCommon();
+        $this->userDataRepository = $this->createUserDataRepository();
+        $this->userRepository = $this->createUserRepository();
+        $this->userPersister = $this->createUserPersister();
+        $this->registerServices();
+    }
+
+    protected function setUpCommon()
+    {
+        $this->eventTester = new EventTester();
+
+        $events = array(
+            Events::preRemove,
+            Events::postRemove,
+            Events::prePersist,
+            Events::postPersist,
+            Events::preUpdate,
+            Events::postUpdate,
+            Events::preLoad,
+            Events::postLoad,
+            Events::preFlush,
+            Events::onFlush,
+            Events::postFlush,
+            Events::onClear,
+        );
+
+        $this->eventManager = new EventManager();
+        foreach ($events as $event) {
+            $this->eventManager->addEventListener($event, $this->eventTester);
+        }
+
+        $this->basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator();
+        $this->classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
+        $this->objectFactory = new SkeletonMapper\ObjectFactory();
+        $this->objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
+        $this->objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
+        $this->objectIdentityMap = new SkeletonMapper\ObjectIdentityMap(
+            $this->objectRepositoryFactory, $this->classMetadataFactory
+        );
+
+        // user class metadata
+        $this->userClassMetadata = new SkeletonMapper\Mapping\ClassMetadata($this->testClassName);
+        $this->userClassMetadata->identifier = array('_id');
+        $this->userClassMetadata->identifierFieldNames = array('id');
+        $this->userClassMetadata->mapField(array(
+            'name' => '_id',
+            'fieldName' => 'id',
+        ));
+        $this->userClassMetadata->mapField(array(
+            'fieldName' => 'username',
+        ));
+        $this->userClassMetadata->mapField(array(
+            'fieldName' => 'password',
+        ));
+
+        foreach ($events as $event) {
+            $this->userClassMetadata->addLifecycleCallback($event, $event);
+        }
+
+        $this->classMetadataFactory->setMetadataFor(
+            $this->testClassName, $this->userClassMetadata
+        );
+
+        $this->objectManager = new SkeletonMapper\ObjectManager(
+            $this->objectRepositoryFactory,
+            $this->objectPersisterFactory,
+            $this->objectIdentityMap,
+            $this->classMetadataFactory,
+            $this->eventManager
+        );
+    }
+
+    protected function registerServices()
+    {
+        $this->objectRepositoryFactory->addObjectRepository(
+            $this->testClassName, $this->userRepository
+        );
+        $this->objectPersisterFactory->addObjectPersister(
+            $this->testClassName, $this->userPersister
+        );
+    }
 
     public function testGetClassMetadata()
     {

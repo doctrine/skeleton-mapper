@@ -20,8 +20,6 @@
 
 namespace Doctrine\SkeletonMapper\Hydrator;
 
-use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
-
 /**
  * Basic object hydrator that delegates hydration
  * to a method on the object that is being hydrated.
@@ -32,7 +30,7 @@ class BasicObjectHydrator extends ObjectHydrator
 {
     /**
      * @param \Doctrine\SkeletonMapper\Hydrator\HydratableInterface $object
-     * @param array  $data
+     * @param array                                                 $data
      */
     public function hydrate($object, array $data)
     {

@@ -37,7 +37,7 @@ abstract class MongoDBObjectPersister extends ObjectPersister
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \MongoCollection $mongoCollection
+     * @param \MongoCollection                                $mongoCollection
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

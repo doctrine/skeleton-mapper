@@ -27,8 +27,8 @@ namespace Doctrine\SkeletonMapper\Persister;
  */
 interface PersistableInterface
 {
-	/**
-	 * @return array
-	 */
-	public function toArray();
+    /**
+     * @return array
+     */
+    public function toArray();
 }

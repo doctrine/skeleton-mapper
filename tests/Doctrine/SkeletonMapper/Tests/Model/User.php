@@ -132,8 +132,8 @@ class User implements HydratableInterface, PersistableInterface, NotifyPropertyC
 
     /**
      * @param string $propName
-     * @param mixed $oldValue
-     * @param mixed $newValue
+     * @param mixed  $oldValue
+     * @param mixed  $newValue
      */
     protected function onPropertyChanged($propName, $oldValue, $newValue)
     {

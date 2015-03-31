@@ -37,7 +37,7 @@ abstract class MongoDBObjectDataRepository extends ObjectDataRepository
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \MongoCollection $mongoCollection
+     * @param \MongoCollection                                $mongoCollection
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

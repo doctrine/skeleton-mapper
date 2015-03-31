@@ -103,7 +103,7 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
                 $orderBySqlParts[] = sprintf('%s %s', $fieldName, $orientation);
             }
 
-            $sqlParts[] = 'ORDER BY ' . implode(', ', $orderBySqlParts);
+            $sqlParts[] = 'ORDER BY '.implode(', ', $orderBySqlParts);
         }
 
         if ($limit !== null) {
