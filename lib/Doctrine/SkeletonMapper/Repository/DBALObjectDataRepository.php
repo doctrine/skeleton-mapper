@@ -33,12 +33,12 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var \Doctrine\DBAL\Connection
      */
-    private $connection;
+    protected $connection;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
@@ -129,7 +129,7 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
     /**
      * @return array $identifier
      */
-    private function getIdentifier()
+    protected function getIdentifier()
     {
         return $this->objectManager
             ->getClassMetadata($this->getClassName())
@@ -141,7 +141,7 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
      *
      * @return array
      */
-    private function getObjectIdentifier($object)
+    protected function getObjectIdentifier($object)
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

@@ -28,12 +28,12 @@ abstract class DBALObjectPersister extends ObjectPersister
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var \Doctrine\DBAL\Connection
      */
-    private $connection;
+    protected $connection;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
@@ -93,7 +93,7 @@ abstract class DBALObjectPersister extends ObjectPersister
      *
      * @return array $identifier
      */
-    private function getObjectIdentifier($object)
+    protected function getObjectIdentifier($object)
     {
         return $this->objectManager
             ->getRepository(get_class($object))

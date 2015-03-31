@@ -28,12 +28,12 @@ abstract class MongoDBObjectDataRepository extends ObjectDataRepository
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var \MongoCollection
      */
-    private $mongoCollection;
+    protected $mongoCollection;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
@@ -100,7 +100,7 @@ abstract class MongoDBObjectDataRepository extends ObjectDataRepository
      *
      * @return array
      */
-    private function getObjectIdentifier($object)
+    protected function getObjectIdentifier($object)
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

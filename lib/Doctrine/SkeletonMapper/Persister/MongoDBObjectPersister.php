@@ -80,7 +80,7 @@ abstract class MongoDBObjectPersister extends ObjectPersister
      *
      * @return array $identifier
      */
-    private function getObjectIdentifier($object)
+    protected function getObjectIdentifier($object)
     {
         return $this->objectManager
             ->getRepository(get_class($object))
