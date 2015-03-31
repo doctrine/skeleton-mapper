@@ -5,10 +5,12 @@ namespace Doctrine\SkeletonMapper\Tests\Model;
 use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+use Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface;
 use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-class User implements HydratableInterface, PersistableInterface, IdentifiableInterface, NotifyPropertyChanged
+class User implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged
 {
     /**
      * @var array
@@ -43,6 +45,22 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
     public function assignIdentifier(array $identifier)
     {
         $this->id = (int) $identifier['_id'];
+    }
+
+    public static function loadMetadata(ClassMetadataInterface $metadata)
+    {
+        $metadata->identifier = array('_id');
+        $metadata->identifierFieldNames = array('id');
+        $metadata->mapField(array(
+            'name' => '_id',
+            'fieldName' => 'id',
+        ));
+        $metadata->mapField(array(
+            'fieldName' => 'username',
+        ));
+        $metadata->mapField(array(
+            'fieldName' => 'password',
+        ));
     }
 
     public function getId()

@@ -53,7 +53,17 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
      */
     public function getMetadataFor($className)
     {
-        return isset($this->classes[$className]) ? $this->classes[$className] : null;
+        if (!isset($this->classes[$className])) {
+            $metadata = $this->createClassMetadata($className);
+
+            if ($metadata->reflClass->implementsInterface('Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface')) {
+                $className::loadMetadata($metadata);
+            }
+
+            $this->classes[$className] = $metadata;
+        }
+
+        return $this->classes[$className];
     }
 
     /**
@@ -90,5 +100,13 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     public function isTransient($className)
     {
         return isset($this->classes[$className]);
+    }
+
+    /**
+     * @param string $className
+     */
+    private function createClassMetadata($className)
+    {
+        return new ClassMetadata($className);
     }
 }

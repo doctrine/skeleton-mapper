@@ -74,19 +74,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         );
 
         // user class metadata
-        $this->userClassMetadata = new SkeletonMapper\Mapping\ClassMetadata($this->testClassName);
-        $this->userClassMetadata->identifier = array('_id');
-        $this->userClassMetadata->identifierFieldNames = array('id');
-        $this->userClassMetadata->mapField(array(
-            'name' => '_id',
-            'fieldName' => 'id',
-        ));
-        $this->userClassMetadata->mapField(array(
-            'fieldName' => 'username',
-        ));
-        $this->userClassMetadata->mapField(array(
-            'fieldName' => 'password',
-        ));
+        $this->userClassMetadata = $this->classMetadataFactory->getMetadataFor($this->testClassName);
 
         foreach ($events as $event) {
             $this->userClassMetadata->addLifecycleCallback($event, $event);
