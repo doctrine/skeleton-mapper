@@ -18,13 +18,22 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\DataRepository;
 
-/**
- * Base class for object data repositories to extend from.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-abstract class ObjectDataRepository implements ObjectDataRepositoryInterface
+abstract class BasicObjectDataRepository extends ObjectDataRepository
 {
+    /**
+     * @var string
+     */
+    protected $className;
+
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    public function setClassName($className)
+    {
+        $this->className = $className;
+    }
 }

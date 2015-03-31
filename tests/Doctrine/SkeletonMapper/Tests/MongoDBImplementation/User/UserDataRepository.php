@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User;
 
-use Doctrine\SkeletonMapper\Repository\MongoDBObjectDataRepository;
+use Doctrine\SkeletonMapper\DataRepository\MongoDBObjectDataRepository;
 
 class UserDataRepository extends MongoDBObjectDataRepository
 {

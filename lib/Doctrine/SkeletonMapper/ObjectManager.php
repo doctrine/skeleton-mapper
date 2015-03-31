@@ -22,7 +22,7 @@ namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
-use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 
 /**
@@ -33,7 +33,7 @@ use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 class ObjectManager implements ObjectManagerInterface
 {
     /**
-     * @var \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 
@@ -58,11 +58,11 @@ class ObjectManager implements ObjectManagerInterface
     private $metadataFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                  $objectIdentityMap
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory       $metadataFactory
-     * @param \Doctrine\Common\EventManager                               $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory         $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory             $metadataFactory
+     * @param \Doctrine\Common\EventManager                                     $eventManager
      */
     public function __construct(
         ObjectRepositoryFactory $objectRepositoryFactory,

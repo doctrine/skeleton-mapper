@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
-use Doctrine\SkeletonMapper\Repository\ObjectRepository;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepository;
 
 class UserRepository extends ObjectRepository
 {

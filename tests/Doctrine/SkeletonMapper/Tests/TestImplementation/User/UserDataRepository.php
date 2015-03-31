@@ -3,7 +3,7 @@
 namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\Repository\ObjectDataRepository;
+use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepository;
 
 class UserDataRepository extends ObjectDataRepository
 {

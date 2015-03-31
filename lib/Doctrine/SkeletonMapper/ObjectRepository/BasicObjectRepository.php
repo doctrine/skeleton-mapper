@@ -18,53 +18,85 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\ObjectRepository;
 
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
-
-/**
- * Interface that object repositories must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
+class BasicObjectPersister extends ObjectPersister
 {
+    /**
+     * @var string
+     */
+    protected $className;
+
+    /**
+     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface
+     */
+    protected $class;
+
     /**
      * Returns the class name of the object managed by the repository.
      *
      * @return string
      */
-    public function getClassName();
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+        $this->class = $this->objectManager->getClassMetadata($this->className);
+    }
 
     /**
      * Returns the objects identifier.
      *
      * @return array
      */
-    public function getObjectIdentifier($object);
+    public function getObjectIdentifier($object)
+    {
+        return $this->objectManager
+            ->getClassMetadata(get_class($object))
+            ->getIdentifierValues($object);
+    }
 
     /**
      * Returns the identifier.
      *
      * @return array
      */
-    public function getObjectIdentifierFromData(array $data);
+    public function getObjectIdentifierFromData(array $data)
+    {
+        $identifier = array();
+
+        foreach ($this->class->identifier as $name) {
+            $identifier[$name] = $data[$name];
+        }
+
+        return $identifier;
+    }
 
     /**
      * @param object $object
      */
-    public function merge($object);
+    public function merge($object)
+    {
+        throw new \BadMethodCallException('Not implemented.');
+    }
 
     /**
      * @param object $object
      * @param array  $data
      */
-    public function hydrate($object, array $data);
+    public function hydrate($object, array $data)
+    {
+        $class = $this->objectManager->getClassMetadata(get_class($object));
 
-    /**
-     * @param string $className
-     *
-     * @return object
-     */
-    public function create($className);
+        foreach ($data as $key => $value) {
+            $class->reflFields[$key]->setValue($object, $value);
+        }
+    }
 }

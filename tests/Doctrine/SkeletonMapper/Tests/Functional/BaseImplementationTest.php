@@ -67,7 +67,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator();
         $this->classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
         $this->objectFactory = new SkeletonMapper\ObjectFactory();
-        $this->objectRepositoryFactory = new SkeletonMapper\Repository\ObjectRepositoryFactory();
+        $this->objectRepositoryFactory = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
         $this->objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
         $this->objectIdentityMap = new SkeletonMapper\ObjectIdentityMap(
             $this->objectRepositoryFactory, $this->classMetadataFactory

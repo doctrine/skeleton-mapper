@@ -28,7 +28,7 @@ use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
-use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
 
 /**
  * Class for managing the persistence of objects.
@@ -43,7 +43,7 @@ class UnitOfWork implements PropertyChangedListener
     private $objectManager;
 
     /**
-     * @var \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 
@@ -83,11 +83,11 @@ class UnitOfWork implements PropertyChangedListener
     private $objectChangeSets = array();
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface             $objectManager
-     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory   $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                  $objectIdentityMap
-     * @param \Doctrine\Common\EventManager                               $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                   $objectManager
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory         $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
+     * @param \Doctrine\Common\EventManager                                     $eventManager
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

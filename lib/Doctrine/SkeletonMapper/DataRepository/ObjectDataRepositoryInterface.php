@@ -18,7 +18,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\DataRepository;
 
 /**
  * Interface that object data repositories must implement.

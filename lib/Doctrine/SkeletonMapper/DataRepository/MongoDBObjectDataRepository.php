@@ -18,12 +18,12 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use MongoCollection;
 
-abstract class MongoDBObjectDataRepository extends ObjectDataRepository
+abstract class MongoDBObjectDataRepository extends BasicObjectDataRepository
 {
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
@@ -46,11 +46,6 @@ abstract class MongoDBObjectDataRepository extends ObjectDataRepository
         $this->objectManager = $objectManager;
         $this->mongoCollection = $mongoCollection;
     }
-
-    /**
-     * @return string
-     */
-    abstract public function getClassName();
 
     public function find($id)
     {

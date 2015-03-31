@@ -18,7 +18,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -28,7 +28,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
+abstract class DBALObjectDataRepository extends BasicObjectDataRepository
 {
     /**
      * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
@@ -56,11 +56,6 @@ abstract class DBALObjectDataRepository implements ObjectDataRepositoryInterface
      * @return string
      */
     abstract public function getTableName();
-
-    /**
-     * @return string
-     */
-    abstract public function getClassName();
 
     public function find($id)
     {

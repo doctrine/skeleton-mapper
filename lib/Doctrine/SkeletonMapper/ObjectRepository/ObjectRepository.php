@@ -18,9 +18,10 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Repository;
+namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
 use Doctrine\SkeletonMapper\Events;
@@ -41,7 +42,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $objectManager;
 
     /**
-     * @var \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface
+     * @var \Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface
      */
     protected $objectDataRepository;
 
@@ -61,11 +62,11 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $eventManager;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                   $objectManager
-     * @param \Doctrine\SkeletonMapper\Repository\ObjectDataRepositoryInterface $objectDataRepository
-     * @param \Doctrine\SkeletonMapper\ObjectFactory                            $objectFactory
-     * @param \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface         $objectHydrator
-     * @param \Doctrine\Common\EventManager                                     $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                       $objectManager
+     * @param \Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface $objectDataRepository
+     * @param \Doctrine\SkeletonMapper\ObjectFactory                                $objectFactory
+     * @param \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface             $objectHydrator
+     * @param \Doctrine\Common\EventManager                                         $eventManager
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

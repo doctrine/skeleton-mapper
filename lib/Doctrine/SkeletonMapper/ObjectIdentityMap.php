@@ -21,7 +21,7 @@
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
-use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
 
 /**
  * Class for maintaining an object identity map.
@@ -46,8 +46,8 @@ class ObjectIdentityMap
     private $classMetadataFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory       $classMetadataFactory
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory             $classMetadataFactory
      */
     public function __construct(
         ObjectRepositoryFactory $objectRepositoryFactory,
