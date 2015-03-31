@@ -546,6 +546,44 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(3, $user->getId());
     }
 
+    public function testClassMetadata()
+    {
+        $object = $this->createTestObject();
+        $object->setId(1);
+
+        $class = $this->classMetadataFactory->getMetadataFor($this->testClassName);
+        $this->assertEquals($this->testClassName, $class->name);
+        $this->assertTrue($class->hasField('id'));
+        $this->assertTrue($class->hasField('username'));
+        $this->assertTrue($class->hasField('password'));
+        $this->assertFalse($class->hasAssociation('password'));
+        $this->assertFalse($class->isSingleValuedAssociation('password'));
+        $this->assertFalse($class->isCollectionValuedAssociation('password'));
+        $this->assertTrue($class->isIdentifier('id'));
+        $this->assertFalse($class->isIdentifier('username'));
+        $this->assertEquals(array('_id'), $class->getIdentifier());
+        $this->assertEquals(array('id'), $class->getIdentifierFieldNames());
+        $this->assertEquals(array('id', 'username', 'password'), $class->getFieldNames());
+        $this->assertInstanceOf('ReflectionClass', $class->getReflectionClass());
+        $this->assertEquals(array(
+            'id' => array(
+                'name' => '_id',
+                'fieldName' => 'id',
+            ),
+            'username' => array(
+                'name' => 'username',
+                'fieldName' => 'username',
+            ),
+            'password' => array(
+                'name' => 'password',
+                'fieldName' => 'password',
+            ),
+        ), $class->getFieldMappings());
+        $this->assertEquals(array(), $class->getAssociationNames());
+        $this->assertNull($class->getTypeOfField('username'));
+        $this->assertEquals(array('id' => 1), $class->getIdentifierValues($object));
+    }
+
     private function createTestObject()
     {
         $className = $this->testClassName;

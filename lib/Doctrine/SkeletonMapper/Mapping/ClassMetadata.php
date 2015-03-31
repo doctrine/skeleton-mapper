@@ -65,24 +65,17 @@ class ClassMetadata implements ClassMetadataInterface
     public $reflClass;
 
     /**
+     * @var array
+     */
+    public $reflFields = array();
+
+    /**
      * @param string $className
      */
     public function __construct($className)
     {
         $this->name = $className;
         $this->reflClass = new \ReflectionClass($className);
-    }
-
-    /**
-     * @return array $fieldMappings
-     */
-    public function autoMapFields()
-    {
-        foreach ($this->reflClass->getProperties() as $property) {
-            $this->mapField(array(
-                'fieldName' => $property->getName(),
-            ));
-        }
     }
 
     /**
@@ -95,6 +88,12 @@ class ClassMetadata implements ClassMetadataInterface
         }
 
         $this->fieldMappings[$mapping['fieldName']] = $mapping;
+
+        if ($this->reflClass->hasProperty($mapping['fieldName'])) {
+            $reflProp = $this->reflClass->getProperty($mapping['fieldName']);
+            $reflProp->setAccessible(true);
+            $this->reflFields[$mapping['fieldName']] = $reflProp;
+        }
     }
 
     /**
@@ -188,7 +187,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getTypeOfField($fieldName)
     {
-        return isset($this->fieldMappings[$fieldName]) ?
+        return isset($this->fieldMappings[$fieldName]['type']) ?
             $this->fieldMappings[$fieldName]['type'] : null;
     }
 
@@ -201,19 +200,20 @@ class ClassMetadata implements ClassMetadataInterface
             throw new \InvalidArgumentException("Association name expected, '".$assocName."' is not an association.");
         }
 
-        return $this->associationMappings[$assocName]['targetDocument'];
+        return $this->associationMappings[$assocName]['targetObject'];
     }
 
     /**
      * {@inheritDoc}
-     *
-     * Since MongoDB only allows exactly one identifier field this is a proxy
-     * to {@see getIdentifierValue()} and returns an array with the identifier
-     * field as a key.
      */
     public function getIdentifierValues($object)
     {
-        return array($this->identifier => $this->getIdentifierValue($object));
+        $identifier = array();
+        foreach ($this->identifierFieldNames as $identifierFieldName) {
+            $identifier[$identifierFieldName] = $this->reflFields[$identifierFieldName]->getValue($object);
+        }
+
+        return $identifier;
     }
 
     /**
