@@ -25,7 +25,6 @@ use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
-use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
 use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
@@ -76,16 +75,6 @@ class UnitOfWork implements PropertyChangedListener
      * @var array
      */
     private $objectsToRemove = array();
-
-    /**
-     * @var array
-     */
-    private $objectActionsToExecute = array();
-
-    /**
-     * @var array
-     */
-    private $objectsWithAction = array();
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface             $objectManager
@@ -215,18 +204,6 @@ class UnitOfWork implements PropertyChangedListener
     }
 
     /**
-     * @param ObjectAction $objectAction The object instance to execute the action for.
-     */
-    public function action(ObjectAction $objectAction)
-    {
-        $this->objectActionsToExecute[] = $objectAction;
-
-        $object = $objectAction->getObject();
-
-        $this->objectsWithAction[spl_object_hash($object)] = $object;
-    }
-
-    /**
      * @param string|null $objectName
      */
     public function clear($objectName = null)
@@ -236,8 +213,6 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
-        $this->objectActionsToExecute = array();
-        $this->objectsWithAction = array();
 
         if ($this->eventManager->hasListeners(Events::onClear)) {
             $this->eventManager->dispatchEvent(
@@ -289,8 +264,7 @@ class UnitOfWork implements PropertyChangedListener
         $objects = array_merge(
             $this->objectsToPersist,
             $this->objectsToUpdate,
-            $this->objectsToRemove,
-            $this->objectsWithAction
+            $this->objectsToRemove
         );
 
         foreach ($objects as $object) {
@@ -302,8 +276,7 @@ class UnitOfWork implements PropertyChangedListener
             }
         }
 
-        if (! ($this->objectActionsToExecute ||
-            $this->objectsToPersist ||
+        if (! ($this->objectsToPersist ||
             $this->objectsToUpdate ||
             $this->objectsToRemove)
         ) {
@@ -315,10 +288,6 @@ class UnitOfWork implements PropertyChangedListener
                 Events::onFlush,
                 new Event\OnFlushEventArgs($this->objectManager)
             );
-        }
-
-        if ($this->objectActionsToExecute) {
-            $this->executeObjectActions();
         }
 
         if ($this->objectsToPersist) {
@@ -343,8 +312,6 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
-        $this->objectActionsToExecute = array();
-        $this->objectsWithAction = array();
     }
 
     /**
@@ -375,16 +342,6 @@ class UnitOfWork implements PropertyChangedListener
     public function isScheduledForRemove($object)
     {
         return isset($this->objectsToRemove[spl_object_hash($object)]);
-    }
-
-    /**
-     * @param object $object
-     *
-     * @return bool
-     */
-    public function isScheduledForAction($object)
-    {
-        return isset($this->objectsWithAction[spl_object_hash($object)]);
     }
 
     /* PropertyChangedListener implementation */
@@ -444,16 +401,6 @@ class UnitOfWork implements PropertyChangedListener
         }
 
         return $object;
-    }
-
-    /**
-     */
-    private function executeObjectActions()
-    {
-        foreach ($this->objectActionsToExecute as $objectAction) {
-            $this->getObjectPersister($objectAction->getObject())
-                ->executeObjectAction($objectAction);
-        }
     }
 
     /**

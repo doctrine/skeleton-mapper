@@ -21,7 +21,6 @@
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
-use Doctrine\SkeletonMapper\Persister\ObjectAction;
 
 /**
  * Interface that object managers must implement.
@@ -34,11 +33,6 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
      * @param object $object
      */
     public function update($object);
-
-    /**
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectAction $objectAction
-     */
-    public function action(ObjectAction $objectAction);
 
     /**
      * @param array $data

@@ -67,9 +67,4 @@ interface ObjectPersisterInterface
      * @param object $object
      */
     public function removeObject($object);
-
-    /**
-     * @param \Doctrine\SkeletonMapper\Persister $objectAction
-     */
-    public function executeObjectAction(ObjectAction $objectAction);
 }

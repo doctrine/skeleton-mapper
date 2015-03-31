@@ -3,7 +3,6 @@
 namespace Doctrine\SkeletonMapper\Tests\TestImplementation\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use Doctrine\SkeletonMapper\Persister\ObjectPersister;
 
 class UserPersister extends ObjectPersister
@@ -37,18 +36,5 @@ class UserPersister extends ObjectPersister
     public function removeObject($object)
     {
         unset($this->users[$object->getId()]);
-    }
-
-    public function executeObjectAction(ObjectAction $objectAction)
-    {
-        $object = $objectAction->getObject();
-
-        switch ($objectAction->getName()) {
-            case 'register':
-                $object->setPassword(md5($object->getPassword()));
-            break;
-        }
-
-        $objectAction->setResult(array('success' => true));
     }
 }

@@ -3,7 +3,6 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\Events;
-use Doctrine\SkeletonMapper\Persister\ObjectAction;
 use PHPUnit_Framework_TestCase;
 
 abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
@@ -231,25 +230,6 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->clear();
 
         $this->assertFalse($this->objectManager->contains($user));
-    }
-
-    public function testPersisterActions()
-    {
-        $user = $this->createTestObject();
-        $user->setId(3);
-        $user->setUsername('jmikola');
-        $user->setPassword('password');
-
-        $action = new ObjectAction($user, 'register', array(
-            'key' => 'value',
-        ));
-
-        $this->objectManager->action($action);
-        $this->objectManager->persist($user);
-        $this->objectManager->flush();
-
-        $this->assertEquals(md5('password'), $user->getPassword());
-        $this->assertEquals(array('success' => true), $action->getResult());
     }
 
     public function testEvents()
