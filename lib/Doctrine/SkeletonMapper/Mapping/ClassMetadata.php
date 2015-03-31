@@ -206,14 +206,6 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * {@inheritDoc}
-     */
-    public function getAssociationMappedByTargetField($fieldName)
-    {
-        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * Since MongoDB only allows exactly one identifier field this is a proxy
      * to {@see getIdentifierValue()} and returns an array with the identifier
@@ -226,20 +218,12 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * {@inheritDoc}
-     */
-    public function isAssociationInverseSide($fieldName)
-    {
-        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * Checks whether the class has a mapped association (embed or reference) with the given field name.
      */
     public function hasAssociation($fieldName)
     {
-        return $this->hasReference($fieldName);
+        return isset($this->associationMappings[$fieldName]);
     }
 
     /**
@@ -250,7 +234,8 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        return $this->isSingleValuedReference($fieldName);
+        return isset($this->associationMappings[$fieldName]['type']) &&
+            $this->associationMappings[$fieldName]['type'] === 'one';
     }
 
     /**
@@ -261,35 +246,8 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        return $this->isCollectionValuedReference($fieldName);
-    }
-
-    /**
-     * Checks whether the class has a mapped association for the specified field
-     * and if yes, checks whether it is a single-valued association (to-one).
-     *
-     * @param string $fieldName
-     *
-     * @return bool TRUE if the association exists and is single-valued, FALSE otherwise.
-     */
-    public function isSingleValuedReference($fieldName)
-    {
-        return isset($this->fieldMappings[$fieldName]['association']) &&
-            $this->fieldMappings[$fieldName]['association'] === 'one';
-    }
-
-    /**
-     * Checks whether the class has a mapped association for the specified field
-     * and if yes, checks whether it is a collection-valued association (to-many).
-     *
-     * @param string $fieldName
-     *
-     * @return bool TRUE if the association exists and is collection-valued, FALSE otherwise.
-     */
-    public function isCollectionValuedReference($fieldName)
-    {
-        return isset($this->fieldMappings[$fieldName]['association']) &&
-            $this->fieldMappings[$fieldName]['association'] === 'many';
+        return isset($this->associationMappings[$fieldName]['type']) &&
+            $this->associationMappings[$fieldName]['type'] === 'many';
     }
 
     /**
@@ -379,5 +337,21 @@ class ClassMetadata implements ClassMetadataInterface
     public function getIdentifierFieldNames()
     {
         return $this->identifierFieldNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAssociationMappedByTargetField($fieldName)
+    {
+        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAssociationInverseSide($fieldName)
+    {
+        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
     }
 }
