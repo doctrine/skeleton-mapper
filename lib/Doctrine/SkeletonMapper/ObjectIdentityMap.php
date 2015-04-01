@@ -36,7 +36,7 @@ class ObjectIdentityMap
     private $identityMap = array();
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
      */
     private $objectRepositoryFactory;
 

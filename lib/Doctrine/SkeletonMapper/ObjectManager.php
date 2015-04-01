@@ -58,6 +58,11 @@ class ObjectManager implements ObjectManagerInterface
     private $metadataFactory;
 
     /**
+     * @var \Doctrine\Common\EventManager
+     */
+    private $eventManager;
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
      * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory         $objectPersisterFactory
      * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
@@ -213,7 +218,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $className
      *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return \Doctrine\Common\ObjectRepository\ObjectRepositoryInterface
      */
     public function getRepository($className)
     {

@@ -63,7 +63,7 @@ abstract class MongoDBObjectDataRepository extends BasicObjectDataRepository
 
     public function findAll()
     {
-        return $this->mongoCollection->find(array());
+        return iterator_to_array($this->mongoCollection->find(array()));
     }
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
