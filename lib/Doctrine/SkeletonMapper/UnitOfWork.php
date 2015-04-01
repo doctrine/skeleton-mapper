@@ -398,7 +398,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      *
-     * @return \Doctrine\SkeletonMapper\Repository\ObjectRepositoryInterface
+     * @return \Doctrine\Common\Persistence\ObjectRepository
      */
     public function getObjectRepository($object)
     {
