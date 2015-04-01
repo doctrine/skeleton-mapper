@@ -445,6 +445,16 @@ class UnitOfWork implements PropertyChangedListener
         );
     }
 
+    private function dispatchLifecycleEvent($eventName, $object)
+    {
+        $this->dispatchObjectLifecycleCallback($eventName, $object);
+
+        $this->dispatchEvent(
+            $eventName,
+            new LifecycleEventArgs($object, $this->objectManager)
+        );
+    }
+
     private function executePersists()
     {
         foreach ($this->objectsToPersist as $object) {
@@ -460,12 +470,7 @@ class UnitOfWork implements PropertyChangedListener
             $persister->assignIdentifier($object, $identifier);
             $this->objectIdentityMap->addToIdentityMap($object, $objectData);
 
-            $this->dispatchObjectLifecycleCallback(Events::postPersist, $object);
-
-            $this->dispatchEvent(
-                Events::postPersist,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
+            $this->dispatchLifecycleEvent(Events::postPersist, $object);
 
             unset($this->objectsToPersist[spl_object_hash($object)]);
         }
@@ -479,12 +484,7 @@ class UnitOfWork implements PropertyChangedListener
             $this->getObjectPersister($object)
                 ->updateObject($object, $changeSet);
 
-            $this->dispatchObjectLifecycleCallback(Events::postUpdate, $object);
-
-            $this->dispatchEvent(
-                Events::postUpdate,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
+            $this->dispatchLifecycleEvent(Events::postUpdate, $object);
 
             unset($this->objectsToUpdate[spl_object_hash($object)]);
         }
@@ -498,12 +498,7 @@ class UnitOfWork implements PropertyChangedListener
 
             $this->objectIdentityMap->detach($object);
 
-            $this->dispatchObjectLifecycleCallback(Events::postRemove, $object);
-
-            $this->dispatchEvent(
-                Events::postRemove,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
+            $this->dispatchLifecycleEvent(Events::postRemove, $object);
 
             unset($this->objectsToRemove[spl_object_hash($object)]);
         }
