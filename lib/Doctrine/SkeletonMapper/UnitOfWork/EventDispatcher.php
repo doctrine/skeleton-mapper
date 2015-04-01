@@ -38,27 +38,19 @@ class EventDispatcher
     private $objectManager;
 
     /**
-     * @var \Doctrine\SkeletonMapper\UnitOfWork
-     */
-    private $unitOfWork;
-
-    /**
      * @var \Doctrine\Common\EventManager
      */
     private $eventManager;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\SkeletonMapper\UnitOfWork             $unitOfWork
      * @param \Doctrine\Common\EventManager                   $eventManager
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        UnitOfWork $unitOfWork,
         EventManager $eventManager)
     {
         $this->objectManager = $objectManager;
-        $this->unitOfWork = $unitOfWork;
         $this->eventManager = $eventManager;
     }
 
@@ -156,17 +148,19 @@ class EventDispatcher
 
     /**
      * @param object $object
+     * @param array $changeSet
      */
-    public function dispatchPreUpdate($object)
+    public function dispatchPreUpdate($object, array &$changeSet = null)
     {
-        $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object);
+        $args = array(&$changeSet);
+        $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object, $args);
 
         $this->dispatchEvent(
             Events::preUpdate,
             new PreUpdateEventArgs(
                 $object,
                 $this->objectManager,
-                $this->unitOfWork->getObjectChangeSet($object)
+                $changeSet
             )
         );
     }

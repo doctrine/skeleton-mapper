@@ -105,7 +105,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectIdentityMap = $objectIdentityMap;
 
         $this->eventDispatcher = new EventDispatcher(
-            $objectManager, $this, $eventManager
+            $objectManager, $eventManager
         );
         $this->persister = new Persister(
             $this->objectManager,
@@ -150,9 +150,13 @@ class UnitOfWork implements PropertyChangedListener
             throw new \InvalidArgumentException('Object is already scheduled for update.');
         }
 
-        $this->eventDispatcher->dispatchPreUpdate($object);
+        $oid = spl_object_hash($object);
 
-        $this->objectsToUpdate[spl_object_hash($object)] = $object;
+        $this->eventDispatcher->dispatchPreUpdate(
+            $object, $this->objectChangeSets[$oid]
+        );
+
+        $this->objectsToUpdate[$oid] = $object;
     }
 
     /**
