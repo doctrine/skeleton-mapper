@@ -67,15 +67,12 @@ class Persister
     public function executePersists()
     {
         foreach ($this->unitOfWork->getObjectsToPersist() as $object) {
-            $className = get_class($object);
-
-            $class = $this->objectManager->getClassMetadata($className);
             $persister = $this->unitOfWork->getObjectPersister($object);
             $repository = $this->unitOfWork->getObjectRepository($object);
 
             $objectData = $persister->persistObject($object);
-            $identifier = $repository->getObjectIdentifierFromData($objectData);
 
+            $identifier = $repository->getObjectIdentifierFromData($objectData);
             $persister->assignIdentifier($object, $identifier);
             $this->objectIdentityMap->addToIdentityMap($object, $objectData);
 
