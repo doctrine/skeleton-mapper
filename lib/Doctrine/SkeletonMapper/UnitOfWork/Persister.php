@@ -22,7 +22,7 @@ namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
-use Doctrine\SkeletonMapper\ObjectManager;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork;
 
 class Persister
@@ -53,7 +53,7 @@ class Persister
      * @param \Doctrine\SkeletonMapper\ObjectIdentityMap          $objectIdentityMap
      */
     public function __construct(
-        ObjectManager $objectManager,
+        ObjectManagerInterface $objectManager,
         UnitOfWork $unitOfWork,
         EventDispatcher $eventDispatcher,
         ObjectIdentityMap $objectIdentityMap)

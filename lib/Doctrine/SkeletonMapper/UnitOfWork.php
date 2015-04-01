@@ -409,7 +409,7 @@ class UnitOfWork implements PropertyChangedListener
 
         $repository->hydrate($object, $data);
 
-        $this->eventDispatcher->dispatchPostLoad($object, $data);
+        $this->eventDispatcher->dispatchPostLoad($object);
 
         $this->objectIdentityMap->addToIdentityMap($object, $data);
 

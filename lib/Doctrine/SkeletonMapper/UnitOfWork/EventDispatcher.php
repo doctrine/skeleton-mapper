@@ -27,13 +27,13 @@ use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Events;
-use Doctrine\SkeletonMapper\ObjectManager;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork;
 
 class EventDispatcher
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectManager
+     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
      */
     private $objectManager;
 
@@ -48,12 +48,12 @@ class EventDispatcher
     private $eventManager;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectManager $objectManager
-     * @param \Doctrine\SkeletonMapper\UnitOfWork    $unitOfWork
-     * @param \Doctrine\Common\EventManager          $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param \Doctrine\SkeletonMapper\UnitOfWork             $unitOfWork
+     * @param \Doctrine\Common\EventManager                   $eventManager
      */
     public function __construct(
-        ObjectManager $objectManager,
+        ObjectManagerInterface $objectManager,
         UnitOfWork $unitOfWork,
         EventManager $eventManager)
     {
