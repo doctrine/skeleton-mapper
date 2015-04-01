@@ -370,7 +370,11 @@ class UnitOfWork implements PropertyChangedListener
                 $object->addPropertyChangedListener($this);
             }
 
+            $this->eventDispatcher->dispatchPreLoad($object, $data);
+
             $repository->hydrate($object, $data);
+
+            $this->eventDispatcher->dispatchPostLoad($object, $data);
 
             $this->objectIdentityMap->addToIdentityMap($object, $data);
         }

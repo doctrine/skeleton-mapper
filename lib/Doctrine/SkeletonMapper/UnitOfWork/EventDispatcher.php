@@ -24,6 +24,7 @@ use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Event;
 use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
+use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectManager;
@@ -76,13 +77,13 @@ class EventDispatcher
      * @param string $eventName
      * @param object $object
      */
-    public function dispatchObjectLifecycleCallback($eventName, $object)
+    public function dispatchObjectLifecycleCallback($eventName, $object, array &$args = array())
     {
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
         if (!empty($class->lifecycleCallbacks[$eventName])) {
-            $class->invokeLifecycleCallbacks($eventName, $object);
+            $class->invokeLifecycleCallbacks($eventName, $object, $args);
         }
     }
 
@@ -181,6 +182,28 @@ class EventDispatcher
             Events::prePersist,
             new LifecycleEventArgs($object, $this->objectManager)
         );
+    }
+
+    /**
+     * @param object $object
+     */
+    public function dispatchPreLoad($object, array &$data)
+    {
+        $args = array(&$data);
+        $this->dispatchObjectLifecycleCallback(Events::preLoad, $object, $args);
+
+        $this->dispatchEvent(
+            Events::preLoad,
+            new PreLoadEventArgs($object, $this->objectManager, $data)
+        );
+    }
+
+    /**
+     * @param object $object
+     */
+    public function dispatchPostLoad($object)
+    {
+        $this->dispatchLifecycleEvent(Events::postLoad, $object);
     }
 
     /**

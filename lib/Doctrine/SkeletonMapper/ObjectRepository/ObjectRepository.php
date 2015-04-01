@@ -173,33 +173,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function hydrate($object, array $data)
     {
-        $className = get_class($object);
-        $class = $this->objectManager->getClassMetadata($className);
-
-        if (!empty($class->lifecycleCallbacks[Events::preLoad])) {
-            $args = array(&$data);
-            $class->invokeLifecycleCallbacks(Events::preLoad, $object, $args);
-        }
-
-        if ($this->eventManager->hasListeners(Events::preLoad)) {
-            $this->eventManager->dispatchEvent(
-                Events::preLoad,
-                new PreLoadEventArgs($object, $this->objectManager, $data)
-            );
-        }
-
         $this->objectHydrator->hydrate($object, $data);
-
-        if (!empty($class->lifecycleCallbacks[Events::postLoad])) {
-            $class->invokeLifecycleCallbacks(Events::postLoad, $object);
-        }
-
-        if ($this->eventManager->hasListeners(Events::postLoad)) {
-            $this->eventManager->dispatchEvent(
-                Events::postLoad,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
-        }
     }
 
     /**
