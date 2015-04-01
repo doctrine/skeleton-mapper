@@ -227,3 +227,5 @@ $userPersister = new DBALObjectPersister(
     $objectManager, $connection, 'Model\User', 'users'
 );
 ```
+
+Of course if you want to be in complete control and implement custom code for all the above interfaces you can do so. You could write and read from a CSV file, or an XML document. You could even have the repositories and persisters read and write to a HTTP end point.
