@@ -215,7 +215,6 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user = $this->objectManager->find($this->testClassName, 1);
         $user->setUsername('jonwage');
 
-        $this->objectManager->update($user);
         $this->objectManager->flush();
         $this->objectManager->clear();
 
@@ -348,7 +347,6 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->eventTester->called = array();
 
         $user->setUsername('jmikola');
-        $this->objectManager->update($user);
         $this->objectManager->flush();
 
         $expected = array(
@@ -416,7 +414,6 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user->called = array();
 
         $user->setUsername('jmikola');
-        $this->objectManager->update($user);
         $this->objectManager->flush();
 
         $expected = array(

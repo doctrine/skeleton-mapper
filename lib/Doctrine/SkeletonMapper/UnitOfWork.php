@@ -128,11 +128,11 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function persist($object)
     {
-        $oid = spl_object_hash($object);
-
-        if (isset($this->objectsToPersist[$oid])) {
-            return;
+        if ($this->isScheduledForPersist($object)) {
+            throw new \InvalidArgumentException('Object is already scheduled for persist.');
         }
+
+        $oid = spl_object_hash($object);
 
         $this->eventDispatcher->dispatchPrePersist($object);
 
@@ -148,11 +148,11 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function update($object)
     {
-        $oid = spl_object_hash($object);
-
-        if (isset($this->objectsToUpdate[$oid])) {
-            return;
+        if ($this->isScheduledForUpdate($object)) {
+            throw new \InvalidArgumentException('Object is already scheduled for update.');
         }
+
+        $oid = spl_object_hash($object);
 
         $this->eventDispatcher->dispatchPreUpdate($object);
 
@@ -164,11 +164,11 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function remove($object)
     {
-        $oid = spl_object_hash($object);
-
-        if (isset($this->objectsToRemove[$oid])) {
-            return;
+        if ($this->isScheduledForRemove($object)) {
+            throw new \InvalidArgumentException('Object is already scheduled for remove.');
         }
+
+        $oid = spl_object_hash($object);
 
         $this->eventDispatcher->dispatchPreRemove($object);
 
@@ -320,7 +320,9 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $this->update($object);
+        if (!$this->isScheduledForUpdate($object)) {
+            $this->update($object);
+        }
 
         $oid = spl_object_hash($object);
         $this->objectChangeSets[$oid][$propertyName] = array($oldValue, $newValue);
