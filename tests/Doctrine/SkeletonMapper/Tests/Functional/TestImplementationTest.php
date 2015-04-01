@@ -34,7 +34,7 @@ class TestImplementationTest extends BaseImplementationTest
     protected function createUserDataRepository()
     {
         return new UserDataRepository(
-            $this->objectManager, $this->users
+            $this->objectManager, $this->users, $this->testClassName
         );
     }
 
@@ -52,7 +52,7 @@ class TestImplementationTest extends BaseImplementationTest
     protected function createUserPersister()
     {
         return new UserPersister(
-            $this->objectManager, $this->users
+            $this->objectManager, $this->users, $this->testClassName
         );
     }
 }

@@ -64,7 +64,7 @@ class DBALImplementationTest extends BaseImplementationTest
     protected function createUserDataRepository()
     {
         return new UserDataRepository(
-            $this->objectManager, $this->connection
+            $this->objectManager, $this->connection, $this->testClassName, 'users'
         );
     }
 
@@ -82,7 +82,7 @@ class DBALImplementationTest extends BaseImplementationTest
     protected function createUserPersister()
     {
         return new UserPersister(
-            $this->objectManager, $this->connection
+            $this->objectManager, $this->connection, $this->testClassName, 'users'
         );
     }
 }

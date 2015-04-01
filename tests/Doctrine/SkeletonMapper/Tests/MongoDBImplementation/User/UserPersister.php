@@ -6,11 +6,6 @@ use Doctrine\SkeletonMapper\Persister\MongoDBObjectPersister;
 
 class UserPersister extends MongoDBObjectPersister
 {
-    public function getClassName()
-    {
-        return 'Doctrine\SkeletonMapper\Tests\Model\User';
-    }
-
     public function persistObject($object)
     {
         $data = $this->prepareChangeSet($object);

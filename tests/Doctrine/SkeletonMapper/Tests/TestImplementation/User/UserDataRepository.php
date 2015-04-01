@@ -7,8 +7,4 @@ use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
 
 class UserDataRepository extends ArrayObjectDataRepository
 {
-    public function getClassName()
-    {
-        return 'Doctrine\SkeletonMapper\Tests\Model\User';
-    }
 }

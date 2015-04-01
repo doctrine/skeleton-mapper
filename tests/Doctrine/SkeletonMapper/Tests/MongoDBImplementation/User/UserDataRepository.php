@@ -6,8 +6,4 @@ use Doctrine\SkeletonMapper\DataRepository\MongoDBObjectDataRepository;
 
 class UserDataRepository extends MongoDBObjectDataRepository
 {
-    public function getClassName()
-    {
-        return 'Doctrine\SkeletonMapper\Tests\Model\User';
-    }
 }
