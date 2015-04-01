@@ -91,13 +91,9 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function find($id)
     {
-        $data = $this->objectDataRepository->find($id);
-
-        if ($data === null) {
-            return;
-        }
-
-        return $this->objectManager->getOrCreateObject($this->getClassName(), $data);
+        return $this->getOrCreateObject(
+            $this->objectDataRepository->find($id)
+        );
     }
 
     /**
@@ -107,12 +103,11 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function findAll()
     {
-        $className = $this->getClassName();
         $objectsData = $this->objectDataRepository->findAll();
 
         $objects = array();
         foreach ($objectsData as $objectData) {
-            $objects[] = $this->objectManager->getOrCreateObject($className, $objectData);
+            $objects[] = $this->getOrCreateObject($objectData);
         }
 
         return $objects;
@@ -136,15 +131,13 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-        $className = $this->getClassName();
-
         $objectsData = $this->objectDataRepository->findBy(
             $criteria, $orderBy, $limit, $offset
         );
 
         $objects = array();
         foreach ($objectsData as $objectData) {
-            $objects[] = $this->objectManager->getOrCreateObject($className, $objectData);
+            $objects[] = $this->getOrCreateObject($objectData);
         }
 
         return $objects;
@@ -159,13 +152,9 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function findOneBy(array $criteria)
     {
-        $data = $this->objectDataRepository->findOneBy($criteria);
-
-        if ($data === null) {
-            return;
-        }
-
-        return $this->objectManager->getOrCreateObject($this->getClassName(), $data);
+        return $this->getOrCreateObject(
+            $this->objectDataRepository->findOneBy($criteria)
+        );
     }
 
     /**
@@ -221,5 +210,21 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     public function create($className)
     {
         return $this->objectFactory->create($className);
+    }
+
+    /**
+     * @param array|null $data
+     *
+     * @return object|null
+     */
+    private function getOrCreateObject(array $data = null)
+    {
+        if ($data === null) {
+            return;
+        }
+
+        return $this->objectManager->getOrCreateObject(
+            $this->getClassName(), $data
+        );
     }
 }

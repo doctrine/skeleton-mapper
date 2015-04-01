@@ -66,9 +66,7 @@ class ObjectIdentityMap
     {
         $className = get_class($object);
 
-        $objectIdentifier = $this->objectRepositoryFactory
-            ->getRepository($className)
-            ->getObjectIdentifier($object);
+        $objectIdentifier = $this->getObjectIdentifier($object);
 
         $serialized = serialize($objectIdentifier);
 
