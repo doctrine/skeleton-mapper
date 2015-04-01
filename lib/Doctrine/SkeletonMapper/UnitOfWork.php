@@ -28,7 +28,6 @@ use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
 
 /**
@@ -403,6 +402,9 @@ class UnitOfWork implements PropertyChangedListener
         );
     }
 
+    /**
+     * @param string|null $objectName
+     */
     private function dispatchOnClearEvent($objectName)
     {
         $this->dispatchEvent(
