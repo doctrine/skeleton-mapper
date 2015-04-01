@@ -89,11 +89,7 @@ class ClassMetadata implements ClassMetadataInterface
 
         $this->fieldMappings[$mapping['fieldName']] = $mapping;
 
-        if ($this->reflClass->hasProperty($mapping['fieldName'])) {
-            $reflProp = $this->reflClass->getProperty($mapping['fieldName']);
-            $reflProp->setAccessible(true);
-            $this->reflFields[$mapping['fieldName']] = $reflProp;
-        }
+        $this->initReflField($mapping);
     }
 
     /**
@@ -353,5 +349,17 @@ class ClassMetadata implements ClassMetadataInterface
     public function isAssociationInverseSide($fieldName)
     {
         throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+    }
+
+    /**
+     * @param array $mapping
+     */
+    private function initReflField(array $mapping)
+    {
+        if ($this->reflClass->hasProperty($mapping['fieldName'])) {
+            $reflProp = $this->reflClass->getProperty($mapping['fieldName']);
+            $reflProp->setAccessible(true);
+            $this->reflFields[$mapping['fieldName']] = $reflProp;
+        }
     }
 }
