@@ -34,7 +34,7 @@ ObjectHydrator:
 ```php
 namespace Doctrine\SkeletonMapper\Hydrator;
 
-class ObjectHydratorInterface
+interface ObjectHydratorInterface
 {
     public function hydrate($object, array $data);
 }
@@ -47,7 +47,7 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
 
-class ObjectRepositoryInterface
+interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {
     public function getObjectIdentifier($object);
     public function getObjectIdentifierFromData(array $data);
@@ -55,7 +55,7 @@ class ObjectRepositoryInterface
     public function hydrate($object, array $data);
     public function create($className);
 
-    // inherited from BaseObjectRepositoryInterface
+    // inherited from Doctrine\Common\Persistence\ObjectRepository
 
     public function find($id);
     public function findAll();
