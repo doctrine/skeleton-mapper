@@ -92,7 +92,7 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * @return \Doctrine\SkeletonWrapper\UnitOfWork
+     * @return UnitOfWork
      */
     public function getUnitOfWork()
     {

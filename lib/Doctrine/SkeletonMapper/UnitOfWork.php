@@ -135,7 +135,7 @@ class UnitOfWork implements PropertyChangedListener
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
-        if (! empty($class->lifecycleCallbacks[Events::prePersist])) {
+        if (!empty($class->lifecycleCallbacks[Events::prePersist])) {
             $class->invokeLifecycleCallbacks(Events::prePersist, $object);
         }
 
@@ -167,7 +167,7 @@ class UnitOfWork implements PropertyChangedListener
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
-        if (! empty($class->lifecycleCallbacks[Events::preUpdate])) {
+        if (!empty($class->lifecycleCallbacks[Events::preUpdate])) {
             $class->invokeLifecycleCallbacks(Events::preUpdate, $object);
         }
 
@@ -199,7 +199,7 @@ class UnitOfWork implements PropertyChangedListener
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
-        if (! empty($class->lifecycleCallbacks[Events::preRemove])) {
+        if (!empty($class->lifecycleCallbacks[Events::preRemove])) {
             $class->invokeLifecycleCallbacks(Events::preRemove, $object);
         }
 
@@ -282,12 +282,12 @@ class UnitOfWork implements PropertyChangedListener
             $className = get_class($object);
             $class = $this->objectManager->getClassMetadata($className);
 
-            if (! empty($class->lifecycleCallbacks[Events::preFlush])) {
+            if (!empty($class->lifecycleCallbacks[Events::preFlush])) {
                 $class->invokeLifecycleCallbacks(Events::preFlush, $object);
             }
         }
 
-        if (! ($this->objectsToPersist ||
+        if (!($this->objectsToPersist ||
             $this->objectsToUpdate ||
             $this->objectsToRemove)
         ) {
@@ -448,7 +448,7 @@ class UnitOfWork implements PropertyChangedListener
             $persister->assignIdentifier($object, $identifier);
             $this->objectIdentityMap->addToIdentityMap($object, $objectData);
 
-            if (! empty($class->lifecycleCallbacks[Events::postPersist])) {
+            if (!empty($class->lifecycleCallbacks[Events::postPersist])) {
                 $class->invokeLifecycleCallbacks(Events::postPersist, $object);
             }
 
@@ -476,7 +476,7 @@ class UnitOfWork implements PropertyChangedListener
             $className = get_class($object);
             $class = $this->objectManager->getClassMetadata($className);
 
-            if (! empty($class->lifecycleCallbacks[Events::postUpdate])) {
+            if (!empty($class->lifecycleCallbacks[Events::postUpdate])) {
                 $class->invokeLifecycleCallbacks(Events::postUpdate, $object);
             }
 
@@ -504,7 +504,7 @@ class UnitOfWork implements PropertyChangedListener
             $className = get_class($object);
             $class = $this->objectManager->getClassMetadata($className);
 
-            if (! empty($class->lifecycleCallbacks[Events::postRemove])) {
+            if (!empty($class->lifecycleCallbacks[Events::postRemove])) {
                 $class->invokeLifecycleCallbacks(Events::postRemove, $object);
             }
 
@@ -529,7 +529,7 @@ class UnitOfWork implements PropertyChangedListener
     }
 
     /**
-     * @return \Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface
+     * @return \Doctrine\Common\Persistence\ObjectRepository
      */
     private function getObjectRepository($object)
     {
