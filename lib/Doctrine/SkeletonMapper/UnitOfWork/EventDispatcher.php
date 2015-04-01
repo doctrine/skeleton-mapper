@@ -86,7 +86,7 @@ class EventDispatcher
     public function dispatchObjectsLifecycleCallbacks($eventName, array $objects)
     {
         foreach ($objects as $object) {
-            $this->dispatchObjectLifecycleCallback(Events::preFlush, $object);
+            $this->dispatchObjectLifecycleCallback($eventName, $object);
         }
     }
 
