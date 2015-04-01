@@ -122,14 +122,10 @@ class ObjectIdentityMap
      */
     public function detach($object)
     {
-        $className = get_class($object);
-
-        $objectIdentifier = $this->objectRepositoryFactory
-            ->getRepository($className)
-            ->getObjectIdentifier($object);
+        $objectIdentifier = $this->getObjectIdentifier($object);
 
         $serialized = serialize($objectIdentifier);
-        unset($this->identityMap[$className][$serialized]);
+        unset($this->identityMap[get_class($object)][$serialized]);
     }
 
     /**
