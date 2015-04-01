@@ -118,7 +118,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     private function dynamicPrepareChangeSet($object, array $changeSet = array())
     {
         if ($changeSet) {
-            return array_map(function($change) {
+            return array_map(function ($change) {
                 return $change[1];
             }, $changeSet);
         }

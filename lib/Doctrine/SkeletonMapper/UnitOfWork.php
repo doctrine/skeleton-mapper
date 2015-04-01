@@ -20,16 +20,13 @@
 
 namespace Doctrine\SkeletonMapper;
 
-use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
-use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
-use Doctrine\SkeletonMapper\Event\PreFlushEventArgs;
-use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
+use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 
 /**
  * Class for managing the persistence of objects.
@@ -59,9 +56,14 @@ class UnitOfWork implements PropertyChangedListener
     private $objectIdentityMap;
 
     /**
-     * @var \Doctrine\Common\EventManager
+     * @var \Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher
      */
-    private $eventManager;
+    private $eventDispatcher;
+
+    /**
+     * @var \Doctrine\SkeletonMapper\UnitOfWork\Persister
+     */
+    private $persister;
 
     /**
      * @var array
@@ -101,15 +103,16 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectRepositoryFactory = $objectRepositoryFactory;
         $this->objectPersisterFactory = $objectPersisterFactory;
         $this->objectIdentityMap = $objectIdentityMap;
-        $this->eventManager = $eventManager;
-    }
 
-    /**
-     * @return \Doctrine\Common\EventManager
-     */
-    public function getEventManager()
-    {
-        return $this->eventManager;
+        $this->eventDispatcher = new EventDispatcher(
+            $objectManager, $this, $eventManager
+        );
+        $this->persister = new Persister(
+            $this->objectManager,
+            $this,
+            $this->eventDispatcher,
+            $this->objectIdentityMap
+        );
     }
 
     /**
@@ -131,7 +134,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $this->dispatchPrePersist($object);
+        $this->eventDispatcher->dispatchPrePersist($object);
 
         $this->objectsToPersist[$oid] = $object;
 
@@ -151,7 +154,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $this->dispatchPreUpdate($object);
+        $this->eventDispatcher->dispatchPreUpdate($object);
 
         $this->objectsToUpdate[$oid] = $object;
     }
@@ -167,7 +170,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $this->dispatchPreRemove($object);
+        $this->eventDispatcher->dispatchPreRemove($object);
 
         $this->objectsToRemove[$oid] = $object;
     }
@@ -184,7 +187,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToRemove = array();
         $this->objectChangeSets = array();
 
-        $this->dispatchOnClearEvent($objectName);
+        $this->eventDispatcher->dispatchOnClearEvent($objectName);
     }
 
     /**
@@ -217,7 +220,7 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function commit()
     {
-        $this->dispatchPreFlush();
+        $this->eventDispatcher->dispatchPreFlush();
 
         if (!($this->objectsToPersist ||
             $this->objectsToUpdate ||
@@ -226,13 +229,24 @@ class UnitOfWork implements PropertyChangedListener
             return; // Nothing to do.
         }
 
-        $this->dispatchPreFlushLifecycleCallbacks();
-        $this->dispatchOnFlush();
-        $this->executePersists();
-        $this->executeUpdates();
-        $this->executeRemoves();
-        $this->dispatchPostFlush();
+        $objects = array_merge(
+            $this->objectsToPersist,
+            $this->objectsToUpdate,
+            $this->objectsToRemove
+        );
+        $this->eventDispatcher->dispatchPreFlushLifecycleCallbacks($objects);
 
+        $this->eventDispatcher->dispatchOnFlush();
+
+        $this->persister->executePersists();
+        $this->persister->executeUpdates();
+        $this->persister->executeRemoves();
+
+        $this->eventDispatcher->dispatchPostFlush();
+
+        $this->objectsToPersist = array();
+        $this->objectsToUpdate = array();
+        $this->objectsToRemove = array();
         $this->objectChangeSets = array();
     }
 
@@ -247,6 +261,14 @@ class UnitOfWork implements PropertyChangedListener
     }
 
     /**
+     * @return array
+     */
+    public function getObjectsToPersist()
+    {
+        return $this->objectsToPersist;
+    }
+
+    /**
      * @param object $object
      *
      * @return bool
@@ -257,6 +279,14 @@ class UnitOfWork implements PropertyChangedListener
     }
 
     /**
+     * @return array
+     */
+    public function getObjectsToUpdate()
+    {
+        return $this->objectsToUpdate;
+    }
+
+    /**
      * @param object $object
      *
      * @return bool
@@ -264,6 +294,14 @@ class UnitOfWork implements PropertyChangedListener
     public function isScheduledForRemove($object)
     {
         return isset($this->objectsToRemove[spl_object_hash($object)]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getObjectsToRemove()
+    {
+        return $this->objectsToRemove;
     }
 
     /* PropertyChangedListener implementation */
@@ -344,173 +382,23 @@ class UnitOfWork implements PropertyChangedListener
         return $object;
     }
 
-    private function dispatchEvent($eventName, EventArgs $event)
-    {
-        if ($this->eventManager->hasListeners($eventName)) {
-            $this->eventManager->dispatchEvent($eventName, $event);
-        }
-    }
-
-    private function dispatchObjectLifecycleCallback($eventName, $object)
-    {
-        $className = get_class($object);
-        $class = $this->objectManager->getClassMetadata($className);
-
-        if (!empty($class->lifecycleCallbacks[$eventName])) {
-            $class->invokeLifecycleCallbacks($eventName, $object);
-        }
-    }
-
-    private function dispatchObjectsLifecycleCallbacks($eventName, array $objects)
-    {
-        foreach ($objects as $object) {
-            $this->dispatchObjectLifecycleCallback(Events::preFlush, $object);
-        }
-    }
-
-    private function dispatchPreFlush()
-    {
-        $this->dispatchEvent(
-            Events::preFlush,
-            new Event\PreFlushEventArgs($this->objectManager)
-        );
-    }
-
-    private function dispatchPreFlushLifecycleCallbacks()
-    {
-        $objects = array_merge(
-            $this->objectsToPersist,
-            $this->objectsToUpdate,
-            $this->objectsToRemove
-        );
-
-        $this->dispatchObjectsLifecycleCallbacks(Events::preFlush, $objects);
-    }
-
-    private function dispatchOnFlush()
-    {
-        $this->dispatchEvent(
-            Events::onFlush,
-            new Event\OnFlushEventArgs($this->objectManager)
-        );
-    }
-
-    private function dispatchPostFlush()
-    {
-        $this->dispatchEvent(
-            Events::postFlush,
-            new Event\PostFlushEventArgs($this->objectManager)
-        );
-    }
-
-    private function dispatchOnClearEvent($objectName)
-    {
-        $this->dispatchEvent(
-            Events::onClear,
-            new Event\OnClearEventArgs($this->objectManager, $objectName)
-        );
-    }
-
-    private function dispatchPreRemove($object)
-    {
-        $this->dispatchObjectLifecycleCallback(Events::preRemove, $object);
-
-        $this->dispatchEvent(
-            Events::preRemove,
-            new LifecycleEventArgs($object, $this->objectManager)
-        );
-    }
-
-    private function dispatchPreUpdate($object)
-    {
-        $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object);
-
-        $this->dispatchEvent(
-            Events::preUpdate,
-            new PreUpdateEventArgs(
-                $object,
-                $this->objectManager,
-                $this->objectChangeSets[spl_object_hash($object)]
-            )
-        );
-    }
-
-    private function dispatchPrePersist($object)
-    {
-        $this->dispatchObjectLifecycleCallback(Events::prePersist, $object);
-
-        $this->dispatchEvent(
-            Events::prePersist,
-            new LifecycleEventArgs($object, $this->objectManager)
-        );
-    }
-
-    private function dispatchLifecycleEvent($eventName, $object)
-    {
-        $this->dispatchObjectLifecycleCallback($eventName, $object);
-
-        $this->dispatchEvent(
-            $eventName,
-            new LifecycleEventArgs($object, $this->objectManager)
-        );
-    }
-
-    private function executePersists()
-    {
-        foreach ($this->objectsToPersist as $object) {
-            $className = get_class($object);
-
-            $class = $this->objectManager->getClassMetadata($className);
-            $persister = $this->getObjectPersister($object);
-            $repository = $this->getObjectRepository($object);
-
-            $objectData = $persister->persistObject($object);
-            $identifier = $repository->getObjectIdentifierFromData($objectData);
-
-            $persister->assignIdentifier($object, $identifier);
-            $this->objectIdentityMap->addToIdentityMap($object, $objectData);
-
-            $this->dispatchLifecycleEvent(Events::postPersist, $object);
-
-            unset($this->objectsToPersist[spl_object_hash($object)]);
-        }
-    }
-
-    private function executeUpdates()
-    {
-        foreach ($this->objectsToUpdate as $object) {
-            $changeSet = $this->getObjectChangeSet($object);
-
-            $this->getObjectPersister($object)
-                ->updateObject($object, $changeSet);
-
-            $this->dispatchLifecycleEvent(Events::postUpdate, $object);
-
-            unset($this->objectsToUpdate[spl_object_hash($object)]);
-        }
-    }
-
-    private function executeRemoves()
-    {
-        foreach ($this->objectsToRemove as $object) {
-            $this->getObjectPersister($object)
-                ->removeObject($object);
-
-            $this->objectIdentityMap->detach($object);
-
-            $this->dispatchLifecycleEvent(Events::postRemove, $object);
-
-            unset($this->objectsToRemove[spl_object_hash($object)]);
-        }
-    }
-
-    private function getObjectPersister($object)
+    /**
+     * @param object $object
+     *
+     * @return \Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface
+     */
+    public function getObjectPersister($object)
     {
         return $this->objectPersisterFactory
             ->getPersister(get_class($object));
     }
 
-    private function getObjectRepository($object)
+    /**
+     * @param object $object
+     *
+     * @return \Doctrine\SkeletonMapper\Repository\ObjectRepositoryInterface
+     */
+    public function getObjectRepository($object)
     {
         return $this->objectManager
             ->getRepository(get_class($object));
