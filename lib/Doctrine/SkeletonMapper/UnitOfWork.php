@@ -132,11 +132,9 @@ class UnitOfWork implements PropertyChangedListener
             throw new \InvalidArgumentException('Object is already scheduled for persist.');
         }
 
-        $oid = spl_object_hash($object);
-
         $this->eventDispatcher->dispatchPrePersist($object);
 
-        $this->objectsToPersist[$oid] = $object;
+        $this->objectsToPersist[spl_object_hash($object)] = $object;
 
         if ($object instanceof NotifyPropertyChanged) {
             $object->addPropertyChangedListener($this);
@@ -152,11 +150,9 @@ class UnitOfWork implements PropertyChangedListener
             throw new \InvalidArgumentException('Object is already scheduled for update.');
         }
 
-        $oid = spl_object_hash($object);
-
         $this->eventDispatcher->dispatchPreUpdate($object);
 
-        $this->objectsToUpdate[$oid] = $object;
+        $this->objectsToUpdate[spl_object_hash($object)] = $object;
     }
 
     /**
@@ -168,11 +164,9 @@ class UnitOfWork implements PropertyChangedListener
             throw new \InvalidArgumentException('Object is already scheduled for remove.');
         }
 
-        $oid = spl_object_hash($object);
-
         $this->eventDispatcher->dispatchPreRemove($object);
 
-        $this->objectsToRemove[$oid] = $object;
+        $this->objectsToRemove[spl_object_hash($object)] = $object;
     }
 
     /**
