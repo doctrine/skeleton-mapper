@@ -23,7 +23,6 @@ namespace Doctrine\SkeletonMapper\Mapping;
 interface LoadMetadataInterface
 {
     /**
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface $class
      */
     public static function loadMetadata(ClassMetadataInterface $metadata);
 }

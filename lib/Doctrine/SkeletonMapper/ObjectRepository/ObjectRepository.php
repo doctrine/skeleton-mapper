@@ -187,7 +187,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
         $className = get_class($object);
         $class = $this->objectManager->getClassMetadata($className);
 
-        if (! empty($class->lifecycleCallbacks[Events::preLoad])) {
+        if (!empty($class->lifecycleCallbacks[Events::preLoad])) {
             $args = array(&$data);
             $class->invokeLifecycleCallbacks(Events::preLoad, $object, $args);
         }
@@ -201,7 +201,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
 
         $this->objectHydrator->hydrate($object, $data);
 
-        if (! empty($class->lifecycleCallbacks[Events::postLoad])) {
+        if (!empty($class->lifecycleCallbacks[Events::postLoad])) {
             $class->invokeLifecycleCallbacks(Events::postLoad, $object);
         }
 

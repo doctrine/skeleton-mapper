@@ -196,7 +196,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getAssociationTargetClass($assocName)
     {
-        if (! isset($this->associationMappings[$assocName])) {
+        if (!isset($this->associationMappings[$assocName])) {
             throw new \InvalidArgumentException("Association name expected, '".$assocName."' is not an association.");
         }
 
@@ -285,7 +285,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function hasLifecycleCallbacks($event)
     {
-        return ! empty($this->lifecycleCallbacks[$event]);
+        return !empty($this->lifecycleCallbacks[$event]);
     }
 
     /**
