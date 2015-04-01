@@ -116,9 +116,7 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function merge($object)
     {
-        $this->objectRepositoryFactory
-            ->getRepository(get_class($object))
-            ->merge($object);
+        $this->getObjectRepository($object)->merge($object);
     }
 
     /**
@@ -132,19 +130,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $className = get_class($object);
-        $class = $this->objectManager->getClassMetadata($className);
-
-        if (!empty($class->lifecycleCallbacks[Events::prePersist])) {
-            $class->invokeLifecycleCallbacks(Events::prePersist, $object);
-        }
-
-        if ($this->eventManager->hasListeners(Events::prePersist)) {
-            $this->eventManager->dispatchEvent(
-                Events::prePersist,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
-        }
+        $this->dispatchPrePersist($object);
 
         $this->objectsToPersist[$oid] = $object;
 
@@ -164,23 +150,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $className = get_class($object);
-        $class = $this->objectManager->getClassMetadata($className);
-
-        if (!empty($class->lifecycleCallbacks[Events::preUpdate])) {
-            $class->invokeLifecycleCallbacks(Events::preUpdate, $object);
-        }
-
-        if ($this->eventManager->hasListeners(Events::preUpdate)) {
-            $this->eventManager->dispatchEvent(
-                Events::preUpdate,
-                new PreUpdateEventArgs(
-                    $object,
-                    $this->objectManager,
-                    $this->objectChangeSets[$oid]
-                )
-            );
-        }
+        $this->dispatchPreUpdate($object);
 
         $this->objectsToUpdate[$oid] = $object;
     }
@@ -196,19 +166,7 @@ class UnitOfWork implements PropertyChangedListener
             return;
         }
 
-        $className = get_class($object);
-        $class = $this->objectManager->getClassMetadata($className);
-
-        if (!empty($class->lifecycleCallbacks[Events::preRemove])) {
-            $class->invokeLifecycleCallbacks(Events::preRemove, $object);
-        }
-
-        if ($this->eventManager->hasListeners(Events::preRemove)) {
-            $this->eventManager->dispatchEvent(
-                Events::preRemove,
-                new LifecycleEventArgs($object, $this->objectManager)
-            );
-        }
+        $this->dispatchPreRemove($object);
 
         $this->objectsToRemove[$oid] = $object;
     }
@@ -225,12 +183,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToRemove = array();
         $this->objectChangeSets = array();
 
-        if ($this->eventManager->hasListeners(Events::onClear)) {
-            $this->eventManager->dispatchEvent(
-                Events::onClear,
-                new Event\OnClearEventArgs($this->objectManager, $objectName)
-            );
-        }
+        $this->dispatchOnClearEvent($objectName);
     }
 
     /**
@@ -246,9 +199,7 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function refresh($object)
     {
-        $this->objectRepositoryFactory
-            ->getRepository(get_class($object))
-            ->refresh($object);
+        $this->getObjectRepository($object)->refresh($object);
     }
 
     /**
@@ -265,27 +216,7 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function commit()
     {
-        if ($this->eventManager->hasListeners(Events::preFlush)) {
-            $this->eventManager->dispatchEvent(
-                Events::preFlush,
-                new Event\PreFlushEventArgs($this->objectManager)
-            );
-        }
-
-        $objects = array_merge(
-            $this->objectsToPersist,
-            $this->objectsToUpdate,
-            $this->objectsToRemove
-        );
-
-        foreach ($objects as $object) {
-            $className = get_class($object);
-            $class = $this->objectManager->getClassMetadata($className);
-
-            if (!empty($class->lifecycleCallbacks[Events::preFlush])) {
-                $class->invokeLifecycleCallbacks(Events::preFlush, $object);
-            }
-        }
+        $this->dispatchPreFlush();
 
         if (!($this->objectsToPersist ||
             $this->objectsToUpdate ||
@@ -294,31 +225,12 @@ class UnitOfWork implements PropertyChangedListener
             return; // Nothing to do.
         }
 
-        if ($this->eventManager->hasListeners(Events::onFlush)) {
-            $this->eventManager->dispatchEvent(
-                Events::onFlush,
-                new Event\OnFlushEventArgs($this->objectManager)
-            );
-        }
-
-        if ($this->objectsToPersist) {
-            $this->executePersists();
-        }
-
-        if ($this->objectsToUpdate) {
-            $this->executeUpdates();
-        }
-
-        if ($this->objectsToRemove) {
-            $this->executeRemoves();
-        }
-
-        if ($this->eventManager->hasListeners(Events::postFlush)) {
-            $this->eventManager->dispatchEvent(
-                Events::postFlush,
-                new Event\PostFlushEventArgs($this->objectManager)
-            );
-        }
+        $this->dispatchPreFlushLifecycleCallbacks();
+        $this->dispatchOnFlush();
+        $this->executePersists();
+        $this->executeUpdates();
+        $this->executeRemoves();
+        $this->dispatchPostFlush();
 
         $this->objectChangeSets = array();
     }
@@ -431,8 +343,120 @@ class UnitOfWork implements PropertyChangedListener
         return $object;
     }
 
-    /**
-     */
+    private function dispatchPreFlush()
+    {
+        if ($this->eventManager->hasListeners(Events::preFlush)) {
+            $this->eventManager->dispatchEvent(
+                Events::preFlush,
+                new Event\PreFlushEventArgs($this->objectManager)
+            );
+        }
+    }
+
+    private function dispatchPreFlushLifecycleCallbacks()
+    {
+        $objects = array_merge(
+            $this->objectsToPersist,
+            $this->objectsToUpdate,
+            $this->objectsToRemove
+        );
+
+        foreach ($objects as $object) {
+            $className = get_class($object);
+            $class = $this->objectManager->getClassMetadata($className);
+
+            if (!empty($class->lifecycleCallbacks[Events::preFlush])) {
+                $class->invokeLifecycleCallbacks(Events::preFlush, $object);
+            }
+        }
+    }
+
+    private function dispatchOnFlush()
+    {
+        if ($this->eventManager->hasListeners(Events::onFlush)) {
+            $this->eventManager->dispatchEvent(
+                Events::onFlush,
+                new Event\OnFlushEventArgs($this->objectManager)
+            );
+        }
+    }
+
+    private function dispatchPostFlush()
+    {
+        if ($this->eventManager->hasListeners(Events::postFlush)) {
+            $this->eventManager->dispatchEvent(
+                Events::postFlush,
+                new Event\PostFlushEventArgs($this->objectManager)
+            );
+        }
+    }
+
+    private function dispatchOnClearEvent($objectName)
+    {
+        if ($this->eventManager->hasListeners(Events::onClear)) {
+            $this->eventManager->dispatchEvent(
+                Events::onClear,
+                new Event\OnClearEventArgs($this->objectManager, $objectName)
+            );
+        }
+    }
+
+    private function dispatchPreRemove($object)
+    {
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (!empty($class->lifecycleCallbacks[Events::preRemove])) {
+            $class->invokeLifecycleCallbacks(Events::preRemove, $object);
+        }
+
+        if ($this->eventManager->hasListeners(Events::preRemove)) {
+            $this->eventManager->dispatchEvent(
+                Events::preRemove,
+                new LifecycleEventArgs($object, $this->objectManager)
+            );
+        }
+    }
+
+    private function dispatchPreUpdate($object)
+    {
+        $oid = spl_object_hash($object);
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (!empty($class->lifecycleCallbacks[Events::preUpdate])) {
+            $class->invokeLifecycleCallbacks(Events::preUpdate, $object);
+        }
+
+        if ($this->eventManager->hasListeners(Events::preUpdate)) {
+            $this->eventManager->dispatchEvent(
+                Events::preUpdate,
+                new PreUpdateEventArgs(
+                    $object,
+                    $this->objectManager,
+                    $this->objectChangeSets[$oid]
+                )
+            );
+        }
+    }
+
+    private function dispatchPrePersist($object)
+    {
+        $className = get_class($object);
+        $class = $this->objectManager->getClassMetadata($className);
+
+        if (!empty($class->lifecycleCallbacks[Events::prePersist])) {
+            $class->invokeLifecycleCallbacks(Events::prePersist, $object);
+        }
+
+        if ($this->eventManager->hasListeners(Events::prePersist)) {
+            $this->eventManager->dispatchEvent(
+                Events::prePersist,
+                new LifecycleEventArgs($object, $this->objectManager)
+            );
+        }
+    }
+
     private function executePersists()
     {
         foreach ($this->objectsToPersist as $object) {
@@ -463,8 +487,6 @@ class UnitOfWork implements PropertyChangedListener
         }
     }
 
-    /**
-     */
     private function executeUpdates()
     {
         foreach ($this->objectsToUpdate as $object) {
@@ -491,8 +513,6 @@ class UnitOfWork implements PropertyChangedListener
         }
     }
 
-    /**
-     */
     private function executeRemoves()
     {
         foreach ($this->objectsToRemove as $object) {
@@ -519,18 +539,12 @@ class UnitOfWork implements PropertyChangedListener
         }
     }
 
-    /**
-     * @return \Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface
-     */
     private function getObjectPersister($object)
     {
         return $this->objectPersisterFactory
             ->getPersister(get_class($object));
     }
 
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
     private function getObjectRepository($object)
     {
         return $this->objectManager
