@@ -50,7 +50,6 @@ class Persister
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface     $objectManager
      * @param \Doctrine\SkeletonMapper\UnitOfWork                 $unitOfWork
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher $eventManager
      * @param \Doctrine\SkeletonMapper\ObjectIdentityMap          $objectIdentityMap
      */
     public function __construct(
