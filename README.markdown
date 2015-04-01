@@ -16,7 +16,7 @@ The Doctrine SkeletonMapper is a skeleton object mapper where you are 100% respo
 
 ObjectDataRepository:
 
-```
+```php
 namespace Doctrine\SkeletonMapper\DataRepository;
 
 interface ObjectDataRepositoryInterface
