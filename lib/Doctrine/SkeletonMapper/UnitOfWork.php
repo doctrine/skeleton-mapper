@@ -353,33 +353,18 @@ class UnitOfWork implements PropertyChangedListener
     }
 
     /**
+     * @param string $className
      * @param array $data
      *
      * @return object
      */
     public function getOrCreateObject($className, array $data)
     {
-        $object = $this->objectIdentityMap->tryGetById($className, $data);
-
-        if (!$object) {
-            $repository = $this->objectManager->getRepository($className);
-
-            $object = $repository->create($className);
-
-            if ($object instanceof NotifyPropertyChanged) {
-                $object->addPropertyChangedListener($this);
-            }
-
-            $this->eventDispatcher->dispatchPreLoad($object, $data);
-
-            $repository->hydrate($object, $data);
-
-            $this->eventDispatcher->dispatchPostLoad($object, $data);
-
-            $this->objectIdentityMap->addToIdentityMap($object, $data);
+        if ($object = $this->objectIdentityMap->tryGetById($className, $data)) {
+            return $object;
         }
 
-        return $object;
+        return $this->createObject($className, $data);
     }
 
     /**
@@ -402,5 +387,32 @@ class UnitOfWork implements PropertyChangedListener
     {
         return $this->objectManager
             ->getRepository(get_class($object));
+    }
+
+    /**
+     * @param string $className
+     * @param array $data
+     *
+     * @return object
+     */
+    private function createObject($className, array $data)
+    {
+        $repository = $this->objectManager->getRepository($className);
+
+        $object = $repository->create($className);
+
+        if ($object instanceof NotifyPropertyChanged) {
+            $object->addPropertyChangedListener($this);
+        }
+
+        $this->eventDispatcher->dispatchPreLoad($object, $data);
+
+        $repository->hydrate($object, $data);
+
+        $this->eventDispatcher->dispatchPostLoad($object, $data);
+
+        $this->objectIdentityMap->addToIdentityMap($object, $data);
+
+        return $object;
     }
 }
