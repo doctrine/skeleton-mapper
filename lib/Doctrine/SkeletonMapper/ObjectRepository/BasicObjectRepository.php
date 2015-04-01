@@ -23,35 +23,6 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 class BasicObjectRepository extends ObjectRepository
 {
     /**
-     * @var string
-     */
-    protected $className;
-
-    /**
-     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface
-     */
-    protected $class;
-
-    /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
-
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
-    {
-        $this->className = $className;
-        $this->class = $this->objectManager->getClassMetadata($this->className);
-    }
-
-    /**
      * Returns the objects identifier.
      *
      * @return array

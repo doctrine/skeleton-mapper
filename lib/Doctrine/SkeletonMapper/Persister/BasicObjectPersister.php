@@ -41,10 +41,12 @@ abstract class BasicObjectPersister extends ObjectPersister
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
+     * @param string                                                         $className
      */
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(ObjectManagerInterface $objectManager, $className = null)
     {
         $this->objectManager = $objectManager;
+        $this->className = $className;
     }
 
     /**

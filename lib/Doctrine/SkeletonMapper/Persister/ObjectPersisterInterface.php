@@ -28,13 +28,6 @@ namespace Doctrine\SkeletonMapper\Persister;
 interface ObjectPersisterInterface
 {
     /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    public function getClassName();
-
-    /**
      * Prepares an object changeset for persistence.
      *
      * @param object $object

@@ -33,12 +33,14 @@ abstract class MongoDBObjectPersister extends BasicObjectPersister
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      * @param \MongoCollection                                $mongoCollection
+     * @param string                                          $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        MongoCollection $mongoCollection)
+        MongoCollection $mongoCollection,
+        $className = null)
     {
-        parent::__construct($objectManager);
+        parent::__construct($objectManager, $className);
         $this->mongoCollection = $mongoCollection;
     }
 

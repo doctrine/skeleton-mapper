@@ -17,12 +17,14 @@ class ArrayObjectPersister extends BasicObjectPersister
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      * @param \Doctrine\Common\Collections\ArrayCollection    $objects
+     * @param string                                          $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ArrayCollection $objects)
+        ArrayCollection $objects,
+        $className = null)
     {
-        parent::__construct($objectManager);
+        parent::__construct($objectManager, $className);
         $this->objects = $objects;
     }
 

@@ -23,7 +23,7 @@ namespace Doctrine\SkeletonMapper\Persister;
 use Doctrine\DBAL\Connection;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
-abstract class DBALObjectPersister extends BasicObjectPersister
+class DBALObjectPersister extends BasicObjectPersister
 {
     /**
      * @var \Doctrine\DBAL\Connection
@@ -31,21 +31,34 @@ abstract class DBALObjectPersister extends BasicObjectPersister
     protected $connection;
 
     /**
+     * @var string
+     */
+    protected $tableName;
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      * @param \Doctrine\DBAL\Connection                       $connection
+     * @param string                                          $className
+     * @param string                                          $tableName
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        Connection $connection)
+        Connection $connection,
+        $className = null,
+        $tableName = null)
     {
-        parent::__construct($objectManager);
+        parent::__construct($objectManager, $className);
         $this->connection = $connection;
+        $this->tableName = $tableName;
     }
 
     /**
      * @return string
      */
-    abstract public function getTableName();
+    public function getTableName()
+    {
+        return $this->tableName;
+    }
 
     public function persistObject($object)
     {

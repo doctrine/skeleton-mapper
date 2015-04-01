@@ -30,13 +30,6 @@ use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterfac
 interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {
     /**
-     * Returns the class name of the object managed by the repository.
-     *
-     * @return string
-     */
-    public function getClassName();
-
-    /**
      * Returns the objects identifier.
      *
      * @return array

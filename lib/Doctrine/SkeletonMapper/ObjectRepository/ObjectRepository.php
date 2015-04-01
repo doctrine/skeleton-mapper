@@ -62,24 +62,59 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     protected $eventManager;
 
     /**
+     * @var string
+     */
+    protected $className;
+
+    /**
+     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface
+     */
+    protected $class;
+
+    /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                       $objectManager
      * @param \Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface $objectDataRepository
      * @param \Doctrine\SkeletonMapper\ObjectFactory                                $objectFactory
      * @param \Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface             $objectHydrator
      * @param \Doctrine\Common\EventManager                                         $eventManager
+     * @param string                                                                $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ObjectDataRepositoryInterface $objectDataRepository,
         ObjectFactory $objectFactory,
         ObjectHydratorInterface $objectHydrator,
-        EventManager $eventManager)
+        EventManager $eventManager,
+        $className = null)
     {
         $this->objectManager = $objectManager;
         $this->objectDataRepository = $objectDataRepository;
         $this->objectFactory = $objectFactory;
         $this->objectHydrator = $objectHydrator;
         $this->eventManager = $eventManager;
+
+        if ($className !== null) {
+            $this->setClassName($className);
+        }
+    }
+
+    /**
+     * Returns the class name of the object managed by the repository.
+     *
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+        $this->class = $this->objectManager->getClassMetadata($this->className);
     }
 
     /**
