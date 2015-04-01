@@ -34,7 +34,7 @@ class TestImplementationTest extends BaseImplementationTest
     protected function createUserDataRepository()
     {
         return new UserDataRepository(
-            $this->users
+            $this->objectManager, $this->users
         );
     }
 

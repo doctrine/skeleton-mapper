@@ -31,11 +31,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 abstract class DBALObjectDataRepository extends BasicObjectDataRepository
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * @var \Doctrine\DBAL\Connection
      */
     protected $connection;
@@ -48,7 +43,7 @@ abstract class DBALObjectDataRepository extends BasicObjectDataRepository
         ObjectManagerInterface $objectManager,
         Connection $connection)
     {
-        $this->objectManager = $objectManager;
+        parent::__construct($objectManager);
         $this->connection = $connection;
     }
 
@@ -56,22 +51,6 @@ abstract class DBALObjectDataRepository extends BasicObjectDataRepository
      * @return string
      */
     abstract public function getTableName();
-
-    public function find($id)
-    {
-        $identifier = $this->getIdentifier();
-
-        $identifierValues = is_array($id) ? $id : array($id);
-
-        $criteria = array_combine($identifier, $identifierValues);
-
-        return $this->findOneBy($criteria);
-    }
-
-    public function findByObject($object)
-    {
-        return $this->find($this->getObjectIdentifier($object));
-    }
 
     public function findAll()
     {
@@ -119,27 +98,5 @@ abstract class DBALObjectDataRepository extends BasicObjectDataRepository
     public function findOneBy(array $criteria)
     {
         return current($this->findBy($criteria)) ?: null;
-    }
-
-    /**
-     * @return array $identifier
-     */
-    protected function getIdentifier()
-    {
-        return $this->objectManager
-            ->getClassMetadata($this->getClassName())
-            ->getIdentifier();
-    }
-
-    /**
-     * @param object $object
-     *
-     * @return array
-     */
-    protected function getObjectIdentifier($object)
-    {
-        return $this->objectManager
-            ->getRepository($this->getClassName())
-            ->getObjectIdentifier($object);
     }
 }

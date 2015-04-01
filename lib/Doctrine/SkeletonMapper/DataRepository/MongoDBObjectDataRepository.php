@@ -43,22 +43,8 @@ abstract class MongoDBObjectDataRepository extends BasicObjectDataRepository
         ObjectManagerInterface $objectManager,
         MongoCollection $mongoCollection)
     {
-        $this->objectManager = $objectManager;
+        parent::__construct($objectManager);
         $this->mongoCollection = $mongoCollection;
-    }
-
-    public function find($id)
-    {
-        if (!is_array($id)) {
-            $id = array('_id' => $id);
-        }
-
-        return $this->mongoCollection->findOne($id);
-    }
-
-    public function findByObject($object)
-    {
-        return $this->find($this->getObjectIdentifier($object));
     }
 
     public function findAll()
@@ -88,17 +74,5 @@ abstract class MongoDBObjectDataRepository extends BasicObjectDataRepository
     public function findOneBy(array $criteria)
     {
         return $this->mongoCollection->findOne($criteria);
-    }
-
-    /**
-     * @param object $object
-     *
-     * @return array
-     */
-    protected function getObjectIdentifier($object)
-    {
-        return $this->objectManager
-            ->getRepository($this->getClassName())
-            ->getObjectIdentifier($object);
     }
 }

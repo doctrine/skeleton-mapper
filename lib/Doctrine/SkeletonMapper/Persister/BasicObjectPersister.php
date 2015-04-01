@@ -108,6 +108,28 @@ abstract class BasicObjectPersister extends ObjectPersister
     }
 
     /**
+     * @return array $identifier
+     */
+    protected function getIdentifier()
+    {
+        return $this->objectManager
+            ->getClassMetadata($this->getClassName())
+            ->getIdentifier();
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return array
+     */
+    protected function getObjectIdentifier($object)
+    {
+        return $this->objectManager
+            ->getRepository($this->getClassName())
+            ->getObjectIdentifier($object);
+    }
+
+    /**
      * Dynamically prepare a changeset using mapping information.
      *
      * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
