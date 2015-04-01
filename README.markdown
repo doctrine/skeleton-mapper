@@ -103,6 +103,7 @@ class User
      */
     public $password;
 }
+```
 
 Create all the necessary services for the mapper:
 
