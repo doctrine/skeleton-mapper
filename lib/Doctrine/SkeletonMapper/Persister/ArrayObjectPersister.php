@@ -70,6 +70,6 @@ class ArrayObjectPersister extends BasicObjectPersister
         foreach ($this->objects as $objectData) {
             $ids[] = $objectData[$class->identifier[0]];
         }
-        return max($ids) + 1;
+        return $ids ? max($ids) + 1 : 1;
     }
 }

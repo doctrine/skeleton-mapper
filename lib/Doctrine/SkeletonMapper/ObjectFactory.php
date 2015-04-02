@@ -29,9 +29,9 @@ namespace Doctrine\SkeletonMapper;
 class ObjectFactory
 {
     /**
-     * @var object
+     * @var array
      */
-    private $prototype;
+    private $prototypes = array();
 
     /**
      * @var array
@@ -45,15 +45,15 @@ class ObjectFactory
      */
     public function create($className)
     {
-        if ($this->prototype === null) {
+        if (!isset($this->prototypes[$className])) {
             if (PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513 || PHP_VERSION_ID >= 50600) {
-                $this->prototype = $this->getReflectionClass($className)->newInstanceWithoutConstructor();
+                $this->prototypes[$className] = $this->getReflectionClass($className)->newInstanceWithoutConstructor();
             } else {
-                $this->prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
+                $this->prototypes[$className] = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
             }
         }
 
-        return clone $this->prototype;
+        return clone $this->prototypes[$className];
     }
 
     /**

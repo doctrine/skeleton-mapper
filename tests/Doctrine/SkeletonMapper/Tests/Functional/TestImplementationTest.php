@@ -4,9 +4,8 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\TestImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\TestImplementation\ObjectDataRepository;
+use Doctrine\SkeletonMapper\Tests\TestImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class TestImplementationTest extends BaseImplementationTest
@@ -25,34 +24,39 @@ class TestImplementationTest extends BaseImplementationTest
                 'password' => 'password',
             ),
         ));
+        $this->profiles = new ArrayCollection();
 
         $this->usersTester = new TestUsersTester($this->users);
+        $this->profilesTester = new TestUsersTester($this->profiles);
 
         $this->setUpCommon();
     }
 
     protected function createUserDataRepository()
     {
-        return new UserDataRepository(
-            $this->objectManager, $this->users, $this->testClassName
-        );
-    }
-
-    protected function createUserRepository()
-    {
-        return new UserRepository(
-            $this->objectManager,
-            $this->userDataRepository,
-            $this->objectFactory,
-            $this->basicObjectHydrator,
-            $this->eventManager
+        return new ObjectDataRepository(
+            $this->objectManager, $this->users, $this->userClassName
         );
     }
 
     protected function createUserPersister()
     {
-        return new UserPersister(
-            $this->objectManager, $this->users, $this->testClassName
+        return new ObjectPersister(
+            $this->objectManager, $this->users, $this->userClassName
+        );
+    }
+
+    protected function createProfileDataRepository()
+    {
+        return new ObjectDataRepository(
+            $this->objectManager, $this->profiles, $this->profileClassName, 'profiles'
+        );
+    }
+
+    protected function createProfilePersister()
+    {
+        return new ObjectPersister(
+            $this->objectManager, $this->profiles, $this->profileClassName, 'profiles'
         );
     }
 }

@@ -51,7 +51,7 @@ class BasicObjectHydrator extends ObjectHydrator
     public function hydrate($object, array $data)
     {
         if ($object instanceof HydratableInterface) {
-            $object->hydrate($data);
+            $object->hydrate($data, $this->objectManager);
         } else {
             $this->abstractHydrate($object, $data);
         }

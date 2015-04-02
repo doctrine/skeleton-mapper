@@ -11,7 +11,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-class User implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged
+class Profile implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged
 {
     /**
      * @var array
@@ -19,29 +19,14 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
     private $listeners = array();
 
     /**
-     * @var id
+     * @var int
      */
     private $id;
 
     /**
      * @var string
      */
-    private $username;
-
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * @var \Doctrine\SkeletonMapper\Tests\Model\Profile
-     */
-    private $profile;
-
-    /**
-     * @var array
-     */
-    public $called = array();
+    private $name;
 
     /**
      * Assign identifier to object.
@@ -62,14 +47,7 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
             'fieldName' => 'id',
         ));
         $metadata->mapField(array(
-            'fieldName' => 'username',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'password',
-        ));
-        $metadata->mapField(array(
-            'name' => 'profileId',
-            'fieldName' => 'profile',
+            'fieldName' => 'name',
         ));
     }
 
@@ -88,56 +66,19 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
         }
     }
 
-    public function getUsername()
+    public function getName()
     {
-        return $this->username;
+        return $this->name;
     }
 
-    public function setUsername($username)
+    public function setName($name)
     {
-        $username = (string) $username;
+        $name = (string) $name;
 
-        if ($this->username !== $username) {
-            $this->onPropertyChanged('username', $this->username, $username);
-            $this->username = $username;
+        if ($this->name !== $name) {
+            $this->onPropertyChanged('name', $this->name, $name);
+            $this->name = $name;
         }
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword($password)
-    {
-        $password = (string) $password;
-
-        if ($this->password !== $password) {
-            $this->onPropertyChanged('password', $this->password, $password);
-            $this->password = $password;
-        }
-    }
-
-    public function getProfile()
-    {
-        return $this->profile;
-    }
-
-    public function setProfile(Profile $profile)
-    {
-        if ($this->profile !== $profile) {
-            $this->onPropertyChanged('profile', $this->profile, $profile);
-            $this->profile = $profile;
-        }
-    }
-
-    /**
-     * @param string $method
-     * @param array  $arguments
-     */
-    public function __call($method, $arguments)
-    {
-        $this->called[] = $method;
     }
 
     /**
@@ -160,19 +101,8 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
             $this->id = (int) $data['_id'];
         }
 
-        if (isset($data['username'])) {
-            $this->username = (string) $data['username'];
-        }
-
-        if (isset($data['password'])) {
-            $this->password = (string) $data['password'];
-        }
-
-        if (isset($data['profileId'])) {
-            $this->profile = $objectManager->find(
-                'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                $data['profileId']
-            );
+        if (isset($data['name'])) {
+            $this->name = (string) $data['name'];
         }
     }
 
@@ -192,22 +122,12 @@ class User implements HydratableInterface, PersistableInterface, IdentifiableInt
 
             $changeSet['_id'] = (int) $this->id;
 
-            if (isset($changeSet['profile'])) {
-                $changeSet['profileId'] = $changeSet['profile']->getId();
-                unset($changeSet['profile']);
-            }
-
             return $changeSet;
         }
 
         $changeSet = array(
-            'username' => $this->username,
-            'password' => $this->password,
+            'name' => $this->name,
         );
-
-        if ($this->profile !== null) {
-            $changeSet['profileId'] = $this->profile->getId();
-        }
 
         if ($this->id !== null) {
             $changeSet['_id'] = (int) $this->id;

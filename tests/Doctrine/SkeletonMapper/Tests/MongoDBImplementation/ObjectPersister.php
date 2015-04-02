@@ -1,10 +1,10 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User;
+namespace Doctrine\SkeletonMapper\Tests\MongoDBImplementation;
 
 use Doctrine\SkeletonMapper\Persister\MongoDBObjectPersister;
 
-class UserPersister extends MongoDBObjectPersister
+class ObjectPersister extends MongoDBObjectPersister
 {
     public function persistObject($object)
     {
@@ -18,9 +18,14 @@ class UserPersister extends MongoDBObjectPersister
                 ->sort(array('_id' => -1))
                 ->limit(1);
             $mostRecentDocument = iterator_to_array($mostRecentDocument, false);
-            $mostRecentDocument = $mostRecentDocument[0];
 
-            $nextId = $mostRecentDocument['_id'] + 1;
+            if ($mostRecentDocument) {
+                $mostRecentDocument = $mostRecentDocument[0];
+
+                $nextId = $mostRecentDocument['_id'] + 1;
+            } else {
+                $nextId = 1;
+            }
 
             $data[$class->identifier[0]] = $nextId;
         }

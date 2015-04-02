@@ -206,7 +206,7 @@ class ClassMetadata implements ClassMetadataInterface
     {
         $identifier = array();
         foreach ($this->identifierFieldNames as $identifierFieldName) {
-            $identifier[$identifierFieldName] = $this->reflFields[$identifierFieldName]->getValue($object);
+            $identifier[$this->fieldMappings[$identifierFieldName]['name']] = $this->reflFields[$identifierFieldName]->getValue($object);
         }
 
         return $identifier;

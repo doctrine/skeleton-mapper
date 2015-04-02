@@ -3,9 +3,8 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
-use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectDataRepository;
+use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class MongoDBImplementationTest extends BaseImplementationTest
@@ -17,7 +16,6 @@ class MongoDBImplementationTest extends BaseImplementationTest
             : new \MongoClient();
 
         $this->users = $mongo->selectDb('test')->selectCollection('users');
-
         $this->users->drop();
 
         $this->users->batchInsert(array(
@@ -33,36 +31,68 @@ class MongoDBImplementationTest extends BaseImplementationTest
             ),
         ));
 
+        $this->profiles = $mongo->selectDb('test')->selectCollection('profiles');
+        $this->profiles->drop();
+
         $this->usersTester = new MongoDBUsersTester($this->users);
+        $this->profilesTester = new MongoDBUsersTester($this->profiles);
     }
 
     protected function createUserDataRepository()
     {
-        return new UserDataRepository(
-            $this->objectManager, $this->users, $this->testClassName, 'users'
-        );
-    }
-
-    protected function createUserRepository()
-    {
-        return new UserRepository(
-            $this->objectManager,
-            $this->userDataRepository,
-            $this->objectFactory,
-            $this->basicObjectHydrator,
-            $this->eventManager
+        return new ObjectDataRepository(
+            $this->objectManager, $this->users, $this->userClassName, 'users'
         );
     }
 
     protected function createUserPersister()
     {
-        return new UserPersister(
-            $this->objectManager, $this->users, $this->testClassName, 'users'
+        return new ObjectPersister(
+            $this->objectManager, $this->users, $this->userClassName, 'users'
+        );
+    }
+
+    protected function createProfileDataRepository()
+    {
+        return new ObjectDataRepository(
+            $this->objectManager, $this->profiles, $this->profileClassName, 'profiles'
+        );
+    }
+
+    protected function createProfilePersister()
+    {
+        return new ObjectPersister(
+            $this->objectManager, $this->profiles, $this->profileClassName, 'profiles'
         );
     }
 }
 
 class MongoDBUsersTester implements UsersTesterInterface
+{
+    private $collection;
+
+    public function __construct(\MongoCollection $collection)
+    {
+        $this->collection = $collection;
+    }
+
+    public function find($id)
+    {
+        return $this->collection->findOne(array('_id' => $id));
+    }
+
+    public function set($id, $key, $value)
+    {
+        $this->collection->update(array('_id' => $id), array('$set' => array($key => $value)));
+    }
+
+    public function count()
+    {
+        return $this->collection->count();
+    }
+}
+
+class MongoDBProfilesTester implements UsersTesterInterface
 {
     private $collection;
 

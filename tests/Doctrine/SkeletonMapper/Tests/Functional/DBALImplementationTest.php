@@ -4,9 +4,8 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\DBAL;
 use Doctrine\SkeletonMapper\Tests\Model\User;
-use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
-use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserDataRepository;
-use Doctrine\SkeletonMapper\Tests\DBALImplementation\User\UserPersister;
+use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectDataRepository;
+use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
 
 class DBALImplementationTest extends BaseImplementationTest
@@ -23,11 +22,18 @@ class DBALImplementationTest extends BaseImplementationTest
         $connection = DBAL\DriverManager::getConnection($connectionParams, $config);
 
         $schema = new DBAL\Schema\Schema();
-        $table = $schema->createTable('users');
-        $table->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
-        $table->addColumn('username', 'string', array('length' => 32, 'notnull' => false));
-        $table->addColumn('password', 'string', array('length' => 32, 'notnull' => false));
-        $table->setPrimaryKey(array('_id'));
+
+        $usersTable = $schema->createTable('users');
+        $usersTable->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
+        $usersTable->addColumn('username', 'string', array('length' => 32, 'notnull' => false));
+        $usersTable->addColumn('password', 'string', array('length' => 32, 'notnull' => false));
+        $usersTable->addColumn('profileId', 'string', array('length' => 32, 'notnull' => false));
+        $usersTable->setPrimaryKey(array('_id'));
+
+        $profilesTable = $schema->createTable('profiles');
+        $profilesTable->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
+        $profilesTable->addColumn('name', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->setPrimaryKey(array('_id'));
 
         $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
 
@@ -39,7 +45,8 @@ class DBALImplementationTest extends BaseImplementationTest
             'driver' => 'pdo_mysql',
         );
         $this->connection = DBAL\DriverManager::getConnection($connectionParams, $config);
-        $this->connection->getSchemaManager()->createTable($table);
+        $this->connection->getSchemaManager()->createTable($usersTable);
+        $this->connection->getSchemaManager()->createTable($profilesTable);
 
         $users = array(
             array(
@@ -59,30 +66,34 @@ class DBALImplementationTest extends BaseImplementationTest
         }
 
         $this->usersTester = new DBALUsersTester($this->connection);
+        $this->profilesTester = new DBALProfilesTester($this->connection);
     }
 
     protected function createUserDataRepository()
     {
-        return new UserDataRepository(
-            $this->objectManager, $this->connection, $this->testClassName, 'users'
-        );
-    }
-
-    protected function createUserRepository()
-    {
-        return new UserRepository(
-            $this->objectManager,
-            $this->userDataRepository,
-            $this->objectFactory,
-            $this->basicObjectHydrator,
-            $this->eventManager
+        return new ObjectDataRepository(
+            $this->objectManager, $this->connection, $this->userClassName, 'users'
         );
     }
 
     protected function createUserPersister()
     {
-        return new UserPersister(
-            $this->objectManager, $this->connection, $this->testClassName, 'users'
+        return new ObjectPersister(
+            $this->objectManager, $this->connection, $this->userClassName, 'users'
+        );
+    }
+
+    protected function createProfileDataRepository()
+    {
+        return new ObjectDataRepository(
+            $this->objectManager, $this->connection, $this->profileClassName, 'profiles'
+        );
+    }
+
+    protected function createProfilePersister()
+    {
+        return new ObjectPersister(
+            $this->objectManager, $this->connection, $this->profileClassName, 'profiles'
         );
     }
 }
@@ -114,5 +125,35 @@ class DBALUsersTester implements UsersTesterInterface
     public function count()
     {
         return $this->connection->fetchColumn('SELECT COUNT(1) FROM users');
+    }
+}
+
+class DBALProfilesTester implements UsersTesterInterface
+{
+    private $connection;
+
+    public function __construct(DBAL\Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    public function find($id)
+    {
+        return $this->connection
+            ->executeQuery('SELECT * FROM profiles WHERE _id = ?', array($id))
+            ->fetch();
+    }
+
+    public function set($id, $key, $value)
+    {
+        $this->connection->executeQuery(
+            sprintf('UPDATE profiles SET %s = ? WHERE _id = ?', $key),
+            array($value, $id)
+        );
+    }
+
+    public function count()
+    {
+        return $this->connection->fetchColumn('SELECT COUNT(1) FROM profiles');
     }
 }
