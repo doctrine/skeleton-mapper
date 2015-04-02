@@ -49,6 +49,14 @@ abstract class MongoDBObjectDataRepository extends BasicObjectDataRepository
         $this->mongoCollection = $mongoCollection;
     }
 
+    /**
+     * @return \MongoCollection
+     */
+    public function getMongoCollection()
+    {
+        return $this->mongoCollection;
+    }
+
     public function findAll()
     {
         return iterator_to_array($this->mongoCollection->find(array()));

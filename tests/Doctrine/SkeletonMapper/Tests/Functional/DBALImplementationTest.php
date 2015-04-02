@@ -3,6 +3,7 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\DBAL;
+use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectPersister;
@@ -95,6 +96,27 @@ class DBALImplementationTest extends BaseImplementationTest
         return new ObjectPersister(
             $this->objectManager, $this->connection, $this->profileClassName, 'profiles'
         );
+    }
+
+    public function testSelectProfileData()
+    {
+        $user = $this->objectManager->find($this->userClassName, 1);
+
+        $profile = new Profile();
+        $profile->setName('Jonathan H. Wage');
+        $user->setProfile($profile);
+
+        $this->objectManager->persist($profile);
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $userRepository = $this->objectManager->getRepository($this->userClassName);
+
+        $user = $userRepository->findUserWithProfileData(1);
+        $this->assertEquals('Jonathan H. Wage', $user->getProfile()->getName());
+
+        $profile = $this->objectManager->find($this->profileClassName, 1);
+        $this->assertSame($profile, $user->getProfile());
     }
 }
 

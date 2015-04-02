@@ -65,6 +65,14 @@ class DBALObjectDataRepository extends BasicObjectDataRepository
         return $this->tableName;
     }
 
+    /**
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
     public function findAll()
     {
         $sql = sprintf('SELECT * FROM %s', $this->getTableName());

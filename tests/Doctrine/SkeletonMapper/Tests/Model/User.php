@@ -151,7 +151,17 @@ class User extends BaseObject
             $this->password = (string) $data['password'];
         }
 
-        if (isset($data['profileId'])) {
+        if (isset($data['profileId']) && isset($data['profileName'])) {
+            $profileData = array(
+                '_id' => $data['profileId'],
+                'name' => $data['profileName'],
+            );
+
+            $this->profile = $objectManager->getOrCreateObject(
+                'Doctrine\SkeletonMapper\Tests\Model\Profile',
+                $profileData
+            );
+        } else if (isset($data['profileId'])) {
             $this->profile = $objectManager->find(
                 'Doctrine\SkeletonMapper\Tests\Model\Profile',
                 $data['profileId']

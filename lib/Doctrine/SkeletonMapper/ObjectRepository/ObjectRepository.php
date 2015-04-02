@@ -223,7 +223,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      *
      * @return object|null
      */
-    private function getOrCreateObject(array $data = null)
+    protected function getOrCreateObject(array $data = null)
     {
         if ($data === null) {
             return;
