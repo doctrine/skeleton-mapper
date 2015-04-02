@@ -5,6 +5,7 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Events;
+use Doctrine\SkeletonMapper\Tests\Model\Address;
 use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\ProfileRepository;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
@@ -654,6 +655,40 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
         $user = $this->objectManager->find($this->userClassName, $user->getId());
         $this->assertEquals('John Caplan', $user->getProfile()->getName());
+    }
+
+    public function testEmbeddedAddress()
+    {
+        $user = $this->objectManager->find($this->userClassName, 1);
+
+        $profile = new Profile();
+        $address = new Address($profile);
+        $address->setAddress1('273 Lake Terrace Dr.');
+        $address->setCity('Hendersonville');
+        $address->setState('TN');
+        $address->setZip('37075');
+
+        $profile->setAddress($address);
+        $profile->setName('Jonathan H. Wage');
+        $user->setProfile($profile);
+
+        $this->objectManager->persist($profile);
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user = $this->objectManager->find($this->userClassName, 1);
+
+        $this->assertNotNull($user->getProfile()->getAddress());
+        $this->assertEquals($address, $user->getProfile()->getAddress());
+
+        $user->getProfile()->getAddress()->setState('Tennessee');
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user = $this->objectManager->find($this->userClassName, 1);
+
+        $this->assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
     }
 
     protected function createUserRepository()

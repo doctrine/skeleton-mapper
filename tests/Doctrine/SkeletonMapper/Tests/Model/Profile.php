@@ -20,6 +20,11 @@ class Profile extends BaseObject
     private $name;
 
     /**
+     * @var \Doctrine\SkeletonMapper\Tests\Model\Address
+     */
+    private $address;
+
+    /**
      * Assign identifier to object.
      *
      * @param array $identifier
@@ -39,6 +44,9 @@ class Profile extends BaseObject
         ));
         $metadata->mapField(array(
             'fieldName' => 'name',
+        ));
+        $metadata->mapField(array(
+            'fieldName' => 'address',
         ));
     }
 
@@ -72,6 +80,28 @@ class Profile extends BaseObject
         }
     }
 
+    public function getAddress()
+    {
+        if ($this->address instanceof \Closure) {
+            $this->address = $this->address->__invoke();
+        }
+
+        return $this->address;
+    }
+
+    public function setAddress(Address $address)
+    {
+        if ($this->address != $address) {
+            $this->onPropertyChanged('address', $this->address, $address);
+            $this->address = $address;
+        }
+    }
+
+    public function addressChanged($propName, $oldValue, $newValue)
+    {
+        $this->onPropertyChanged('address', $this->address, $this->address);
+    }
+
     /**
      * @see HydratableInterface
      *
@@ -86,6 +116,40 @@ class Profile extends BaseObject
 
         if (isset($data['name'])) {
             $this->name = (string) $data['name'];
+        }
+
+        if (isset($data['address1'])
+            || isset($data['address2'])
+            || isset($data['city'])
+            || isset($data['state'])
+            || isset($data['zip'])) {
+
+            $profile = $this;
+            $this->address = function() use ($data, $profile) {
+                $address = new Address($profile);
+
+                if (isset($data['address1'])) {
+                    $address->setAddress1($data['address1']);
+                }
+
+                if (isset($data['address2'])) {
+                    $address->setAddress2($data['address2']);
+                }
+
+                if (isset($data['city'])) {
+                    $address->setCity($data['city']);
+                }
+
+                if (isset($data['state'])) {
+                    $address->setState($data['state']);
+                }
+
+                if (isset($data['zip'])) {
+                    $address->setZip($data['zip']);
+                }
+
+                return $address;
+            };
         }
     }
 
@@ -105,12 +169,30 @@ class Profile extends BaseObject
 
             $changeSet['_id'] = (int) $this->id;
 
+            if ($address = $changeSet['address']) {
+                unset($changeSet['address']);
+
+                $changeSet['address1'] = $address->getAddress1();
+                $changeSet['address2'] = $address->getAddress2();
+                $changeSet['city'] = $address->getCity();
+                $changeSet['state'] = $address->getState();
+                $changeSet['zip'] = $address->getZip();
+            }
+
             return $changeSet;
         }
 
         $changeSet = array(
             'name' => $this->name,
         );
+
+        if ($this->address !== null) {
+            $changeSet['address1'] = $this->address->getAddress1();
+            $changeSet['address2'] = $this->address->getAddress2();
+            $changeSet['city'] = $this->address->getCity();
+            $changeSet['state'] = $this->address->getState();
+            $changeSet['zip'] = $this->address->getZip();
+        }
 
         if ($this->id !== null) {
             $changeSet['_id'] = (int) $this->id;

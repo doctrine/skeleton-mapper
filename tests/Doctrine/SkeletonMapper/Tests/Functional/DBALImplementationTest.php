@@ -34,6 +34,11 @@ class DBALImplementationTest extends BaseImplementationTest
         $profilesTable = $schema->createTable('profiles');
         $profilesTable->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
         $profilesTable->addColumn('name', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->addColumn('address1', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->addColumn('address2', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->addColumn('city', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->addColumn('state', 'string', array('length' => 32, 'notnull' => false));
+        $profilesTable->addColumn('zip', 'string', array('length' => 32, 'notnull' => false));
         $profilesTable->setPrimaryKey(array('_id'));
 
         $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');

@@ -111,6 +111,10 @@ class User extends BaseObject
 
     public function getProfile()
     {
+        if ($this->profile instanceof \Closure) {
+            $this->profile = $this->profile->__invoke();
+        }
+
         return $this->profile;
     }
 
@@ -157,15 +161,19 @@ class User extends BaseObject
                 'name' => $data['profileName'],
             );
 
-            $this->profile = $objectManager->getOrCreateObject(
-                'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                $profileData
-            );
+            $this->profile = function() use ($objectManager, $profileData) {
+                return $objectManager->getOrCreateObject(
+                    'Doctrine\SkeletonMapper\Tests\Model\Profile',
+                    $profileData
+                );
+            };
         } else if (isset($data['profileId'])) {
-            $this->profile = $objectManager->find(
-                'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                $data['profileId']
-            );
+            $this->profile = function() use ($objectManager, $data) {
+                return $objectManager->find(
+                    'Doctrine\SkeletonMapper\Tests\Model\Profile',
+                    $data['profileId']
+                );
+            };
         }
     }
 
