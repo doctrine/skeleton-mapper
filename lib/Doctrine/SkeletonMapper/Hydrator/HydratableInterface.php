@@ -30,7 +30,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 interface HydratableInterface
 {
     /**
-     * @param array $data
+     * @param array                                           $data
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      */
     public function hydrate(array $data, ObjectManagerInterface $objectManager);

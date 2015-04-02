@@ -3,7 +3,6 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\TestImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;

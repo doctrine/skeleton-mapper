@@ -22,9 +22,6 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
-use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
-use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
-use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectFactory;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;

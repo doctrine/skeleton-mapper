@@ -2,7 +2,6 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
-use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;

@@ -3,7 +3,6 @@
 namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\DataRepository\BasicObjectDataRepository;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class ArrayObjectDataRepository extends BasicObjectDataRepository

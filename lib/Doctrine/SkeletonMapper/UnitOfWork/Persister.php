@@ -48,9 +48,9 @@ class Persister
     private $objectIdentityMap;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface     $objectManager
-     * @param \Doctrine\SkeletonMapper\UnitOfWork                 $unitOfWork
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap          $objectIdentityMap
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param \Doctrine\SkeletonMapper\UnitOfWork             $unitOfWork
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap      $objectIdentityMap
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

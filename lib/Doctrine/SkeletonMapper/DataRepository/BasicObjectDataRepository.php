@@ -36,7 +36,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param string $className
+     * @param string                                          $className
      */
     public function __construct(ObjectManagerInterface $objectManager, $className = null)
     {

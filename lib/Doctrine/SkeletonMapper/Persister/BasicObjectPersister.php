@@ -41,7 +41,7 @@ abstract class BasicObjectPersister extends ObjectPersister
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
-     * @param string                                                         $className
+     * @param string                                          $className
      */
     public function __construct(ObjectManagerInterface $objectManager, $className = null)
     {
@@ -142,7 +142,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     private function dynamicPrepareChangeSet($object, array $changeSet = array())
     {
         if ($changeSet) {
-            return array_map(function($change) {
+            return array_map(function ($change) {
                 return $change[1];
             }, $changeSet);
         }

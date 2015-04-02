@@ -5,7 +5,6 @@ namespace Doctrine\SkeletonMapper\Persister;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use Doctrine\SkeletonMapper\Persister\BasicObjectPersister;
 
 class ArrayObjectPersister extends BasicObjectPersister
 {
@@ -70,6 +69,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         foreach ($this->objects as $objectData) {
             $ids[] = $objectData[$class->identifier[0]];
         }
+
         return $ids ? max($ids) + 1 : 1;
     }
 }

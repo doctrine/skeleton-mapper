@@ -28,7 +28,6 @@ use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use Doctrine\SkeletonMapper\UnitOfWork;
 
 class EventDispatcher
 {
@@ -148,7 +147,7 @@ class EventDispatcher
 
     /**
      * @param object $object
-     * @param array $changeSet
+     * @param array  $changeSet
      */
     public function dispatchPreUpdate($object, array &$changeSet = null)
     {

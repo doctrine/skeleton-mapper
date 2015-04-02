@@ -2,22 +2,13 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
-use Doctrine\Common\NotifyPropertyChanged;
-use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
-use Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-class Profile implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged
+class Profile extends BaseObject
 {
-    /**
-     * @var array
-     */
-    private $listeners = array();
-
     /**
      * @var int
      */
@@ -82,17 +73,9 @@ class Profile implements HydratableInterface, PersistableInterface, Identifiable
     }
 
     /**
-     * @param \Doctrine\Common\PropertyChangedListener $listener
-     */
-    public function addPropertyChangedListener(PropertyChangedListener $listener)
-    {
-        $this->listeners[] = $listener;
-    }
-
-    /**
      * @see HydratableInterface
      *
-     * @param array $data
+     * @param array                                           $data
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
      */
     public function hydrate(array $data, ObjectManagerInterface $objectManager)
@@ -134,19 +117,5 @@ class Profile implements HydratableInterface, PersistableInterface, Identifiable
         }
 
         return $changeSet;
-    }
-
-    /**
-     * @param string $propName
-     * @param mixed  $oldValue
-     * @param mixed  $newValue
-     */
-    protected function onPropertyChanged($propName, $oldValue, $newValue)
-    {
-        if ($this->listeners) {
-            foreach ($this->listeners as $listener) {
-                $listener->propertyChanged($this, $propName, $oldValue, $newValue);
-            }
-        }
     }
 }

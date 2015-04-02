@@ -358,7 +358,7 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * @param string $className
-     * @param array $data
+     * @param array  $data
      *
      * @return object
      */
@@ -395,7 +395,7 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * @param string $className
-     * @param array $data
+     * @param array  $data
      *
      * @return object
      */
