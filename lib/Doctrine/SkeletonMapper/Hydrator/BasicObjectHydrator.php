@@ -45,33 +45,15 @@ class BasicObjectHydrator extends ObjectHydrator
     }
 
     /**
-     * @param object $object
-     * @param array  $data
+     * @param \Doctrine\SkeletonMapper\Hydrator\HydratableInterface $object
+     * @param array                                                 $data
      */
     public function hydrate($object, array $data)
     {
-        if ($object instanceof HydratableInterface) {
-            $object->hydrate($data, $this->objectManager);
-        } else {
-            $this->abstractHydrate($object, $data);
+        if (!$object instanceof HydratableInterface) {
+            throw new \InvalidArgumentException(sprintf('%s must implement HydratableInterface.', get_class($object)));
         }
-    }
 
-    /**
-     * @param object $object
-     * @param array  $data
-     */
-    private function abstractHydrate($object, array $data)
-    {
-        $class = $this->objectManager->getClassMetadata(get_class($object));
-
-        foreach ($class->fieldMappings as $fieldMapping) {
-            if (!isset($data[$fieldMapping['name']])) {
-                continue;
-            }
-
-            $class->reflFields[$fieldMapping['fieldName']]
-                ->setValue($object, $data[$fieldMapping['name']]);
-        }
+        $object->hydrate($data, $this->objectManager);
     }
 }

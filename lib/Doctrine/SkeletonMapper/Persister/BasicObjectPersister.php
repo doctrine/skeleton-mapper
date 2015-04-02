@@ -87,11 +87,11 @@ abstract class BasicObjectPersister extends ObjectPersister
      */
     public function prepareChangeSet($object, array $changeSet = array())
     {
-        if ($object instanceof PersistableInterface) {
-            return $object->prepareChangeSet($changeSet);
+        if (!$object instanceof PersistableInterface) {
+            throw new \InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
         }
 
-        return $this->dynamicPrepareChangeSet($object, $changeSet);
+        return $object->prepareChangeSet($changeSet);
     }
 
     /**
@@ -102,74 +102,10 @@ abstract class BasicObjectPersister extends ObjectPersister
      */
     public function assignIdentifier($object, array $identifier)
     {
-        if ($object instanceof IdentifiableInterface) {
-            return $object->assignIdentifier($identifier);
+        if (!$object instanceof IdentifiableInterface) {
+            throw new \InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', get_class($object)));
         }
 
-        return $this->dynamicAssignIdentifier($object, $identifier);
-    }
-
-    /**
-     * @return array $identifier
-     */
-    protected function getIdentifier()
-    {
-        return $this->objectManager
-            ->getClassMetadata($this->getClassName())
-            ->getIdentifier();
-    }
-
-    /**
-     * @param object $object
-     *
-     * @return array
-     */
-    protected function getObjectIdentifier($object)
-    {
-        return $this->objectManager
-            ->getRepository($this->getClassName())
-            ->getObjectIdentifier($object);
-    }
-
-    /**
-     * Dynamically prepare a changeset using mapping information.
-     *
-     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
-     * @param array                                                   $changeSet
-     *
-     * @return array
-     */
-    private function dynamicPrepareChangeSet($object, array $changeSet = array())
-    {
-        if ($changeSet) {
-            return array_map(function ($change) {
-                return $change[1];
-            }, $changeSet);
-        }
-
-        $class = $this->getClassMetadata();
-
-        $changeSet = array();
-        foreach ($class->fieldMappings as $fieldMapping) {
-            $value = $class->reflFields[$fieldMapping['fieldName']]->getValue($object);
-
-            $changeSet[$fieldMapping['name']] = $value;
-        }
-
-        return $changeSet;
-    }
-
-    /**
-     * Dynamically assign identifier to object using mapping information.
-     *
-     * @param object $object
-     * @param array  $identifier
-     */
-    private function dynamicAssignIdentifier($object, array $identifier)
-    {
-        $class = $this->getClassMetadata();
-
-        $class->reflFields[$class->identifierFieldNames[0]]
-            ->setValue($object, $identifier[$class->identifier[0]]);
+        return $object->assignIdentifier($identifier);
     }
 }
