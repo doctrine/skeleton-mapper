@@ -31,7 +31,6 @@ interface ObjectPersisterInterface
      * Prepares an object persist changeset for persistence.
      *
      * @param object $object
-     * @param array  $changeSet
      *
      * @return array
      */
