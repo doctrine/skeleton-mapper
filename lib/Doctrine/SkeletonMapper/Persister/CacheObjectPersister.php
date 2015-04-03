@@ -3,7 +3,6 @@
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class CacheObjectPersister extends BasicObjectPersister
