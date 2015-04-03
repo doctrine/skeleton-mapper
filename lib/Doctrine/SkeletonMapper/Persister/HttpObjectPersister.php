@@ -34,7 +34,7 @@ class HttpObjectPersister extends BasicObjectPersister
     /**
      * @var string
      */
-    protected $tableName;
+    protected $url;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
