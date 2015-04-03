@@ -45,7 +45,7 @@ class PersistentCollection implements Collection
     private $collection;
 
     /**
-     * @param \Doctrine\Common\Collections\Collection $coll
+     * @param \Doctrine\Common\Collections\Collection $collection
      */
     public function __construct(Collection $collection)
     {
