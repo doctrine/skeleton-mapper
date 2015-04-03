@@ -189,14 +189,14 @@ class User extends BaseObject
                 'name' => $data['profileName'],
             );
 
-            $this->profile = function() use ($objectManager, $profileData) {
+            $this->profile = function () use ($objectManager, $profileData) {
                 return $objectManager->getOrCreateObject(
                     'Doctrine\SkeletonMapper\Tests\Model\Profile',
                     $profileData
                 );
             };
-        } else if (isset($data['profileId'])) {
-            $this->profile = function() use ($objectManager, $data) {
+        } elseif (isset($data['profileId'])) {
+            $this->profile = function () use ($objectManager, $data) {
                 return $objectManager->find(
                     'Doctrine\SkeletonMapper\Tests\Model\Profile',
                     (int) $data['profileId']
@@ -205,8 +205,8 @@ class User extends BaseObject
         }
 
         if (isset($data['groupIds'])) {
-            $this->groups = new LazyCollection(function() use ($objectManager, $data) {
-                return new ArrayCollection(array_map(function($groupId) use ($objectManager) {
+            $this->groups = new LazyCollection(function () use ($objectManager, $data) {
+                return new ArrayCollection(array_map(function ($groupId) use ($objectManager) {
                     return $objectManager->find(
                         'Doctrine\SkeletonMapper\Tests\Model\Group',
                         (int) $groupId
@@ -238,10 +238,10 @@ class User extends BaseObject
             }
 
             if (isset($changeSet['groups'])) {
-                $groupIds = $changeSet['groups']->map(function(Group $group) {
+                $groupIds = $changeSet['groups']->map(function (Group $group) {
                     return $group->getId();
                 })->toArray();
- 
+
                 $changeSet['groupIds'] = implode(',', $groupIds);
                 unset($changeSet['groups']);
             }
@@ -259,7 +259,7 @@ class User extends BaseObject
         }
 
         if ($this->groups) {
-            $groupIds = $this->groups->map(function(Group $group) {
+            $groupIds = $this->groups->map(function (Group $group) {
                 return $group->getId();
             })->toArray();
 

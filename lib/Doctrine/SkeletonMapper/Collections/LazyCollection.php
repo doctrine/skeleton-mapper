@@ -26,13 +26,12 @@ class LazyCollection extends AbstractLazyCollection
     public function getCollection()
     {
         $this->initialize();
+
         return $this->collection;
     }
 
     /**
      * Initializes the collection.
-     *
-     * @return void
      */
     protected function doInitialize()
     {

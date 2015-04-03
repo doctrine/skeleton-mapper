@@ -123,9 +123,8 @@ class Profile extends BaseObject
             || isset($data['city'])
             || isset($data['state'])
             || isset($data['zip'])) {
-
             $profile = $this;
-            $this->address = function() use ($data, $profile) {
+            $this->address = function () use ($data, $profile) {
                 $address = new Address($profile);
 
                 if (isset($data['address1'])) {

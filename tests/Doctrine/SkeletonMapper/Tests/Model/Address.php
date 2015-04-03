@@ -30,7 +30,7 @@ class Address
     private $zip;
 
     /**
-     * @var \Doctrine\SkeletonMapper\Tests\Model\Profile 
+     * @var \Doctrine\SkeletonMapper\Tests\Model\Profile
      */
     private $profile;
 

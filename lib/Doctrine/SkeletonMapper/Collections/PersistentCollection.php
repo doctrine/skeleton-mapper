@@ -35,7 +35,7 @@ class PersistentCollection implements Collection
     private $snapshot = array();
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isDirty = false;
 
@@ -83,7 +83,7 @@ class PersistentCollection implements Collection
         return array_udiff_assoc(
             $this->snapshot,
             $this->collection->toArray(),
-            function($a, $b) { return $a === $b ? 0 : 1; }
+            function ($a, $b) { return $a === $b ? 0 : 1; }
         );
     }
 
@@ -92,7 +92,7 @@ class PersistentCollection implements Collection
         return array_udiff_assoc(
             $this->collection->toArray(),
             $this->snapshot,
-            function($a, $b) { return $a === $b ? 0 : 1; }
+            function ($a, $b) { return $a === $b ? 0 : 1; }
         );
     }
 
@@ -171,6 +171,7 @@ class PersistentCollection implements Collection
     {
         $this->takeSnapshot();
         $this->collection->add($value);
+
         return true;
     }
 

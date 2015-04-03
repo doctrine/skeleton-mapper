@@ -746,6 +746,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $moderatorGroup = new Group('Moderator');
         $user->addGroup($moderatorGroup);
 
+        $this->objectManager->persist($moderatorGroup);
         $this->objectManager->flush();
         $this->objectManager->clear();
 
