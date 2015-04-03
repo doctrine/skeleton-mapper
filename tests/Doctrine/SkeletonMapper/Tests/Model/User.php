@@ -2,6 +2,9 @@
 
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\SkeletonMapper\Collections\LazyCollection;
+use Doctrine\SkeletonMapper\Collections\PersistentCollection;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -32,7 +35,17 @@ class User extends BaseObject
     /**
      * @var array
      */
+    private $groups;
+
+    /**
+     * @var array
+     */
     public $called = array();
+
+    public function __construct()
+    {
+        $this->groups = new PersistentCollection(new ArrayCollection());
+    }
 
     /**
      * Assign identifier to object.
@@ -61,6 +74,10 @@ class User extends BaseObject
         $metadata->mapField(array(
             'name' => 'profileId',
             'fieldName' => 'profile',
+        ));
+        $metadata->mapField(array(
+            'name' => 'groupIds',
+            'fieldName' => 'groups',
         ));
     }
 
@@ -126,6 +143,17 @@ class User extends BaseObject
         }
     }
 
+    public function addGroup(Group $group)
+    {
+        $this->groups->add($group);
+        $this->onPropertyChanged('groups', $this->groups, $this->groups);
+    }
+
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
     /**
      * @param string $method
      * @param array  $arguments
@@ -157,7 +185,7 @@ class User extends BaseObject
 
         if (isset($data['profileId']) && isset($data['profileName'])) {
             $profileData = array(
-                '_id' => $data['profileId'],
+                '_id' => (int) $data['profileId'],
                 'name' => $data['profileName'],
             );
 
@@ -171,9 +199,20 @@ class User extends BaseObject
             $this->profile = function() use ($objectManager, $data) {
                 return $objectManager->find(
                     'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                    $data['profileId']
+                    (int) $data['profileId']
                 );
             };
+        }
+
+        if (isset($data['groupIds'])) {
+            $this->groups = new LazyCollection(function() use ($objectManager, $data) {
+                return new ArrayCollection(array_map(function($groupId) use ($objectManager) {
+                    return $objectManager->find(
+                        'Doctrine\SkeletonMapper\Tests\Model\Group',
+                        (int) $groupId
+                    );
+                }, explode(',', $data['groupIds'])));
+            });
         }
     }
 
@@ -198,6 +237,15 @@ class User extends BaseObject
                 unset($changeSet['profile']);
             }
 
+            if (isset($changeSet['groups'])) {
+                $groupIds = $changeSet['groups']->map(function(Group $group) {
+                    return $group->getId();
+                })->toArray();
+ 
+                $changeSet['groupIds'] = implode(',', $groupIds);
+                unset($changeSet['groups']);
+            }
+
             return $changeSet;
         }
 
@@ -208,6 +256,14 @@ class User extends BaseObject
 
         if ($this->profile !== null) {
             $changeSet['profileId'] = $this->profile->getId();
+        }
+
+        if ($this->groups) {
+            $groupIds = $this->groups->map(function(Group $group) {
+                return $group->getId();
+            })->toArray();
+
+            $changeSet['groupIds'] = implode(',', $groupIds);
         }
 
         if ($this->id !== null) {

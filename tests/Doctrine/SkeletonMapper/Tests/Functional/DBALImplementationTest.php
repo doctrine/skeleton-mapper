@@ -7,7 +7,7 @@ use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectPersister;
-use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
+use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
 class DBALImplementationTest extends BaseImplementationTest
 {
@@ -29,6 +29,7 @@ class DBALImplementationTest extends BaseImplementationTest
         $usersTable->addColumn('username', 'string', array('length' => 32, 'notnull' => false));
         $usersTable->addColumn('password', 'string', array('length' => 32, 'notnull' => false));
         $usersTable->addColumn('profileId', 'string', array('length' => 32, 'notnull' => false));
+        $usersTable->addColumn('groupIds', 'string', array('length' => 32, 'notnull' => false));
         $usersTable->setPrimaryKey(array('_id'));
 
         $profilesTable = $schema->createTable('profiles');
@@ -40,6 +41,11 @@ class DBALImplementationTest extends BaseImplementationTest
         $profilesTable->addColumn('state', 'string', array('length' => 32, 'notnull' => false));
         $profilesTable->addColumn('zip', 'string', array('length' => 32, 'notnull' => false));
         $profilesTable->setPrimaryKey(array('_id'));
+
+        $groupsTable = $schema->createTable('groups');
+        $groupsTable->addColumn('_id', 'integer', array('unsigned' => true, 'autoincrement' => true));
+        $groupsTable->addColumn('name', 'string', array('length' => 32, 'notnull' => false));
+        $groupsTable->setPrimaryKey(array('_id'));
 
         $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
 
@@ -53,6 +59,7 @@ class DBALImplementationTest extends BaseImplementationTest
         $this->connection = DBAL\DriverManager::getConnection($connectionParams, $config);
         $this->connection->getSchemaManager()->createTable($usersTable);
         $this->connection->getSchemaManager()->createTable($profilesTable);
+        $this->connection->getSchemaManager()->createTable($groupsTable);
 
         $users = array(
             array(
@@ -71,8 +78,9 @@ class DBALImplementationTest extends BaseImplementationTest
             $this->connection->insert('users', $user);
         }
 
-        $this->usersTester = new DBALUsersTester($this->connection);
-        $this->profilesTester = new DBALProfilesTester($this->connection);
+        $this->usersTester = new DBALTester($this->connection, 'users');
+        $this->profilesTester = new DBALTester($this->connection, 'profiles');
+        $this->groupsTester = new DBALTester($this->connection, 'groups');
     }
 
     protected function createUserDataRepository()
@@ -103,6 +111,20 @@ class DBALImplementationTest extends BaseImplementationTest
         );
     }
 
+    protected function createGroupDataRepository()
+    {
+        return new ObjectDataRepository(
+            $this->objectManager, $this->connection, $this->groupClassName, 'groups'
+        );
+    }
+
+    protected function createGroupPersister()
+    {
+        return new ObjectPersister(
+            $this->objectManager, $this->connection, $this->groupClassName, 'groups'
+        );
+    }
+
     public function testSelectProfileData()
     {
         $user = $this->objectManager->find($this->userClassName, 1);
@@ -125,62 +147,34 @@ class DBALImplementationTest extends BaseImplementationTest
     }
 }
 
-class DBALUsersTester implements UsersTesterInterface
+class DBALTester implements DataTesterInterface
 {
     private $connection;
+    private $tableName;
 
-    public function __construct(DBAL\Connection $connection)
+    public function __construct(DBAL\Connection $connection, $tableName)
     {
         $this->connection = $connection;
+        $this->tableName = $tableName;
     }
 
     public function find($id)
     {
         return $this->connection
-            ->executeQuery('SELECT * FROM users WHERE _id = ?', array($id))
+            ->executeQuery(sprintf('SELECT * FROM %s WHERE _id = ?', $this->tableName), array($id))
             ->fetch();
     }
 
     public function set($id, $key, $value)
     {
         $this->connection->executeQuery(
-            sprintf('UPDATE users SET %s = ? WHERE _id = ?', $key),
+            sprintf('UPDATE %s SET %s = ? WHERE _id = ?', $this->tableName, $key),
             array($value, $id)
         );
     }
 
     public function count()
     {
-        return $this->connection->fetchColumn('SELECT COUNT(1) FROM users');
-    }
-}
-
-class DBALProfilesTester implements UsersTesterInterface
-{
-    private $connection;
-
-    public function __construct(DBAL\Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    public function find($id)
-    {
-        return $this->connection
-            ->executeQuery('SELECT * FROM profiles WHERE _id = ?', array($id))
-            ->fetch();
-    }
-
-    public function set($id, $key, $value)
-    {
-        $this->connection->executeQuery(
-            sprintf('UPDATE profiles SET %s = ? WHERE _id = ?', $key),
-            array($value, $id)
-        );
-    }
-
-    public function count()
-    {
-        return $this->connection->fetchColumn('SELECT COUNT(1) FROM profiles');
+        return $this->connection->fetchColumn(sprintf('SELECT COUNT(1) FROM %s', $this->tableName));
     }
 }

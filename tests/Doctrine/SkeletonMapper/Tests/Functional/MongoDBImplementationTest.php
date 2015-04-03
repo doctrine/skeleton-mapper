@@ -4,7 +4,7 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectPersister;
-use Doctrine\SkeletonMapper\Tests\UsersTesterInterface;
+use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
 class MongoDBImplementationTest extends BaseImplementationTest
 {
@@ -33,8 +33,12 @@ class MongoDBImplementationTest extends BaseImplementationTest
         $this->profiles = $mongo->selectDb('test')->selectCollection('profiles');
         $this->profiles->drop();
 
-        $this->usersTester = new MongoDBUsersTester($this->users);
-        $this->profilesTester = new MongoDBUsersTester($this->profiles);
+        $this->groups = $mongo->selectDb('test')->selectCollection('groups');
+        $this->groups->drop();
+
+        $this->usersTester = new MongoDBTester($this->users);
+        $this->profilesTester = new MongoDBTester($this->profiles);
+        $this->groupsTester = new MongoDBTester($this->groups);
     }
 
     protected function createUserDataRepository()
@@ -64,34 +68,23 @@ class MongoDBImplementationTest extends BaseImplementationTest
             $this->objectManager, $this->profiles, $this->profileClassName, 'profiles'
         );
     }
-}
 
-class MongoDBUsersTester implements UsersTesterInterface
-{
-    private $collection;
-
-    public function __construct(\MongoCollection $collection)
+    protected function createGroupDataRepository()
     {
-        $this->collection = $collection;
+        return new ObjectDataRepository(
+            $this->objectManager, $this->groups, $this->groupClassName, 'groups'
+        );
     }
 
-    public function find($id)
+    protected function createGroupPersister()
     {
-        return $this->collection->findOne(array('_id' => $id));
-    }
-
-    public function set($id, $key, $value)
-    {
-        $this->collection->update(array('_id' => $id), array('$set' => array($key => $value)));
-    }
-
-    public function count()
-    {
-        return $this->collection->count();
+        return new ObjectPersister(
+            $this->objectManager, $this->groups, $this->groupClassName, 'groups'
+        );
     }
 }
 
-class MongoDBProfilesTester implements UsersTesterInterface
+class MongoDBTester implements DataTesterInterface
 {
     private $collection;
 

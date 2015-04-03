@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\TestImplementation;
+namespace Doctrine\SkeletonMapper\Tests\ArrayImplementation;
 
 use Doctrine\SkeletonMapper\Persister\ArrayObjectPersister;
 

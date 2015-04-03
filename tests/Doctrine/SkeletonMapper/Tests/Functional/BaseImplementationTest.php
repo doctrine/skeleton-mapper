@@ -6,7 +6,9 @@ use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\Tests\Model\Address;
+use Doctrine\SkeletonMapper\Tests\Model\Group;
 use Doctrine\SkeletonMapper\Tests\Model\Profile;
+use Doctrine\SkeletonMapper\Tests\Model\GroupRepository;
 use Doctrine\SkeletonMapper\Tests\Model\ProfileRepository;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use PHPUnit_Framework_TestCase;
@@ -29,8 +31,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
     protected $unitOfWork;
     protected $users;
     protected $profiles;
+    protected $groups;
     protected $usersTester;
     protected $profilesTester;
+    protected $groupsTester;
+    protected $groupClassName = 'Doctrine\SkeletonMapper\Tests\Model\Group';
     protected $profileClassName = 'Doctrine\SkeletonMapper\Tests\Model\Profile';
     protected $userClassName = 'Doctrine\SkeletonMapper\Tests\Model\User';
     protected $eventTester;
@@ -42,6 +47,9 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 
     abstract protected function createProfileDataRepository();
     abstract protected function createProfilePersister();
+
+    abstract protected function createGroupDataRepository();
+    abstract protected function createGroupPersister();
 
     protected function setUp()
     {
@@ -55,6 +63,10 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->profileDataRepository = $this->createProfileDataRepository();
         $this->profileRepository = $this->createProfileRepository();
         $this->profilePersister = $this->createProfilePersister();
+
+        $this->groupDataRepository = $this->createGroupDataRepository();
+        $this->groupRepository = $this->createGroupRepository();
+        $this->groupPersister = $this->createGroupPersister();
 
         $this->registerServices();
     }
@@ -124,12 +136,18 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectRepositoryFactory->addObjectRepository(
             $this->profileClassName, $this->profileRepository
         );
+        $this->objectRepositoryFactory->addObjectRepository(
+            $this->groupClassName, $this->groupRepository
+        );
 
         $this->objectPersisterFactory->addObjectPersister(
             $this->userClassName, $this->userPersister
         );
         $this->objectPersisterFactory->addObjectPersister(
             $this->profileClassName, $this->profilePersister
+        );
+        $this->objectPersisterFactory->addObjectPersister(
+            $this->groupClassName, $this->groupPersister
         );
     }
 
@@ -154,6 +172,10 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
                 'name' => 'profileId',
                 'fieldName' => 'profile',
             ),
+            'groups' => array(
+                'name' => 'groupIds',
+                'fieldName' => 'groups',
+            ),
         );
 
         $this->assertEquals($this->userClassName, $class->getName());
@@ -167,7 +189,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($class->hasField('username'));
         $this->assertFalse($class->hasField('nope'));
 
-        $this->assertEquals(array('id', 'username', 'password', 'profile'), $class->getFieldNames());
+        $this->assertEquals(array('id', 'username', 'password', 'profile', 'groups'), $class->getFieldNames());
         $this->assertEquals($fieldMappings, $class->getFieldMappings());
     }
 
@@ -581,7 +603,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($class->isIdentifier('username'));
         $this->assertEquals(array('_id'), $class->getIdentifier());
         $this->assertEquals(array('id'), $class->getIdentifierFieldNames());
-        $this->assertEquals(array('id', 'username', 'password', 'profile'), $class->getFieldNames());
+        $this->assertEquals(array('id', 'username', 'password', 'profile', 'groups'), $class->getFieldNames());
         $this->assertInstanceOf('ReflectionClass', $class->getReflectionClass());
         $this->assertEquals(array(
             'id' => array(
@@ -599,6 +621,10 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             'profile' => array(
                 'name' => 'profileId',
                 'fieldName' => 'profile',
+            ),
+            'groups' => array(
+                'name' => 'groupIds',
+                'fieldName' => 'groups',
             ),
         ), $class->getFieldMappings());
         $this->assertEquals(array(), $class->getAssociationNames());
@@ -691,6 +717,44 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
     }
 
+    public function testReferenceMany()
+    {
+        $adminGroup = new Group('Admin');
+        $techGroup = new Group('Tech');
+        $user = $this->createTestObject();
+
+        $this->objectManager->persist($adminGroup);
+        $this->objectManager->persist($techGroup);
+        $this->objectManager->persist($user);
+
+        $user->setUsername('ryanweaver');
+        $user->addGroup($adminGroup);
+        $user->addGroup($techGroup);
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user = $this->objectManager->find($this->userClassName, $user->getId());
+
+        $this->assertCount(2, $user->getGroups());
+
+        $groups = $user->getGroups();
+
+        $this->assertEquals('Admin', $groups[0]->getName());
+        $this->assertEquals('Tech', $groups[1]->getName());
+
+        $moderatorGroup = new Group('Moderator');
+        $user->addGroup($moderatorGroup);
+
+        $this->objectManager->flush();
+        $this->objectManager->clear();
+
+        $user = $this->objectManager->find($this->userClassName, $user->getId());
+
+        $this->assertCount(3, $user->getGroups());
+        $this->assertEquals('Moderator', $groups[2]->getName());
+    }
+
     protected function createUserRepository()
     {
         return new UserRepository(
@@ -712,6 +776,18 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->basicObjectHydrator,
             $this->eventManager,
             $this->profileClassName
+        );
+    }
+
+    protected function createGroupRepository()
+    {
+        return new GroupRepository(
+            $this->objectManager,
+            $this->groupDataRepository,
+            $this->objectFactory,
+            $this->basicObjectHydrator,
+            $this->eventManager,
+            $this->groupClassName
         );
     }
 

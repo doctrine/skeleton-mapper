@@ -2,7 +2,7 @@
 
 namespace Doctrine\SkeletonMapper\Tests;
 
-interface UsersTesterInterface
+interface DataTesterInterface
 {
     public function find($id);
     public function set($id, $key, $value);
