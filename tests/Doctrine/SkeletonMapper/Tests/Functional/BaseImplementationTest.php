@@ -11,6 +11,8 @@ use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\GroupRepository;
 use Doctrine\SkeletonMapper\Tests\Model\ProfileRepository;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
+use Doctrine\SkeletonMapper\UnitOfWork\Change;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use PHPUnit_Framework_TestCase;
 
 abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
@@ -506,7 +508,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user->setUsername('changed');
 
         $this->assertEquals(
-            array('username' => array('jwage', 'changed')),
+            new ChangeSet($user, array('username' => new Change('username', 'jwage', 'changed'))),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 
@@ -514,7 +516,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->clear();
 
         $this->assertEquals(
-            array(),
+            new ChangeSet($user, array()),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 
@@ -527,7 +529,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user3->setUsername('another');
 
         $this->assertEquals(
-            array(),
+            new ChangeSet($user3, array()),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
@@ -544,7 +546,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user3->setUsername('changed');
 
         $this->assertEquals(
-            array('username' => array('another', 'changed')),
+            new ChangeSet($user3, array('username' => new Change('username', 'another', 'changed'))),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
@@ -558,7 +560,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $user3->setUsername('testing');
 
         $this->assertEquals(
-            array('username' => array('changed', 'testing')),
+            new ChangeSet($user3, array('username' => new Change('username', 'changed', 'testing'))),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
@@ -566,7 +568,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
 
         $this->assertEquals(
-            array(),
+            new ChangeSet($user, array()),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 

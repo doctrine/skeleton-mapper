@@ -14,7 +14,7 @@ class CacheObjectDataRepository extends BasicObjectDataRepository
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\Common\Cache\Cache    $cache
+     * @param \Doctrine\Common\Cache\Cache                    $cache
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

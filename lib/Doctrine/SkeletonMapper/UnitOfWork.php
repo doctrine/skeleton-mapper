@@ -25,6 +25,8 @@ use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\UnitOfWork\Change;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
 use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
 use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 
@@ -81,7 +83,7 @@ class UnitOfWork implements PropertyChangedListener
     private $objectsToRemove = array();
 
     /**
-     * @var array
+     * @var \Doctrine\SkeletonMapper\UnitOfWork\ChangeSets
      */
     private $objectChangeSets = array();
 
@@ -113,6 +115,8 @@ class UnitOfWork implements PropertyChangedListener
             $this->eventDispatcher,
             $this->objectIdentityMap
         );
+
+        $this->objectChangeSets = new ChangeSets();
     }
 
     /**
@@ -150,13 +154,11 @@ class UnitOfWork implements PropertyChangedListener
             throw new \InvalidArgumentException('Object is already scheduled for update.');
         }
 
-        $oid = spl_object_hash($object);
-
         $this->eventDispatcher->dispatchPreUpdate(
-            $object, $this->objectChangeSets[$oid]
+            $object, $this->getObjectChangeSet($object)
         );
 
-        $this->objectsToUpdate[$oid] = $object;
+        $this->objectsToUpdate[spl_object_hash($object)] = $object;
     }
 
     /**
@@ -183,7 +185,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
-        $this->objectChangeSets = array();
+        $this->objectChangeSets = new ChangeSets();
 
         $this->eventDispatcher->dispatchOnClearEvent($objectName);
     }
@@ -245,7 +247,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToPersist = array();
         $this->objectsToUpdate = array();
         $this->objectsToRemove = array();
-        $this->objectChangeSets = array();
+        $this->objectChangeSets = new ChangeSets();
     }
 
     /**
@@ -322,8 +324,10 @@ class UnitOfWork implements PropertyChangedListener
             $this->update($object);
         }
 
-        $oid = spl_object_hash($object);
-        $this->objectChangeSets[$oid][$propertyName] = array($oldValue, $newValue);
+        $this->objectChangeSets->addObjectChange(
+            $object,
+            new Change($propertyName, $oldValue, $newValue)
+        );
     }
 
     /**
@@ -331,17 +335,11 @@ class UnitOfWork implements PropertyChangedListener
      *
      * @param object $object
      *
-     * @return array array('property' => array(0 => mixed|null, 1 => mixed|null))
+     * @return \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet
      */
     public function getObjectChangeSet($object)
     {
-        $oid = spl_object_hash($object);
-
-        if (isset($this->objectChangeSets[$oid])) {
-            return $this->objectChangeSets[$oid];
-        }
-
-        return array();
+        return $this->objectChangeSets->getObjectChangeSet($object);
     }
 
     /**

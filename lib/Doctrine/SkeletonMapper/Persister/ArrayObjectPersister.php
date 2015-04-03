@@ -5,6 +5,7 @@ namespace Doctrine\SkeletonMapper\Persister;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 class ArrayObjectPersister extends BasicObjectPersister
 {
@@ -42,7 +43,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         return $data;
     }
 
-    public function updateObject($object, array $changeSet)
+    public function updateObject($object, ChangeSet $changeSet)
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 

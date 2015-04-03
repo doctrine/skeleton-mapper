@@ -18,26 +18,37 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Persister;
+namespace Doctrine\SkeletonMapper\UnitOfWork;
 
-use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-
-/**
- * Interface persistable objects must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-interface PersistableInterface
+class ChangeSets
 {
     /**
-     * @return array
+     * @var array
      */
-    public function preparePersistChangeSet();
+    private $changeSets = array();
 
     /**
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
-     *
-     * @return array
+     * @param object                                     $object
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\Change $change
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet);
+    public function addObjectChange($object, Change $change)
+    {
+        $this->getObjectChangeSet($object)->addChange($change);
+    }
+
+    /**
+     * @param object $object
+     *
+     * @return \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet
+     */
+    public function getObjectChangeSet($object)
+    {
+        $oid = spl_object_hash($object);
+
+        if (!isset($this->changeSets[$oid])) {
+            $this->changeSets[$oid] = new ChangeSet($object);
+        }
+
+        return $this->changeSets[$oid];
+    }
 }

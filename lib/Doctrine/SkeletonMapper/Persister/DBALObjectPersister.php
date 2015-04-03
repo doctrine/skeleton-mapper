@@ -22,6 +22,7 @@ namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 class DBALObjectPersister extends BasicObjectPersister
 {
@@ -75,7 +76,7 @@ class DBALObjectPersister extends BasicObjectPersister
         return $data;
     }
 
-    public function updateObject($object, array $changeSet)
+    public function updateObject($object, ChangeSet $changeSet)
     {
         $data = $this->prepareUpdateChangeSet($object, $changeSet);
 

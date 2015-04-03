@@ -4,6 +4,7 @@ namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 class CacheObjectPersister extends BasicObjectPersister
 {
@@ -37,7 +38,7 @@ class CacheObjectPersister extends BasicObjectPersister
         return $data;
     }
 
-    public function updateObject($object, array $changeSet)
+    public function updateObject($object, ChangeSet $changeSet)
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 

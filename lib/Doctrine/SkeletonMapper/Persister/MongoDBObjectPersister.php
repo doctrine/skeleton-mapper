@@ -21,6 +21,7 @@
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use MongoCollection;
 
 abstract class MongoDBObjectPersister extends BasicObjectPersister
@@ -53,7 +54,7 @@ abstract class MongoDBObjectPersister extends BasicObjectPersister
         return $data;
     }
 
-    public function updateObject($object, array $changeSet)
+    public function updateObject($object, ChangeSet $changeSet)
     {
         $data = $this->prepareUpdateChangeSet($object, $changeSet);
 

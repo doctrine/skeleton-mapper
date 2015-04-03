@@ -149,9 +149,9 @@ class EventDispatcher
      * @param object $object
      * @param array  $changeSet
      */
-    public function dispatchPreUpdate($object, array &$changeSet = null)
+    public function dispatchPreUpdate($object, ChangeSet $changeSet)
     {
-        $args = array(&$changeSet);
+        $args = array($changeSet);
         $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object, $args);
 
         $this->dispatchEvent(

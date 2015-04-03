@@ -6,6 +6,7 @@ use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 class Group extends BaseObject
 {
@@ -115,11 +116,11 @@ class Group extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param array $changeSet
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
      * @return array
      */
-    public function prepareUpdateChangeSet(array $changeSet)
+    public function prepareUpdateChangeSet(ChangeSet $changeSet)
     {
         $changeSet = array_map(function ($change) {
             return $change[1];

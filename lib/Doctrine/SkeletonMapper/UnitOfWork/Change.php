@@ -18,26 +18,58 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\Persister;
+namespace Doctrine\SkeletonMapper\UnitOfWork;
 
-use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-
-/**
- * Interface persistable objects must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-interface PersistableInterface
+class Change
 {
     /**
-     * @return array
+     * @var string
      */
-    public function preparePersistChangeSet();
+    private $propertyName;
 
     /**
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
-     *
-     * @return array
+     * @var mixed
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet);
+    private $oldValue;
+
+    /**
+     * @var mixed
+     */
+    private $newValue;
+
+    /**
+     * @param string $propertyName
+     * @param mixed  $oldValue
+     * @param mixed  $newValue
+     */
+    public function __construct($propertyName, $oldValue, $newValue)
+    {
+        $this->propertyName = $propertyName;
+        $this->oldValue = $oldValue;
+        $this->newValue = $newValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOldValue()
+    {
+        return $this->oldValue;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNewValue()
+    {
+        return $this->newValue;
+    }
 }

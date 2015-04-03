@@ -46,6 +46,5 @@ class ObjectPersister extends CacheObjectPersister
     private function generateNextId()
     {
         return $this->cache->fetch('incrementedId') + 1;
-
     }
 }

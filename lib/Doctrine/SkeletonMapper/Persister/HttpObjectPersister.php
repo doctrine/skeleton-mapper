@@ -21,6 +21,7 @@
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use GuzzleHttp\Client;
 
 class HttpObjectPersister extends BasicObjectPersister
@@ -67,7 +68,7 @@ class HttpObjectPersister extends BasicObjectPersister
         return $this->client->post($this->url, array('body' => $data))->json();
     }
 
-    public function updateObject($object, array $changeSet)
+    public function updateObject($object, ChangeSet $changeSet)
     {
         $data = $this->prepareUpdateChangeSet($object, $changeSet);
 

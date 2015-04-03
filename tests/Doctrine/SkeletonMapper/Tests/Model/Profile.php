@@ -6,6 +6,8 @@ use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\Change;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 class Profile extends BaseObject
 {
@@ -155,15 +157,15 @@ class Profile extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param array $changeSet
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
      * @return array
      */
-    public function prepareUpdateChangeSet(array $changeSet)
+    public function prepareUpdateChangeSet(ChangeSet $changeSet)
     {
-        $changeSet = array_map(function ($change) {
-            return $change[1];
-        }, $changeSet);
+        $changeSet = array_map(function (Change $change) {
+            return $change->getNewValue();
+        }, $changeSet->getChanges());
 
         $changeSet['_id'] = (int) $this->id;
 

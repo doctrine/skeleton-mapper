@@ -21,6 +21,7 @@
 namespace Doctrine\SkeletonMapper\Event;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 /**
  * Class that holds event arguments for a preUpdate event.
@@ -37,17 +38,17 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Constructor.
      *
-     * @param object        $object
-     * @param ObjectManager $objectManager
-     * @param array         $changeSet
+     * @param object                                          $object
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet   $changeSet
      */
     public function __construct(
         $object,
         ObjectManagerInterface $objectManager,
-        array &$changeSet = null)
+        ChangeSet $changeSet)
     {
         parent::__construct($object, $objectManager);
-        $this->objectChangeSet = &$changeSet;
+        $this->objectChangeSet = $changeSet;
     }
 
     /**
@@ -69,7 +70,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     public function hasChangedField($field)
     {
-        return isset($this->objectChangeSet[$field]);
+        return $this->objectChangeSet->hasChangedField($field);
     }
 
     /**
@@ -81,9 +82,9 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     public function getOldValue($field)
     {
-        return isset($this->objectChangeSet[$field][0])
-            ? $this->objectChangeSet[$field][0]
-            : null;
+        if ($change = $this->objectChangeSet->getFieldChange($field)) {
+            return $change->getOldValue();
+        }
     }
 
     /**
@@ -95,9 +96,9 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     public function getNewValue($field)
     {
-        return isset($this->objectChangeSet[$field][1])
-            ? $this->objectChangeSet[$field][1]
-            : null;
+        if ($change = $this->objectChangeSet->getFieldChange($field)) {
+            return $change->getNewValue();
+        }
     }
 
     /**
@@ -108,10 +109,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     public function setNewValue($field, $value)
     {
-        if (!isset($this->objectChangeSet[$field])) {
-            $this->objectChangeSet[$field] = $value;
+        if ($change = $this->objectChangeSet->getFieldChange($field)) {
+            $change->setNewValue($value);
         }
-
-        $this->objectChangeSet[$field][1] = $value;
     }
 }

@@ -21,6 +21,7 @@
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 abstract class BasicObjectPersister extends ObjectPersister
 {
@@ -97,11 +98,11 @@ abstract class BasicObjectPersister extends ObjectPersister
      * Prepares an object changeset for update.
      *
      * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
-     * @param array                                                   $changeSet
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet           $changeSet
      *
      * @return array
      */
-    public function prepareUpdateChangeSet($object, array $changeSet = array())
+    public function prepareUpdateChangeSet($object, ChangeSet $changeSet)
     {
         if (!$object instanceof PersistableInterface) {
             throw new \InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
@@ -109,7 +110,6 @@ abstract class BasicObjectPersister extends ObjectPersister
 
         return $object->prepareUpdateChangeSet($changeSet);
     }
-
 
     /**
      * Assign identifier to object.
