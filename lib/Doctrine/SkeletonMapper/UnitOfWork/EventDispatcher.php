@@ -146,8 +146,8 @@ class EventDispatcher
     }
 
     /**
-     * @param object $object
-     * @param array  $changeSet
+     * @param object                                         $object
+     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet  $changeSet
      */
     public function dispatchPreUpdate($object, ChangeSet $changeSet)
     {
