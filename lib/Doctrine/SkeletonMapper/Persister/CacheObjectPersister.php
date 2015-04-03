@@ -2,29 +2,29 @@
 
 namespace Doctrine\SkeletonMapper\Persister;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
-class ArrayObjectPersister extends BasicObjectPersister
+class CacheObjectPersister extends BasicObjectPersister
 {
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
+     * @var \Doctrine\Common\Cache\Cache
      */
-    protected $objects;
+    protected $cache;
 
     /**
      * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\Common\Collections\ArrayCollection    $objects
+     * @param \Doctrine\Common\Cache\Cache                    $cache
      * @param string                                          $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ArrayCollection $objects,
+        Cache $cache,
         $className = null)
     {
         parent::__construct($objectManager, $className);
-        $this->objects = $objects;
+        $this->cache = $cache;
     }
 
     public function persistObject($object)
@@ -33,11 +33,7 @@ class ArrayObjectPersister extends BasicObjectPersister
 
         $class = $this->getClassMetadata();
 
-        if (!isset($data[$class->identifier[0]])) {
-            $data[$class->identifier[0]] = $this->generateNextId($class);
-        }
-
-        $this->objects[$data[$class->identifier[0]]] = $data;
+        $this->cache->save($data[$class->identifier[0]], $data);
 
         return $data;
     }
@@ -46,30 +42,27 @@ class ArrayObjectPersister extends BasicObjectPersister
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
-        $objectData = $this->objects[$object->getId()];
+        $class = $this->getClassMetadata();
+        $identifier = $this->getObjectIdentifier($object);
+        $identifier = $identifier[$class->identifier[0]];
+
+        $objectData = $this->cache->fetch($identifier);
 
         foreach ($changeSet as $key => $value) {
             $objectData[$key] = $value;
         }
 
-        $class = $this->getClassMetadata();
-        $this->objects[$objectData[$class->identifier[0]]] = $objectData;
+        $this->cache->save($identifier, $objectData);
 
         return $changeSet;
     }
 
     public function removeObject($object)
     {
-        unset($this->objects[$object->getId()]);
-    }
+        $class = $this->getClassMetadata();
+        $identifier = $this->getObjectIdentifier($object);
+        $identifier = $identifier[$class->identifier[0]];
 
-    private function generateNextId(ClassMetadataInterface $class)
-    {
-        $ids = array();
-        foreach ($this->objects as $objectData) {
-            $ids[] = $objectData[$class->identifier[0]];
-        }
-
-        return $ids ? max($ids) + 1 : 1;
+        $this->cache->delete($identifier);
     }
 }

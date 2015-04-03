@@ -86,16 +86,4 @@ class HttpObjectPersister extends BasicObjectPersister
 
         $this->client->delete($url);
     }
-
-    /**
-     * @param object $object
-     *
-     * @return array $identifier
-     */
-    protected function getObjectIdentifier($object)
-    {
-        return $this->objectManager
-            ->getRepository(get_class($object))
-            ->getObjectIdentifier($object);
-    }
 }
