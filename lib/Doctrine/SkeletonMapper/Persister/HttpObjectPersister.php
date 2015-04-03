@@ -62,14 +62,14 @@ class HttpObjectPersister extends BasicObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->prepareChangeSet($object);
+        $data = $this->preparePersistChangeSet($object);
 
         return $this->client->post($this->url, array('body' => $data))->json();
     }
 
     public function updateObject($object, array $changeSet)
     {
-        $data = $this->prepareChangeSet($object, $changeSet);
+        $data = $this->prepareUpdateChangeSet($object, $changeSet);
 
         $identifier = $this->getObjectIdentifier($object);
         $class = $this->objectManager->getClassMetadata(get_class($object));

@@ -72,7 +72,8 @@ interface ObjectPersisterInterface
     public function persistObject($object);
     public function updateObject($object);
     public function removeObject($object);
-    public function prepareChangeSet($object, array $changeSet = array());
+    public function preparePersistChangeSet($object);
+    public function prepareUpdateChangeSet($object, array $changeSet = array());
 }
 ```
 

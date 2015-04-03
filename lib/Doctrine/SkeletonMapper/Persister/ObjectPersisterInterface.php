@@ -28,14 +28,25 @@ namespace Doctrine\SkeletonMapper\Persister;
 interface ObjectPersisterInterface
 {
     /**
-     * Prepares an object changeset for persistence.
+     * Prepares an object persist changeset for persistence.
      *
      * @param object $object
      * @param array  $changeSet
      *
      * @return array
      */
-    public function prepareChangeSet($object, array $changeSet = array());
+    public function preparePersistChangeSet($object);
+
+    /**
+     * Prepares an object update changeset for update.
+     *
+     * @param object $object
+     * @param array  $changeSet
+     *
+     * @return array
+     */
+    public function prepareUpdateChangeSet($object, array $changeSet = array());
+
 
     /**
      * Performs operation to write object to the database.

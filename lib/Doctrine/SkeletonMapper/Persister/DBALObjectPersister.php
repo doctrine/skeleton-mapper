@@ -62,7 +62,7 @@ class DBALObjectPersister extends BasicObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->prepareChangeSet($object);
+        $data = $this->preparePersistChangeSet($object);
 
         $this->connection->insert($this->getTableName(), $data);
 
@@ -77,7 +77,7 @@ class DBALObjectPersister extends BasicObjectPersister
 
     public function updateObject($object, array $changeSet)
     {
-        $data = $this->prepareChangeSet($object, $changeSet);
+        $data = $this->prepareUpdateChangeSet($object, $changeSet);
 
         $this->connection->update(
             $this->getTableName(),

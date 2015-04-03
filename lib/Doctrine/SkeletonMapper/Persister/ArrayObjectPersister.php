@@ -29,7 +29,7 @@ class ArrayObjectPersister extends BasicObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->prepareChangeSet($object);
+        $data = $this->preparePersistChangeSet($object);
 
         $class = $this->getClassMetadata();
 
@@ -44,7 +44,7 @@ class ArrayObjectPersister extends BasicObjectPersister
 
     public function updateObject($object, array $changeSet)
     {
-        $changeSet = $this->prepareChangeSet($object, $changeSet);
+        $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
         $objectData = $this->objects[$object->getId()];
 

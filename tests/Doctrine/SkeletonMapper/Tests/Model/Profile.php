@@ -159,28 +159,34 @@ class Profile extends BaseObject
      *
      * @return array
      */
-    public function prepareChangeSet(array $changeSet)
+    public function prepareUpdateChangeSet(array $changeSet)
     {
-        if ($changeSet) {
-            $changeSet = array_map(function ($change) {
-                return $change[1];
-            }, $changeSet);
+        $changeSet = array_map(function ($change) {
+            return $change[1];
+        }, $changeSet);
 
-            $changeSet['_id'] = (int) $this->id;
+        $changeSet['_id'] = (int) $this->id;
 
-            if ($address = $changeSet['address']) {
-                unset($changeSet['address']);
+        if ($address = $changeSet['address']) {
+            unset($changeSet['address']);
 
-                $changeSet['address1'] = $address->getAddress1();
-                $changeSet['address2'] = $address->getAddress2();
-                $changeSet['city'] = $address->getCity();
-                $changeSet['state'] = $address->getState();
-                $changeSet['zip'] = $address->getZip();
-            }
-
-            return $changeSet;
+            $changeSet['address1'] = $address->getAddress1();
+            $changeSet['address2'] = $address->getAddress2();
+            $changeSet['city'] = $address->getCity();
+            $changeSet['state'] = $address->getState();
+            $changeSet['zip'] = $address->getZip();
         }
 
+        return $changeSet;
+    }
+
+    /**
+     * @see PersistableInterface
+     *
+     * @return array
+     */
+    public function preparePersistChangeSet()
+    {
         $changeSet = array(
             'name' => $this->name,
         );

@@ -81,18 +81,35 @@ abstract class BasicObjectPersister extends ObjectPersister
      * Prepares an object changeset for persistence.
      *
      * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
-     * @param array                                                   $changeSet
      *
      * @return array
      */
-    public function prepareChangeSet($object, array $changeSet = array())
+    public function preparePersistChangeSet($object)
     {
         if (!$object instanceof PersistableInterface) {
             throw new \InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
         }
 
-        return $object->prepareChangeSet($changeSet);
+        return $object->preparePersistChangeSet();
     }
+
+    /**
+     * Prepares an object changeset for update.
+     *
+     * @param \Doctrine\SkeletonMapper\Persister\PersistableInterface $object
+     * @param array                                                   $changeSet
+     *
+     * @return array
+     */
+    public function prepareUpdateChangeSet($object, array $changeSet = array())
+    {
+        if (!$object instanceof PersistableInterface) {
+            throw new \InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
+        }
+
+        return $object->prepareUpdateChangeSet($changeSet);
+    }
+
 
     /**
      * Assign identifier to object.

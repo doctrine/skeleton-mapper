@@ -32,5 +32,12 @@ interface PersistableInterface
      *
      * @return array
      */
-    public function prepareChangeSet(array $changeSet);
+    public function preparePersistChangeSet();
+
+    /**
+     * @param array $changeSet
+     *
+     * @return array
+     */
+    public function prepareUpdateChangeSet(array $changeSet);
 }

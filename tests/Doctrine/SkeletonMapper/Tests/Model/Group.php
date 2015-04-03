@@ -97,22 +97,10 @@ class Group extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param array $changeSet
-     *
      * @return array
      */
-    public function prepareChangeSet(array $changeSet)
+    public function preparePersistChangeSet()
     {
-        if ($changeSet) {
-            $changeSet = array_map(function ($change) {
-                return $change[1];
-            }, $changeSet);
-
-            $changeSet['_id'] = (int) $this->id;
-
-            return $changeSet;
-        }
-
         $changeSet = array(
             'name' => $this->name,
         );
@@ -120,6 +108,24 @@ class Group extends BaseObject
         if ($this->id !== null) {
             $changeSet['_id'] = (int) $this->id;
         }
+
+        return $changeSet;
+    }
+
+    /**
+     * @see PersistableInterface
+     *
+     * @param array $changeSet
+     *
+     * @return array
+     */
+    public function prepareUpdateChangeSet(array $changeSet)
+    {
+        $changeSet = array_map(function ($change) {
+            return $change[1];
+        }, $changeSet);
+
+        $changeSet['_id'] = (int) $this->id;
 
         return $changeSet;
     }

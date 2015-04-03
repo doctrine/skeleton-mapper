@@ -8,7 +8,7 @@ class ObjectPersister extends MongoDBObjectPersister
 {
     public function persistObject($object)
     {
-        $data = $this->prepareChangeSet($object);
+        $data = $this->preparePersistChangeSet($object);
 
         if (!isset($data['_id'])) {
             $class = $this->objectManager->getClassMetadata(get_class($object));

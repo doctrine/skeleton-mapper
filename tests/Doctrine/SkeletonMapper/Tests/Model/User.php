@@ -219,36 +219,10 @@ class User extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param array $changeSet
-     *
      * @return array
      */
-    public function prepareChangeSet(array $changeSet)
+    public function preparePersistChangeSet()
     {
-        if ($changeSet) {
-            $changeSet = array_map(function ($change) {
-                return $change[1];
-            }, $changeSet);
-
-            $changeSet['_id'] = (int) $this->id;
-
-            if (isset($changeSet['profile'])) {
-                $changeSet['profileId'] = $changeSet['profile']->getId();
-                unset($changeSet['profile']);
-            }
-
-            if (isset($changeSet['groups'])) {
-                $groupIds = $changeSet['groups']->map(function (Group $group) {
-                    return $group->getId();
-                })->toArray();
-
-                $changeSet['groupIds'] = implode(',', $groupIds);
-                unset($changeSet['groups']);
-            }
-
-            return $changeSet;
-        }
-
         $changeSet = array(
             'username' => $this->username,
             'password' => $this->password,
@@ -268,6 +242,38 @@ class User extends BaseObject
 
         if ($this->id !== null) {
             $changeSet['_id'] = (int) $this->id;
+        }
+
+        return $changeSet;
+    }
+
+    /**
+     * @see PersistableInterface
+     *
+     * @param array $changeSet
+     *
+     * @return array
+     */
+    public function prepareUpdateChangeSet(array $changeSet)
+    {
+        $changeSet = array_map(function ($change) {
+            return $change[1];
+        }, $changeSet);
+
+        $changeSet['_id'] = (int) $this->id;
+
+        if (isset($changeSet['profile'])) {
+            $changeSet['profileId'] = $changeSet['profile']->getId();
+            unset($changeSet['profile']);
+        }
+
+        if (isset($changeSet['groups'])) {
+            $groupIds = $changeSet['groups']->map(function (Group $group) {
+                return $group->getId();
+            })->toArray();
+
+            $changeSet['groupIds'] = implode(',', $groupIds);
+            unset($changeSet['groups']);
         }
 
         return $changeSet;

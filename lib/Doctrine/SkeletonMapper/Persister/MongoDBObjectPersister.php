@@ -46,7 +46,7 @@ abstract class MongoDBObjectPersister extends BasicObjectPersister
 
     public function persistObject($object)
     {
-        $data = $this->prepareChangeSet($object);
+        $data = $this->preparePersistChangeSet($object);
 
         $this->mongoCollection->insert($data);
 
@@ -55,7 +55,7 @@ abstract class MongoDBObjectPersister extends BasicObjectPersister
 
     public function updateObject($object, array $changeSet)
     {
-        $data = $this->prepareChangeSet($object, $changeSet);
+        $data = $this->prepareUpdateChangeSet($object, $changeSet);
 
         unset($data['_id']);
 
