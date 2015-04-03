@@ -83,7 +83,7 @@ class PersistentCollection implements Collection
         return array_udiff_assoc(
             $this->snapshot,
             $this->collection->toArray(),
-            function ($a, $b) { return $a === $b ? 0 : 1; }
+            function($a, $b) { return $a === $b ? 0 : 1; }
         );
     }
 
@@ -92,7 +92,7 @@ class PersistentCollection implements Collection
         return array_udiff_assoc(
             $this->collection->toArray(),
             $this->snapshot,
-            function ($a, $b) { return $a === $b ? 0 : 1; }
+            function($a, $b) { return $a === $b ? 0 : 1; }
         );
     }
 
@@ -115,7 +115,7 @@ class PersistentCollection implements Collection
     {
         $removed = $this->collection->removeElement($element);
 
-        if ( ! $removed) {
+        if (!$removed) {
             return $removed;
         }
 
@@ -238,7 +238,7 @@ class PersistentCollection implements Collection
 
     public function offsetSet($offset, $value)
     {
-        if ( ! isset($offset)) {
+        if (!isset($offset)) {
             return $this->add($value);
         }
 
