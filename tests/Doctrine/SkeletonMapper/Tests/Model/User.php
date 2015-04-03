@@ -4,7 +4,6 @@ namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Collections\LazyCollection;
-use Doctrine\SkeletonMapper\Collections\PersistentCollection;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -46,7 +45,7 @@ class User extends BaseObject
 
     public function __construct()
     {
-        $this->groups = new PersistentCollection(new ArrayCollection());
+        $this->groups = new ArrayCollection();
     }
 
     /**
