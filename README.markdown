@@ -5,6 +5,7 @@ Doctrine SkeletonMapper
 
 [![Build Status](https://travis-ci.org/doctrine/skeleton-mapper.png)](https://travis-ci.org/doctrine/skeleton-mapper)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/doctrine/skeleton-mapper/badges/quality-score.png?s=7e0e1d4b5d7f6be61a3cd804dba556a0e4d1141d)](https://scrutinizer-ci.com/g/doctrine/skeleton-mapper/)
+[![Code Coverage](https://scrutinizer-ci.com/g/doctrine/skeleton-mapper/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/doctrine/skeleton-mapper/?branch=master)
 [![Total Downloads](https://poser.pugx.org/doctrine/skeleton-mapper/downloads.png)](https://packagist.org/packages/doctrine/skeleton-mapper)
 
 The Doctrine SkeletonMapper is a skeleton object mapper where you are 100% responsible for implementing the guts of the persistence operations. This means you write plain old PHP code for the data repositories, object repositories, object hydrators and object persisters.
