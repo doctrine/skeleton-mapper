@@ -31,7 +31,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 class PreUpdateEventArgs extends LifecycleEventArgs
 {
     /**
-     * @var array
+     * @var \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet
      */
     private $objectChangeSet;
 
@@ -54,7 +54,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Retrieves the object changeset.
      *
-     * @return array
+     * @return \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet
      */
     public function getObjectChangeSet()
     {
