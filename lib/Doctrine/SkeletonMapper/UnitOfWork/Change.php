@@ -72,4 +72,12 @@ class Change
     {
         return $this->newValue;
     }
+
+    /**
+     * @param mixed $newValue
+     */
+    public function setNewValue($newValue)
+    {
+        $this->newValue = $newValue;
+    }
 }
