@@ -252,4 +252,4 @@ $userPersister = new HttpObjectPersister(
 - When an object is updated it will perform a PUT request to http://myapi.example.com/users/{id}
 - When an object is removed it will perform a DELETE request to http://myapi.example.com/users/{id}
 
-Of course if you want to be in complete control and implement custom code for all the above interfaces you can do so. You could write and read from a CSV file, or an XML document. You could even have the repositories and persisters read and write to a HTTP end point.
+Of course if you want to be in complete control and implement custom code for all the above interfaces you can do so. You could write and read from a CSV file, an XML document or any data source you can imagine.
