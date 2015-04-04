@@ -184,6 +184,15 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($data, $object->testEventCalled);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Expected class "Doctrine\SkeletonMapper\Tests\Functional\ClassMetadataTestModel"; found: "stdClass"
+     */
+    public function testInvokeLifecycleCallbacksThrowsInvalidArgumentException()
+    {
+        $this->class->invokeLifecycleCallbacks('test', new \stdClass());
+    }
+
     public function testInvokeLifecycleCallbacksWithoutArguments()
     {
         $object = new ClassMetadataTestModel();
