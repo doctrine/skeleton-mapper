@@ -47,21 +47,26 @@ class ArrayObjectPersister extends BasicObjectPersister
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
-        $objectData = $this->objects[$object->getId()];
+        $class = $this->getClassMetadata();
+        $identifier = $this->getObjectIdentifier($object);
+
+        $objectData = $this->objects[$identifier[$class->identifier[0]]];
 
         foreach ($changeSet as $key => $value) {
             $objectData[$key] = $value;
         }
 
-        $class = $this->getClassMetadata();
         $this->objects[$objectData[$class->identifier[0]]] = $objectData;
 
-        return $changeSet;
+        return $objectData;
     }
 
     public function removeObject($object)
     {
-        unset($this->objects[$object->getId()]);
+        $class = $this->getClassMetadata();
+        $identifier = $this->getObjectIdentifier($object);
+
+        unset($this->objects[$identifier[$class->identifier[0]]]);
     }
 
     private function generateNextId(ClassMetadataInterface $class)
