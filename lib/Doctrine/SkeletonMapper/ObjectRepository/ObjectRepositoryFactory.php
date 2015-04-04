@@ -33,8 +33,8 @@ class ObjectRepositoryFactory
     private $repositories = array();
 
     /**
-     * @param string                                                $className
-     * @param \Doctrine\Common\Repository\ObjectRepositoryInterface $objectRepository
+     * @param string                                                              $className
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface $objectRepository
      */
     public function addObjectRepository($className, ObjectRepositoryInterface $objectRepository)
     {
