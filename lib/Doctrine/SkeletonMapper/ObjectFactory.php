@@ -46,7 +46,7 @@ class ObjectFactory
     public function create($className)
     {
         if (!isset($this->prototypes[$className])) {
-            if (PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513 || PHP_VERSION_ID >= 50600) {
+            if ($this->isReflectionMethodAvailable()) {
                 $this->prototypes[$className] = $this->getReflectionClass($className)->newInstanceWithoutConstructor();
             } else {
                 $this->prototypes[$className] = unserialize(sprintf('O:%d:"%s":0:{}', strlen($className), $className));
@@ -54,6 +54,14 @@ class ObjectFactory
         }
 
         return clone $this->prototypes[$className];
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function isReflectionMethodAvailable()
+    {
+        return PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513 || PHP_VERSION_ID >= 50600;
     }
 
     /**
