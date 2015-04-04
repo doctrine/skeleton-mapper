@@ -228,8 +228,10 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->class->hasLifecycleCallbacks('test'));
 
         $this->class->addLifecycleCallback('testEvent', 'test');
+        $this->class->addLifecycleCallback('testEvent', 'test');
 
         $this->assertTrue($this->class->hasLifecycleCallbacks('test'));
+        $this->assertCount(1, $this->class->lifecycleCallbacks['test']);
     }
 
     public function testSetLifecycleCallbacks()
