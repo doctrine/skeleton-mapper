@@ -7,6 +7,9 @@ use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group unit
+ */
 class BasicObjectHydratorTest extends PHPUnit_Framework_TestCase
 {
     private $objectManager;
