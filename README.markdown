@@ -188,7 +188,7 @@ $objectRepositoryFactory->addObjectRepository('Model\User', $userRepository);
 $objectPersisterFactory->addObjectPersister('Model\User', $userPersister);
 ```
 
-Now you can manager user instances and they will be persisted to the `ArrayCollection` instance we created above:
+Now you can manage user instances and they will be persisted to the `ArrayCollection` instance we created above:
 
 ```php
 // create and persist a new user
