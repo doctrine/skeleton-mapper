@@ -21,6 +21,7 @@
 namespace Doctrine\SkeletonMapper\Event;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 /**
@@ -111,6 +112,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     {
         if ($change = $this->objectChangeSet->getFieldChange($field)) {
             $change->setNewValue($value);
+        } else {
+            $this->objectChangeSet->addChange(new Change($field, null, $value));
         }
     }
 }
