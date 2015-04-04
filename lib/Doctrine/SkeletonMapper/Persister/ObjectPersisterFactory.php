@@ -36,7 +36,7 @@ class ObjectPersisterFactory
      * @param string                                                $className
      * @param \Doctrine\Common\Persistence\ObjectPersisterInterface $objectPersister
      */
-    public function addObjectPersister($className, $objectPersister)
+    public function addObjectPersister($className, ObjectPersisterInterface $objectPersister)
     {
         $this->persisters[$className] = $objectPersister;
     }
