@@ -7,6 +7,9 @@ use Doctrine\SkeletonMapper\Tests\HttpImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 use GuzzleHttp\Client;
 
+/**
+ * @group functional
+ */
 class HttpImplementationTest extends BaseImplementationTest
 {
     private $client;

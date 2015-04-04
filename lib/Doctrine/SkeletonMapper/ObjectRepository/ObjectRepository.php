@@ -194,7 +194,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      */
     public function refresh($object)
     {
-        $data = $this->objectDataRepository->findByObject($object);
+        $data = $this->objectDataRepository->find($this->getObjectIdentifier($object));
 
         $this->hydrate($object, $data);
     }

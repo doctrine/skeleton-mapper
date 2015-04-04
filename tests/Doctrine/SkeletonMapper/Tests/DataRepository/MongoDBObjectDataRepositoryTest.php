@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\MongoDBObjectDataRepository;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group unit
+ */
 class MongoDBObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
 {
     private $objectManager;

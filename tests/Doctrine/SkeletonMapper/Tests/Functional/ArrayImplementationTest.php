@@ -7,6 +7,9 @@ use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
+/**
+ * @group functional
+ */
 class ArrayImplementationTest extends BaseImplementationTest
 {
     protected function setUpImplementation()

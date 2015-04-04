@@ -6,6 +6,9 @@ use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\MongoDBImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
+/**
+ * @group functional
+ */
 class MongoDBImplementationTest extends BaseImplementationTest
 {
     protected function setUpImplementation()

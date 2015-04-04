@@ -37,15 +37,6 @@ interface ObjectDataRepositoryInterface
     public function find($id);
 
     /**
-     * Finds an objects data by the object.
-     *
-     * @param object $object
-     *
-     * @return array The objects array of data.
-     */
-    public function findByObject($object);
-
-    /**
      * Finds all object data in the repository.
      *
      * @return array The objects data.

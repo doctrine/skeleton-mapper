@@ -8,6 +8,9 @@ use Doctrine\SkeletonMapper\Tests\CacheImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\CacheImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
+/**
+ * @group functional
+ */
 class CacheImplementationTest extends BaseImplementationTest
 {
     protected function setUpImplementation()

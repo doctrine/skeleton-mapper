@@ -6,6 +6,9 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\SkeletonMapper\DataRepository\CacheObjectDataRepository;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group unit
+ */
 class CacheObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
 {
     private $objectManager;

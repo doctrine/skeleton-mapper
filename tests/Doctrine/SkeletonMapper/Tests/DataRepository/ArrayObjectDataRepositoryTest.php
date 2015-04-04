@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group unit
+ */
 class ArrayObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
 {
     private $objectManager;

@@ -71,11 +71,6 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         return $this->findOneBy($criteria);
     }
 
-    public function findByObject($object)
-    {
-        return $this->find($this->getObjectIdentifier($object));
-    }
-
     /**
      * @return array $identifier
      */

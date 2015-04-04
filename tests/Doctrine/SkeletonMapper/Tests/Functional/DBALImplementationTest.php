@@ -9,6 +9,9 @@ use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 
+/**
+ * @group functional
+ */
 class DBALImplementationTest extends BaseImplementationTest
 {
     protected function setUpImplementation()
