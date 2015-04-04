@@ -20,6 +20,9 @@
 
 namespace Doctrine\SkeletonMapper;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class Events
 {
     /**
