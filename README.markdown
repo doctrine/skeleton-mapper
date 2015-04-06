@@ -20,7 +20,6 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 interface ObjectDataRepositoryInterface
 {
     public function find($id);
-    public function findByObject($object);
     public function findAll();
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     public function findOneBy(array $criteria)
