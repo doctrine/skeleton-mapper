@@ -21,9 +21,9 @@
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
-use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
+use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
  * Class for managing the persistence of objects.
@@ -33,12 +33,12 @@ use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
 class ObjectManager implements ObjectManagerInterface
 {
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface
      */
     private $objectRepositoryFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory
+     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface
      */
     private $objectPersisterFactory;
 
@@ -63,15 +63,15 @@ class ObjectManager implements ObjectManagerInterface
     private $eventManager;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory         $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory             $metadataFactory
-     * @param \Doctrine\Common\EventManager                                     $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface         $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                                 $objectIdentityMap
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory                      $metadataFactory
+     * @param \Doctrine\Common\EventManager                                              $eventManager
      */
     public function __construct(
-        ObjectRepositoryFactory $objectRepositoryFactory,
-        ObjectPersisterFactory $objectPersisterFactory,
+        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
+        ObjectPersisterFactoryInterface $objectPersisterFactory,
         ObjectIdentityMap $objectIdentityMap,
         ClassMetadataFactory $metadataFactory,
         EventManager $eventManager = null)

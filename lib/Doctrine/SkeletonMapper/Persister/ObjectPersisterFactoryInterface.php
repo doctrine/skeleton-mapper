@@ -18,40 +18,24 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper\ObjectRepository;
+namespace Doctrine\SkeletonMapper\Persister;
 
 /**
- * Class responsible for retrieving ObjectRepository instances.
+ * Class responsible for retrieving ObjectPersister instances.
  *
- * @author Jonathan H. Wage <jonwage@gmail.com>
+ * @author Magnus Nordlander <magnus@fervo.se>
  */
-class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
+interface ObjectPersisterFactoryInterface
 {
-    /**
-     * @var array
-     */
-    private $repositories = array();
-
-    /**
-     * @param string                                                              $className
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface $objectRepository
-     */
-    public function addObjectRepository($className, ObjectRepositoryInterface $objectRepository)
-    {
-        $this->repositories[$className] = $objectRepository;
-    }
-
     /**
      * @param string $className
      *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return \Doctrine\Common\Persistence\ObjectPersisterInterface
      */
-    public function getRepository($className)
-    {
-        if (!isset($this->repositories[$className])) {
-            throw new \InvalidArgumentException(sprintf('ObjectRepository with class name %s was not found', $className));
-        }
+    public function getPersister($className);
 
-        return $this->repositories[$className];
-    }
+    /**
+     * @return array
+     */
+    public function getPersisters();
 }

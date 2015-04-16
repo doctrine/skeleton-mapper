@@ -25,7 +25,7 @@ namespace Doctrine\SkeletonMapper\Persister;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class ObjectPersisterFactory
+class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
 {
     /**
      * @var array

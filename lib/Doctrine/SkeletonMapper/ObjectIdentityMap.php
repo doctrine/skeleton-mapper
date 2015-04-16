@@ -20,8 +20,8 @@
 
 namespace Doctrine\SkeletonMapper;
 
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 
 /**
  * Class for maintaining an object identity map.
@@ -36,7 +36,7 @@ class ObjectIdentityMap
     private $identityMap = array();
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface
      */
     private $objectRepositoryFactory;
 
@@ -46,11 +46,11 @@ class ObjectIdentityMap
     private $classMetadataFactory;
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory             $classMetadataFactory
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory                      $classMetadataFactory
      */
     public function __construct(
-        ObjectRepositoryFactory $objectRepositoryFactory,
+        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
         ClassMetadataFactory $classMetadataFactory)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
