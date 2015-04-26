@@ -66,7 +66,7 @@ class HttpObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @return \Doctrine\DBAL\Connection
+     * @return \GuzzleHttp\Client
      */
     public function getClient()
     {
