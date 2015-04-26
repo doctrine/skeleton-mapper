@@ -107,7 +107,7 @@ Create all the necessary services for the mapper:
 
 ```php
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrone\Common\EventManager;
+use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
 use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
