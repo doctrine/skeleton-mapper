@@ -3,6 +3,7 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\DBAL;
+use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\DBALImplementation\ObjectDataRepository;
@@ -50,7 +51,13 @@ class DBALImplementationTest extends BaseImplementationTest
         $groupsTable->addColumn('name', 'string', array('length' => 32, 'notnull' => false));
         $groupsTable->setPrimaryKey(array('_id'));
 
-        $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
+        try {
+            $connection->getSchemaManager()->dropAndCreateDatabase('skeleton_mapper');
+        } catch (PDOException $e) {
+            $this->markTestIncomplete("Cannot create database");
+        } catch (DBAL\DBALException $e) {
+            $this->markTestIncomplete("Cannot create database");
+        }
 
         $connectionParams = array(
             'dbname' => 'skeleton_mapper',

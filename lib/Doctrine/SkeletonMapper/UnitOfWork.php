@@ -23,8 +23,8 @@ namespace Doctrine\SkeletonMapper;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\NotifyPropertyChanged;
 use Doctrine\Common\PropertyChangedListener;
-use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
+use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
 use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
@@ -43,12 +43,12 @@ class UnitOfWork implements PropertyChangedListener
     private $objectManager;
 
     /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory
+     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface
      */
     private $objectRepositoryFactory;
 
     /**
-     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory
+     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface
      */
     private $objectPersisterFactory;
 
@@ -88,16 +88,16 @@ class UnitOfWork implements PropertyChangedListener
     private $objectChangeSets = array();
 
     /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                   $objectManager
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory         $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                        $objectIdentityMap
-     * @param \Doctrine\Common\EventManager                                     $eventManager
+     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface                            $objectManager
+     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface $objectRepositoryFactory
+     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface         $objectPersisterFactory
+     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                                 $objectIdentityMap
+     * @param \Doctrine\Common\EventManager                                              $eventManager
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ObjectRepositoryFactory $objectRepositoryFactory,
-        ObjectPersisterFactory $objectPersisterFactory,
+        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
+        ObjectPersisterFactoryInterface $objectPersisterFactory,
         ObjectIdentityMap $objectIdentityMap,
         EventManager $eventManager)
     {

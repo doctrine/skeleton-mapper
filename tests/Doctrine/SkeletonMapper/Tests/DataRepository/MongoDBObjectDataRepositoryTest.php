@@ -17,6 +17,12 @@ class MongoDBObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        if (!extension_loaded('mongo')) {
+            $this->markTestIncomplete(
+                'MongoDB extension is not loaded'
+            );
+        }
+
         $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
             ->getMock();
 

@@ -13,6 +13,12 @@ class MongoDBImplementationTest extends BaseImplementationTest
 {
     protected function setUpImplementation()
     {
+        if (!extension_loaded('mongo')) {
+            $this->markTestIncomplete(
+                'MongoDB extension is not loaded'
+            );
+        }
+
         $mongo = version_compare(phpversion('mongo'), '1.3.0', '<')
             ? new \Mongo()
             : new \MongoClient();
