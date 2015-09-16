@@ -87,10 +87,10 @@ class ClassMetadata implements ClassMetadataInterface
             $mapping['name'] = $mapping['fieldName'];
         }
 
-        $this->fieldMappings[$mapping['fieldName']] = $mapping;
-
         if (isset($mapping['type']) && isset($mapping['targetObject'])) {
             $this->associationMappings[$mapping['fieldName']] = $mapping;
+        } else {
+            $this->fieldMappings[$mapping['fieldName']] = $mapping;
         }
 
         $this->initReflField($mapping);
