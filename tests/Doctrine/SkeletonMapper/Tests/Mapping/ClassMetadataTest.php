@@ -13,6 +13,7 @@ use PHPUnit_Framework_TestCase;
  */
 class ClassMetadataTest extends PHPUnit_Framework_TestCase
 {
+
     private $class;
 
     protected function setUp()
@@ -128,6 +129,21 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         ));
 
         $this->assertTrue($this->class->hasAssociation('groups'));
+    }
+
+    public function testAddingAssociationMappingDoesNotAddFieldMapping()
+    {
+        $this->assertFalse($this->class->hasAssociation('groups'));
+
+        $this->class->mapField(
+            array(
+                'fieldName' => 'groups',
+                'targetObject' => 'Test',
+                'type' => 'many',
+            )
+        );
+
+        $this->assertFalse($this->class->hasField('groups'));
     }
 
     public function testIsSingleValuedAssociation()
