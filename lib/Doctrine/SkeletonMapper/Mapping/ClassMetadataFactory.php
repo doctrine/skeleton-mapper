@@ -30,9 +30,22 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadat
 class ClassMetadataFactory implements BaseClassMetadataFactory
 {
     /**
+     * @var ClassMetadataInstantiatorInterface
+     */
+    private $classMetadataInstantiator;
+
+    /**
      * @var array
      */
     protected $classes = array();
+
+    /**
+     * @param ClassMetadataInstantiatorInterface $classMetadataInstantiator
+     */
+    public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
+    {
+        $this->classMetadataInstantiator = $classMetadataInstantiator;
+    }
 
     /**
      * Returns all mapped classes.
@@ -54,7 +67,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     public function getMetadataFor($className)
     {
         if (!isset($this->classes[$className])) {
-            $metadata = $this->createClassMetadata($className);
+            $metadata = $this->classMetadataInstantiator->instantiate($className);
 
             if ($metadata->reflClass->implementsInterface('Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface')) {
                 $className::loadMetadata($metadata);
@@ -100,13 +113,5 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     public function isTransient($className)
     {
         return isset($this->classes[$className]);
-    }
-
-    /**
-     * @param string $className
-     */
-    private function createClassMetadata($className)
-    {
-        return new ClassMetadata($className);
     }
 }

@@ -19,6 +19,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
 {
     protected $basicObjectHydrator;
     protected $classMetadataFactory;
+    protected $classMetadataInstantiator;
     protected $objectFactory;
     protected $objectRepositoryFactory;
     protected $objectPersisterFactory;
@@ -97,7 +98,8 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->eventManager->addEventListener($event, $this->eventTester);
         }
 
-        $this->classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory();
+        $this->classMetadataInstantiator = new SkeletonMapper\Mapping\ClassMetadataInstantiator();
+        $this->classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory($this->classMetadataInstantiator);
         $this->objectFactory = new SkeletonMapper\ObjectFactory();
         $this->objectRepositoryFactory = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
         $this->objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
