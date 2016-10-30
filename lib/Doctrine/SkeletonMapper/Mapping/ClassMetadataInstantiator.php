@@ -18,32 +18,18 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\SkeletonMapper;
-
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+namespace Doctrine\SkeletonMapper\Mapping;
 
 /**
- * Interface that object managers must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
+ * @author Igor Timoshenko <igor.timoshenko@i.ua>
  */
-interface ObjectManagerInterface extends BaseObjectManagerInterface
+class ClassMetadataInstantiator implements ClassMetadataInstantiatorInterface
 {
     /**
-     * @param object $object
+     * {@inheritdoc}
      */
-    public function update($object);
-
-    /**
-     * @param string $className
-     * @param array $data
-     *
-     * @return object
-     */
-    public function getOrCreateObject($className, array $data);
-
-    /**
-     * @return UnitOfWork
-     */
-    public function getUnitOfWork();
+    public function instantiate($className)
+    {
+        return new ClassMetadata($className);
+    }
 }
