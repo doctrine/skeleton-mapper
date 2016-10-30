@@ -15,10 +15,14 @@
     },
     "require-dev": {
         "doctrine/dbal": "~2.4",
-        "guzzlehttp/guzzle": "~5.0"
+        "guzzlehttp/guzzle": "~5.0",
+        "phpunit/phpunit": "^5.6"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\SkeletonMapper": "lib/" }
+        "psr-0": {
+            "Doctrine\\SkeletonMapper": "lib/",
+            "Doctrine\\SkeletonMapper\\Tests": "tests/"
+        }
     },
     "minimum-stability": "dev",
     "extra": {
