@@ -16,7 +16,7 @@
     "require-dev": {
         "doctrine/dbal": "~2.4",
         "guzzlehttp/guzzle": "~5.0",
-        "phpunit/phpunit": "^5.6"
+        "phpunit/phpunit": "5.6.*"
     },
     "autoload": {
         "psr-0": {
