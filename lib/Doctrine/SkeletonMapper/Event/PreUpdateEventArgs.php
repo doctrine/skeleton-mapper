@@ -8,8 +8,6 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 /**
  * Class that holds event arguments for a preUpdate event.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class PreUpdateEventArgs extends LifecycleEventArgs
 {

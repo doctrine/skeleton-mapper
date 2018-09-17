@@ -6,8 +6,6 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 /**
  * Interface that object persisters must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface ObjectPersisterInterface
 {

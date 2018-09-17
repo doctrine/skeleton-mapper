@@ -8,8 +8,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
  * Basic object hydrator that delegates hydration
  * to a method on the object that is being hydrated
  * or uses a dynamic hydration algorithm.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class BasicObjectHydrator extends ObjectHydrator
 {

@@ -4,8 +4,6 @@ namespace Doctrine\SkeletonMapper\Mapping;
 
 /**
  * Class used to hold metadata about mapped classes.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ClassMetadata implements ClassMetadataInterface
 {

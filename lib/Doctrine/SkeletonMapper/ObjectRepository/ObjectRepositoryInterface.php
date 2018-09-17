@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterfac
 
 /**
  * Interface that object repositories must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {

@@ -10,8 +10,6 @@ use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
 
 /**
  * Base class for object repositories to extend from.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {

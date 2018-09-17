@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;
 
 /**
  * Provides event arguments for the onClear event.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class OnClearEventArgs extends BaseOnClearEventArgs
 {

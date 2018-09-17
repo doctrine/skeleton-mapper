@@ -6,8 +6,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 /**
  * Class that holds event arguments for a preLoad event.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class PreLoadEventArgs extends LifecycleEventArgs
 {

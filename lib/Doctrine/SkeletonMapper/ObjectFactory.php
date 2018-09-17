@@ -5,8 +5,6 @@ namespace Doctrine\SkeletonMapper;
 /**
  * Class for creating object instances without
  * invoking the __construct method.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectFactory
 {

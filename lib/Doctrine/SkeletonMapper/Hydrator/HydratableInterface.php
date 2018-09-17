@@ -6,8 +6,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 /**
  * Interface hydratable objects must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface HydratableInterface
 {

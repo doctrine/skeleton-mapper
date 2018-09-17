@@ -7,8 +7,6 @@ use GuzzleHttp\Client;
 
 /**
  * Base class for HTTP object data repositories to extend from.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class HttpObjectDataRepository extends BasicObjectDataRepository
 {

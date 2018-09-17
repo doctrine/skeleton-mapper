@@ -9,8 +9,6 @@ use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
  * Class for managing the persistence of objects.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectManager implements ObjectManagerInterface
 {

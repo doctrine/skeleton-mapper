@@ -4,8 +4,6 @@ namespace Doctrine\SkeletonMapper\Persister;
 
 /**
  * Class responsible for retrieving ObjectPersister instances.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
 {

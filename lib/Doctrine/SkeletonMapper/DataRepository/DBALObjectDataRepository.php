@@ -7,8 +7,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 /**
  * Base class for DBAL object data repositories to extend from.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class DBALObjectDataRepository extends BasicObjectDataRepository
 {

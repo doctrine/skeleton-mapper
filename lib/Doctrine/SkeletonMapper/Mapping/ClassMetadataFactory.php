@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadat
 
 /**
  * Class responsible for retrieving ClassMetadata instances.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ClassMetadataFactory implements BaseClassMetadataFactory
 {

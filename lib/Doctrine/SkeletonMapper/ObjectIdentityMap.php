@@ -7,8 +7,6 @@ use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 
 /**
  * Class for maintaining an object identity map.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectIdentityMap
 {

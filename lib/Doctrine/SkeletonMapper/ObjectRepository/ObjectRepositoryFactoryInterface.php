@@ -4,8 +4,6 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 /**
  * Class responsible for retrieving ObjectRepository instances.
- *
- * @author Magnus Nordlander <magnus@fervo.se>
  */
 interface ObjectRepositoryFactoryInterface
 {

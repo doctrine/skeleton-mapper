@@ -14,8 +14,6 @@ use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 
 /**
  * Class for managing the persistence of objects.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class UnitOfWork implements PropertyChangedListener
 {

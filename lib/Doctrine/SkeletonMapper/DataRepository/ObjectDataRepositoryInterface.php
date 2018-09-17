@@ -4,8 +4,6 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 
 /**
  * Interface that object data repositories must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface ObjectDataRepositoryInterface
 {

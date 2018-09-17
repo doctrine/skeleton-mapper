@@ -2,9 +2,6 @@
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-/**
- * @author Igor Timoshenko <igor.timoshenko@i.ua>
- */
 class ClassMetadataInstantiator implements ClassMetadataInstantiatorInterface
 {
     /**

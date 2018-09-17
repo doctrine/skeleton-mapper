@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
 
 /**
  * Interface that object managers must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface ObjectManagerInterface extends BaseObjectManagerInterface
 {
