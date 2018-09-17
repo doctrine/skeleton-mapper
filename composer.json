@@ -14,7 +14,6 @@
         "doctrine/common": "~2.9"
     },
     "require-dev": {
-        "doctrine/dbal": "~2.8",
         "phpunit/phpunit": "~7.0",
         "guzzlehttp/guzzle": "~5.0"
     },
