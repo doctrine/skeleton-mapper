@@ -1,40 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 class Change
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $propertyName;
 
-    /**
-     * @var mixed
-     */
+    /** @var mixed */
     private $oldValue;
 
-    /**
-     * @var mixed
-     */
+    /** @var mixed */
     private $newValue;
 
     /**
-     * @param string $propertyName
-     * @param mixed  $oldValue
-     * @param mixed  $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      */
-    public function __construct($propertyName, $oldValue, $newValue)
+    public function __construct(string $propertyName, $oldValue, $newValue)
     {
         $this->propertyName = $propertyName;
-        $this->oldValue = $oldValue;
-        $this->newValue = $newValue;
+        $this->oldValue     = $oldValue;
+        $this->newValue     = $newValue;
     }
 
-    /**
-     * @return string
-     */
-    public function getPropertyName()
+    public function getPropertyName() : string
     {
         return $this->propertyName;
     }
@@ -58,7 +50,7 @@ class Change
     /**
      * @param mixed $newValue
      */
-    public function setNewValue($newValue)
+    public function setNewValue($newValue) : void
     {
         $this->newValue = $newValue;
     }

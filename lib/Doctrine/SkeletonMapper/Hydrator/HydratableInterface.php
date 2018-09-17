@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Hydrator;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -10,8 +12,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 interface HydratableInterface
 {
     /**
-     * @param array                                           $data
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager);
+    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void;
 }

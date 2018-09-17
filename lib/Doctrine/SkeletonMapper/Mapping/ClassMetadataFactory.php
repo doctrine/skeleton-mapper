@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Mapping;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
@@ -9,19 +11,12 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadat
  */
 class ClassMetadataFactory implements BaseClassMetadataFactory
 {
-    /**
-     * @var ClassMetadataInstantiatorInterface
-     */
+    /** @var ClassMetadataInstantiatorInterface */
     private $classMetadataInstantiator;
 
-    /**
-     * @var array
-     */
-    protected $classes = array();
+    /** @var ClassMetadataInterface[] */
+    private $classes = [];
 
-    /**
-     * @param ClassMetadataInstantiatorInterface $classMetadataInstantiator
-     */
     public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
     {
         $this->classMetadataInstantiator = $classMetadataInstantiator;
@@ -30,23 +25,19 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * Returns all mapped classes.
      *
-     * @return array The ClassMetadata instances of all mapped classes.
+     * @return ClassMetadataInterface[] The ClassMetadataInterface instances of all mapped classes.
      */
-    public function getAllMetadata()
+    public function getAllMetadata() : array
     {
         return $this->classes;
     }
 
     /**
-     * Gets the class metadata descriptor for a class.
-     *
-     * @param string $className The name of the class.
-     *
-     * @return ClassMetadata
+     * @param string $className
      */
-    public function getMetadataFor($className)
+    public function getMetadataFor($className) : ClassMetadataInterface
     {
-        if (!isset($this->classes[$className])) {
+        if (! isset($this->classes[$className])) {
             $metadata = $this->classMetadataInstantiator->instantiate($className);
 
             if ($metadata->reflClass->implementsInterface('Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface')) {
@@ -60,22 +51,16 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     }
 
     /**
-     * Checks whether the factory has the metadata for a class loaded already.
-     *
-     * @param string $className
-     *
-     * @return bool TRUE if the metadata of the class in question is already loaded, FALSE otherwise.
+     * {@inheritDoc}
      */
-    public function hasMetadataFor($className)
+    public function hasMetadataFor($className) : bool
     {
         return isset($this->classes[$className]);
     }
 
     /**
-     * Sets the metadata descriptor for a specific class.
-     *
-     * @param string        $className
-     * @param ClassMetadata $class
+     * @param string                 $className
+     * @param ClassMetadataInterface $class
      */
     public function setMetadataFor($className, $class)
     {
@@ -83,14 +68,9 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     }
 
     /**
-     * Returns whether the class with the specified name should have its metadata loaded.
-     * This is only the case if it is either mapped directly or as a MappedSuperclass.
-     *
-     * @param string $className
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    public function isTransient($className)
+    public function isTransient($className) : bool
     {
         return isset($this->classes[$className]);
     }

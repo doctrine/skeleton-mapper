@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
 
 /**
@@ -7,15 +9,10 @@ namespace Doctrine\SkeletonMapper\Persister;
  */
 interface ObjectPersisterFactoryInterface
 {
-    /**
-     * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\ObjectPersisterInterface
-     */
-    public function getPersister($className);
+    public function getPersister(string $className) : ObjectPersisterInterface;
 
     /**
-     * @return array
+     * @return ObjectPersisterInterface[]
      */
-    public function getPersisters();
+    public function getPersisters() : array;
 }

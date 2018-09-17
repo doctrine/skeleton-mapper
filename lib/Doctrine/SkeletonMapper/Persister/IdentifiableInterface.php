@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
 
 interface IdentifiableInterface
@@ -7,7 +9,7 @@ interface IdentifiableInterface
     /**
      * Assign identifier to object.
      *
-     * @param array $identifier
+     * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier);
+    public function assignIdentifier(array $identifier) : void;
 }

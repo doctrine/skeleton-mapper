@@ -1,0 +1,35 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 7
+    paths:
+      - lib
+      - tests
+    ignoreErrors:
+        - '~findBy\(\) has parameter \$limit with no typehint specified~'
+        - '~findBy\(\) has parameter \$offset with no typehint specified~'
+        - '~findOneBy\(\) has no return typehint specified~'
+        - '~Doctrine\\SkeletonMapper\\ObjectManager\:\:find\(\) has no return typehint specified.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:find\(\) has parameter \$className with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:find\(\) has parameter \$id with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:persist\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:remove\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:merge\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:clear\(\) has parameter \$objectName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:detach\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\ObjectManager\:\:refresh\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadataFactory\:\:setMetadataFor\(\) has no return typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:isIdentifier\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:hasField\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:getTypeOfField\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:getAssociationTargetClass\(\) has parameter \$assocName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:getIdentifierValues\(\) has parameter \$object with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:hasAssociation\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:isSingleValuedAssociation\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:isCollectionValuedAssociation\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:getAssociationMappedByTargetField\(\) has no return typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:getAssociationMappedByTargetField\(\) has parameter \$fieldName with no typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:isAssociationInverseSide\(\) has no return typehint specified\.~'
+        - '~Method Doctrine\\SkeletonMapper\\Mapping\\ClassMetadata\:\:isAssociationInverseSide\(\) has parameter \$fieldName with no typehint specified\.~'

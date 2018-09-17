@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Hydrator;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use InvalidArgumentException;
+use function get_class;
+use function sprintf;
 
 /**
  * Basic object hydrator that delegates hydration
@@ -11,27 +16,27 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
  */
 class BasicObjectHydrator extends ObjectHydrator
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
+    /** @var ObjectManagerInterface */
     protected $objectManager;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
-     */
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
 
     /**
-     * @param \Doctrine\SkeletonMapper\Hydrator\HydratableInterface $object
-     * @param array                                                 $data
+     * @param object  $object
+     *
+     * @param mixed[] $data
      */
-    public function hydrate($object, array $data)
+    public function hydrate($object, array $data) : void
     {
-        if (!$object instanceof HydratableInterface) {
-            throw new \InvalidArgumentException(sprintf('%s must implement HydratableInterface.', get_class($object)));
+        if (! $object instanceof HydratableInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'Class %s does not implement %s.',
+                get_class($object),
+                HydratableInterface::class
+            ));
         }
 
         $object->hydrate($data, $this->objectManager);

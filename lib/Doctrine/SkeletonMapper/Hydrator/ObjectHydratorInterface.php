@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Hydrator;
 
 /**
@@ -8,8 +10,9 @@ namespace Doctrine\SkeletonMapper\Hydrator;
 interface ObjectHydratorInterface
 {
     /**
-     * @param object $object
-     * @param array  $data
+     * @param object  $object
+     *
+     * @param mixed[] $data
      */
-    public function hydrate($object, array $data);
+    public function hydrate($object, array $data) : void;
 }

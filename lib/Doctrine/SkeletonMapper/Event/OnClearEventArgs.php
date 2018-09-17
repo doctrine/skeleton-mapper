@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Event;
 
 use Doctrine\Common\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;
@@ -13,9 +15,8 @@ class OnClearEventArgs extends BaseOnClearEventArgs
      * Returns the name of the object class that is cleared, or null if all
      * are cleared.
      *
-     * @return string|null
      */
-    public function getObjectClass()
+    public function getObjectClass() : ?string
     {
         return $this->getEntityClass();
     }
@@ -23,9 +24,8 @@ class OnClearEventArgs extends BaseOnClearEventArgs
     /**
      * Returns whether this event clears all objects.
      *
-     * @return bool
      */
-    public function clearsAllObjects()
+    public function clearsAllObjects() : bool
     {
         return $this->clearsAllEntities();
     }

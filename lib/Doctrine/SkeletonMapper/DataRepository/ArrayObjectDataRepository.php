@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -7,68 +9,84 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class ArrayObjectDataRepository extends BasicObjectDataRepository
 {
-    /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
-     */
+    /** @var ArrayCollection */
     private $objects;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\Common\Collections\ArrayCollection    $objects
-     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,
-        $className = null)
-    {
+        string $className
+    ) {
         parent::__construct($objectManager, $className);
         $this->objects = $objects;
     }
 
-    public function findAll()
+    /**
+     * @return mixed[][]
+     */
+    public function findAll() : array
     {
         return $this->objects->toArray();
     }
 
+    /**
+     * @param mixed[] $criteria
+     * @param mixed[] $orderBy
+     *
+     * @return mixed[][]
+     */
     public function findBy(
         array $criteria,
-        array $orderBy = null,
-        $limit = null,
-        $offset = null)
-    {
-        $objects = array();
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ) : array {
+        $objects = [];
 
         foreach ($this->objects as $object) {
             $matches = true;
 
             foreach ($criteria as $key => $value) {
-                if ($object[$key] !== $value) {
-                    $matches = false;
+                if ($object[$key] === $value) {
+                    continue;
                 }
+
+                $matches = false;
             }
 
-            if ($matches) {
-                $objects[] = $object;
+            if (! $matches) {
+                continue;
             }
+
+            $objects[] = $object;
         }
 
         return $objects;
     }
 
-    public function findOneBy(array $criteria)
+    /**
+     * @param mixed[] $criteria
+     *
+     * @return null|mixed[]
+     */
+    public function findOneBy(array $criteria) : ?array
     {
         foreach ($this->objects as $object) {
             $matches = true;
 
             foreach ($criteria as $key => $value) {
-                if ($object[$key] !== $value) {
-                    $matches = false;
+                if ($object[$key] === $value) {
+                    continue;
                 }
+
+                $matches = false;
             }
 
             if ($matches) {
                 return $object;
             }
         }
+
+        return null;
     }
 }

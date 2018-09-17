@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
@@ -12,32 +14,39 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
     /**
      * Returns the objects identifier.
      *
-     * @return array
+     * @param object $object
+     *
+     * @return mixed[]
      */
-    public function getObjectIdentifier($object);
+    public function getObjectIdentifier($object) : array;
 
     /**
      * Returns the identifier.
      *
-     * @return array
-     */
-    public function getObjectIdentifierFromData(array $data);
-
-    /**
-     * @param object $object
-     */
-    public function merge($object);
-
-    /**
-     * @param object $object
-     * @param array  $data
-     */
-    public function hydrate($object, array $data);
-
-    /**
-     * @param string $className
+     * @param mixed[] $data
      *
+     * @return mixed[]
+     */
+    public function getObjectIdentifierFromData(array $data) : array;
+
+    /**
+     * @param object $object
+     */
+    public function merge($object) : void;
+
+    /**
+     * @param object  $object
+     * @param mixed[] $data
+     */
+    public function hydrate($object, array $data) : void;
+
+    /**
      * @return object
      */
-    public function create($className);
+    public function create(string $className);
+
+    /**
+     * @param object $object
+     */
+    public function refresh($object) : void;
 }

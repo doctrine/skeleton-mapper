@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Mapping;
 
 interface LoadMetadataInterface
 {
-    /**
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface $metadata
-     */
-    public static function loadMetadata(ClassMetadataInterface $metadata);
+    public static function loadMetadata(ClassMetadataInterface $metadata) : void;
 }

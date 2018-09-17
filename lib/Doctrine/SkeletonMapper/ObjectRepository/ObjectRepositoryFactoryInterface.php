@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 /**
@@ -7,10 +9,5 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
  */
 interface ObjectRepositoryFactoryInterface
 {
-    /**
-     * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    public function getRepository($className);
+    public function getRepository(string $className) : ObjectRepositoryInterface;
 }

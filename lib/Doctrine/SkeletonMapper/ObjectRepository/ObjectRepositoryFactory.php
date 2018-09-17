@@ -1,35 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\ObjectRepository;
+
+use InvalidArgumentException;
+use function sprintf;
 
 /**
  * Class responsible for retrieving ObjectRepository instances.
  */
 class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
 {
-    /**
-     * @var array
-     */
-    private $repositories = array();
+    /** @var ObjectRepositoryInterface[] */
+    private $repositories = [];
 
-    /**
-     * @param string                                                              $className
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface $objectRepository
-     */
-    public function addObjectRepository($className, ObjectRepositoryInterface $objectRepository)
+    public function addObjectRepository(string $className, ObjectRepositoryInterface $objectRepository) : void
     {
         $this->repositories[$className] = $objectRepository;
     }
 
-    /**
-     * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    public function getRepository($className)
+    public function getRepository(string $className) : ObjectRepositoryInterface
     {
-        if (!isset($this->repositories[$className])) {
-            throw new \InvalidArgumentException(sprintf('ObjectRepository with class name %s was not found', $className));
+        if (! isset($this->repositories[$className])) {
+            throw new InvalidArgumentException(
+                sprintf('ObjectRepository with class name %s was not found', $className)
+            );
         }
 
         return $this->repositories[$className];

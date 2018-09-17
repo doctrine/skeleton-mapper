@@ -1,33 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\UnitOfWork;
+
+use function spl_object_hash;
 
 class ChangeSets
 {
-    /**
-     * @var array
-     */
-    private $changeSets = array();
+    /** @var ChangeSet[] */
+    private $changeSets = [];
 
     /**
-     * @param object                                     $object
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\Change $change
+     * @param object $object
      */
-    public function addObjectChange($object, Change $change)
+    public function addObjectChange($object, Change $change) : void
     {
         $this->getObjectChangeSet($object)->addChange($change);
     }
 
     /**
      * @param object $object
-     *
-     * @return \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet
      */
-    public function getObjectChangeSet($object)
+    public function getObjectChangeSet($object) : ChangeSet
     {
         $oid = spl_object_hash($object);
 
-        if (!isset($this->changeSets[$oid])) {
+        if (! isset($this->changeSets[$oid])) {
             $this->changeSets[$oid] = new ChangeSet($object);
         }
 

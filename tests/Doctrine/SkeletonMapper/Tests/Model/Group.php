@@ -1,26 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
+use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+use function array_map;
 
 class Group extends BaseObject
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $name;
 
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name;
     }
@@ -28,86 +28,85 @@ class Group extends BaseObject
     /**
      * Assign identifier to object.
      *
-     * @param array $identifier
+     * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier)
+    public function assignIdentifier(array $identifier) : void
     {
         $this->id = (int) $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata)
+    public static function loadMetadata(ClassMetadataInterface $metadata) : void
     {
-        $metadata->identifier = array('_id');
-        $metadata->identifierFieldNames = array('id');
-        $metadata->mapField(array(
+        $metadata->setIdentifier(['_id']);
+        $metadata->setIdentifierFieldNames(['id']);
+        $metadata->mapField([
             'name' => '_id',
             'fieldName' => 'id',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'name',
-        ));
+        ]);
+        $metadata->mapField(['fieldName' => 'name']);
     }
 
-    public function getId()
+    public function getId() : int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id) : void
     {
-        $id = (int) $id;
-
-        if ($this->id !== $id) {
-            $this->onPropertyChanged('id', $this->id, $id);
-            $this->id = $id;
+        if ($this->id === $id) {
+            return;
         }
+
+        $this->onPropertyChanged('id', $this->id, $id);
+        $this->id = $id;
     }
 
-    public function getName()
+    public function getName() : ?string
     {
         return $this->name;
     }
 
-    public function setName($name)
+    public function setName(string $name) : void
     {
-        $name = (string) $name;
-
-        if ($this->name !== $name) {
-            $this->onPropertyChanged('name', $this->name, $name);
-            $this->name = $name;
+        if ($this->name === $name) {
+            return;
         }
+
+        $this->onPropertyChanged('name', $this->name, $name);
+        $this->name = $name;
     }
 
     /**
      * @see HydratableInterface
      *
-     * @param array                                           $data
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager)
+    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
     {
         if (isset($data['_id'])) {
-            $this->id = (int) $data['_id'];
+            $this->id = $data['_id'];
         }
 
-        if (isset($data['name'])) {
-            $this->name = (string) $data['name'];
+        if (! isset($data['name'])) {
+            return;
         }
+
+        $this->name = $data['name'];
     }
 
     /**
      * @see PersistableInterface
      *
-     * @return array
+     * @return mixed[]
      */
-    public function preparePersistChangeSet()
+    public function preparePersistChangeSet() : array
     {
-        $changeSet = array(
+        $changeSet = [
             'name' => $this->name,
-        );
+        ];
 
         if ($this->id !== null) {
-            $changeSet['_id'] = (int) $this->id;
+            $changeSet['_id'] = $this->id;
         }
 
         return $changeSet;
@@ -116,17 +115,16 @@ class Group extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
-     * @return array
+     * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet)
+    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
-        $changeSet = array_map(function ($change) {
-            return $change[1];
-        }, $changeSet);
+        $changeSet = array_map(function (Change $change) {
+            return $change->getNewValue();
+        }, $changeSet->getChanges());
 
-        $changeSet['_id'] = (int) $this->id;
+        $changeSet['_id'] = $this->id;
 
         return $changeSet;
     }

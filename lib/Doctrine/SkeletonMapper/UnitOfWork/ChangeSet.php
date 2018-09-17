@@ -1,26 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 class ChangeSet
 {
-    /**
-     * @var object
-     */
+    /** @var object */
     private $object;
 
-    /**
-     * @var array
-     */
-    private $changes = array();
+    /** @var Change[] */
+    private $changes = [];
 
     /**
-     * @param object $object
-     * @param array  $changes
+     * @param object   $object
+     * @param Change[] $changes
      */
-    public function __construct($object, array $changes = array())
+    public function __construct($object, array $changes = [])
     {
-        $this->object = $object;
+        $this->object  = $object;
         $this->changes = $changes;
     }
 
@@ -32,39 +30,26 @@ class ChangeSet
         return $this->object;
     }
 
-    /**
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\Change $change
-     */
-    public function addChange(Change $change)
+    public function addChange(Change $change) : void
     {
         $this->changes[$change->getPropertyName()] = $change;
     }
 
     /**
-     * @return array
+     * @return Change[]
      */
-    public function getChanges()
+    public function getChanges() : array
     {
         return $this->changes;
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return bool
-     */
-    public function hasChangedField($fieldName)
+    public function hasChangedField(string $fieldName) : bool
     {
         return isset($this->changes[$fieldName]);
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return \Doctrine\SkeletonMapper\UnitOfWork\Change
-     */
-    public function getFieldChange($fieldName)
+    public function getFieldChange(string $fieldName) : ?Change
     {
-        return isset($this->changes[$fieldName]) ? $this->changes[$fieldName] : null;
+        return $this->changes[$fieldName] ?? null;
     }
 }

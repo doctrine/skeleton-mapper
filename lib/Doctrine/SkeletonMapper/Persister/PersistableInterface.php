@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
@@ -10,14 +12,13 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 interface PersistableInterface
 {
     /**
-     * @return array
+     * @return mixed[]
      */
-    public function preparePersistChangeSet();
+    public function preparePersistChangeSet() : array;
 
     /**
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
-     * @return array
+     * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet);
+    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array;
 }

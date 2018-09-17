@@ -1,53 +1,194 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Functional;
+declare(strict_types=1);
 
+namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
+
+use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
+use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+use Doctrine\SkeletonMapper\ObjectFactory;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepository;
+use Doctrine\SkeletonMapper\Tests\Model\User;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @group unit
  */
 class ObjectRepositoryTest extends TestCase
 {
+    /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
+
+    /** @var ObjectDataRepositoryInterface|MockObject */
     private $objectDataRepository;
+
+    /** @var ObjectFactory|MockObject */
     private $objectFactory;
+
+    /** @var ObjectHydratorInterface|MockObject */
     private $hydrator;
+
+    /** @var EventManager|MockObject */
     private $eventManager;
+
+    /** @var ClassMetadataInterface|MockObject */
     private $classMetadata;
+
+    /** @var TestObjectRepository */
     private $repository;
 
-    protected function setUp()
+    public function testGetClassName() : void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        self::assertEquals('TestClassName', $this->repository->getClassName());
+    }
 
-        $this->objectDataRepository = $this->getMockBuilder('Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+    public function testFind() : void
+    {
+        $data = ['username' => 'jwage'];
 
-        $this->objectFactory = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectDataRepository->expects(self::once())
+            ->method('find')
+            ->with(1)
+            ->will(self::returnValue($data));
 
-        $this->hydrator = $this->getMockBuilder('Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManager->expects(self::once())
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data)
+            ->will(self::returnValue(new stdClass()));
 
-        $this->eventManager = $this->getMockBuilder('Doctrine\Common\EventManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $object = $this->repository->find(1);
+        self::assertEquals(new stdClass(), $object);
+    }
 
-        $this->classMetadata = $this->getMockBuilder('Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+    public function testFindAll() : void
+    {
+        $data = [
+            ['username' => 'jwage'],
+            ['username' => 'romanb'],
+        ];
 
-        $this->objectManager->expects($this->once())
+        $object1 = new stdClass();
+        $object2 = new stdClass();
+
+        $this->objectDataRepository->expects(self::once())
+            ->method('findAll')
+            ->will(self::returnValue($data));
+
+        $this->objectManager->expects(self::at(0))
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data[0])
+            ->will(self::returnValue($object1));
+
+        $this->objectManager->expects(self::at(1))
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data[1])
+            ->will(self::returnValue($object2));
+
+        $objects = $this->repository->findAll();
+        self::assertSame([$object1, $object2], $objects);
+    }
+
+    public function testFindBy() : void
+    {
+        $data = [
+            ['username' => 'jwage'],
+            ['username' => 'romanb'],
+        ];
+
+        $object1 = new stdClass();
+        $object2 = new stdClass();
+
+        $this->objectDataRepository->expects(self::once())
+            ->method('findBy')
+            ->with([])
+            ->will(self::returnValue($data));
+
+        $this->objectManager->expects(self::at(0))
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data[0])
+            ->will(self::returnValue($object1));
+
+        $this->objectManager->expects(self::at(1))
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data[1])
+            ->will(self::returnValue($object2));
+
+        $objects = $this->repository->findBy([]);
+        self::assertSame([$object1, $object2], $objects);
+    }
+
+    public function testFindOneBy() : void
+    {
+        $data     = ['username' => 'jwage'];
+        $criteria = ['username' => 'jwage'];
+
+        $this->objectDataRepository->expects(self::once())
+            ->method('findOneBy')
+            ->with($criteria)
+            ->will(self::returnValue($data));
+
+        $this->objectManager->expects(self::once())
+            ->method('getOrCreateObject')
+            ->with('TestClassName', $data)
+            ->will(self::returnValue(new stdClass()));
+
+        $object = $this->repository->findOneBy($criteria);
+        self::assertEquals(new stdClass(), $object);
+    }
+
+    public function testRefresh() : void
+    {
+        $data = ['username' => 'jwage'];
+
+        $this->objectDataRepository->expects(self::once())
+            ->method('find')
+            ->with(['id' => 1])
+            ->will(self::returnValue($data));
+
+        $object = new User();
+
+        $this->hydrator->expects(self::once())
+            ->method('hydrate')
+            ->with($object, $data);
+
+        $this->repository->refresh($object);
+    }
+
+    public function testCreate() : void
+    {
+        $object = new stdClass();
+
+        $this->objectFactory->expects(self::once())
+            ->method('create')
+            ->with('stdClass')
+            ->will(self::returnValue($object));
+
+        self::assertSame($object, $this->repository->create('stdClass'));
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $this->objectDataRepository = $this->createMock(ObjectDataRepositoryInterface::class);
+
+        $this->objectFactory = $this->createMock(ObjectFactory::class);
+
+        $this->hydrator = $this->createMock(ObjectHydratorInterface::class);
+
+        $this->eventManager = $this->createMock(EventManager::class);
+
+        $this->classMetadata = $this->createMock(ClassMetadataInterface::class);
+
+        $this->objectManager->expects(self::once())
             ->method('getClassMetadata')
             ->with('TestClassName')
-            ->will($this->returnValue($this->classMetadata));
+            ->will(self::returnValue($this->classMetadata));
 
         $this->repository = new TestObjectRepository(
             $this->objectManager,
@@ -58,155 +199,39 @@ class ObjectRepositoryTest extends TestCase
             'TestClassName'
         );
     }
-
-    public function testGetClassName()
-    {
-        $this->assertEquals('TestClassName', $this->repository->getClassName());
-    }
-
-    public function testFind()
-    {
-        $data = array('username' => 'jwage');
-
-        $this->objectDataRepository->expects($this->once())
-            ->method('find')
-            ->with(1)
-            ->will($this->returnValue($data));
-
-        $this->objectManager->expects($this->once())
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
-            ->will($this->returnValue(new \stdClass()));
-
-        $object = $this->repository->find(1);
-        $this->assertEquals(new \stdClass(), $object);
-    }
-
-    public function testFindAll()
-    {
-        $data = array(
-            array('username' => 'jwage'),
-            array('username' => 'romanb'),
-        );
-
-        $object1 = new \stdClass();
-        $object2 = new \stdClass();
-
-        $this->objectDataRepository->expects($this->once())
-            ->method('findAll')
-            ->will($this->returnValue($data));
-
-        $this->objectManager->expects($this->at(0))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will($this->returnValue($object1));
-
-        $this->objectManager->expects($this->at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will($this->returnValue($object2));
-
-        $objects = $this->repository->findAll(1);
-        $this->assertSame(array($object1, $object2), $objects);
-    }
-
-    public function testFindBy()
-    {
-        $data = array(
-            array('username' => 'jwage'),
-            array('username' => 'romanb'),
-        );
-
-        $object1 = new \stdClass();
-        $object2 = new \stdClass();
-
-        $this->objectDataRepository->expects($this->once())
-            ->method('findBy')
-            ->with(array())
-            ->will($this->returnValue($data));
-
-        $this->objectManager->expects($this->at(0))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will($this->returnValue($object1));
-
-        $this->objectManager->expects($this->at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will($this->returnValue($object2));
-
-        $objects = $this->repository->findBy(array());
-        $this->assertSame(array($object1, $object2), $objects);
-    }
-
-    public function testFindOneBy()
-    {
-        $data = array('username' => 'jwage');
-        $criteria = array('username' => 'jwage');
-
-        $this->objectDataRepository->expects($this->once())
-            ->method('findOneBy')
-            ->with($criteria)
-            ->will($this->returnValue($data));
-
-        $this->objectManager->expects($this->once())
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
-            ->will($this->returnValue(new \stdClass()));
-
-        $object = $this->repository->findOneBy($criteria);
-        $this->assertEquals(new \stdClass(), $object);
-    }
-
-    public function testRefresh()
-    {
-        $data = array('username' => 'jwage');
-
-        $this->objectDataRepository->expects($this->once())
-            ->method('find')
-            ->with(array('id' => 1))
-            ->will($this->returnValue($data));
-
-        $object = new \stdClass();
-
-        $this->hydrator->expects($this->once())
-            ->method('hydrate')
-            ->with($object, $data);
-
-        $this->repository->refresh($object);
-    }
-
-    public function testCreate()
-    {
-        $object = new \stdClass();
-
-        $this->objectFactory->expects($this->once())
-            ->method('create')
-            ->with('stdClass')
-            ->will($this->returnValue($object));
-
-        $this->assertSame($object, $this->repository->create('stdClass'));
-    }
 }
 
 class TestObjectRepository extends ObjectRepository
 {
-    public function getClassMetadata()
+    public function getClassMetadata() : ClassMetadataInterface
     {
         return $this->class;
     }
 
-    public function getObjectIdentifier($object)
+    /**
+     * @param object $object
+     *
+     * @return int[]
+     */
+    public function getObjectIdentifier($object) : array
     {
-        return array('id' => 1);
+        return ['id' => 1];
     }
 
-    public function getObjectIdentifierFromData(array $data)
+    /**
+     * @param mixed[] $data
+     *
+     * @return int[]
+     */
+    public function getObjectIdentifierFromData(array $data) : array
     {
-        return array('id' => 1);
+        return ['id' => 1];
     }
 
-    public function merge($object)
+    /**
+     * @param object $object
+     */
+    public function merge($object) : void
     {
     }
 }

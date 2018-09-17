@@ -1,39 +1,42 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Persister;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\UnitOfWork;
 
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @group unit
  */
 class ChangeSetTest extends TestCase
 {
-    public function testChangeSet()
+    public function testChangeSet() : void
     {
-        $object = new \stdClass();
+        $object    = new stdClass();
         $changeSet = new ChangeSet($object);
 
-        $this->assertSame($object, $changeSet->getObject());
+        self::assertSame($object, $changeSet->getObject());
 
-        $this->assertFalse($changeSet->hasChangedField('username'));
+        self::assertFalse($changeSet->hasChangedField('username'));
 
         $change = new Change('username', 'jwage', 'jonwage');
 
         $changeSet->addChange($change);
 
-        $this->assertTrue($changeSet->hasChangedField('username'));
+        self::assertTrue($changeSet->hasChangedField('username'));
 
-        $this->assertSame($change, $changeSet->getFieldChange('username'));
+        self::assertSame($change, $changeSet->getFieldChange('username'));
 
-        $this->assertEquals('username', $change->getPropertyName());
-        $this->assertEquals('jwage', $change->getOldValue());
-        $this->assertEquals('jonwage', $change->getNewValue());
+        self::assertEquals('username', $change->getPropertyName());
+        self::assertEquals('jwage', $change->getOldValue());
+        self::assertEquals('jonwage', $change->getNewValue());
 
         $change->setNewValue('jon');
 
-        $this->assertEquals('jon', $change->getNewValue());
+        self::assertEquals('jon', $change->getNewValue());
     }
 }

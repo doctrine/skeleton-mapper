@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\Common\NotifyPropertyChanged;
@@ -9,32 +11,28 @@ use Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface;
 use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 
-abstract class BaseObject implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged
+abstract class BaseObject implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged, Identifiable
 {
-    /**
-     * @var array
-     */
-    private $listeners = array();
+    /** @var PropertyChangedListener[] */
+    private $listeners = [];
 
-    /**
-     * @param \Doctrine\Common\PropertyChangedListener $listener
-     */
-    public function addPropertyChangedListener(PropertyChangedListener $listener)
+    public function addPropertyChangedListener(PropertyChangedListener $listener) : void
     {
         $this->listeners[] = $listener;
     }
 
     /**
-     * @param string $propName
-     * @param mixed  $oldValue
-     * @param mixed  $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      */
-    protected function onPropertyChanged($propName, $oldValue, $newValue)
+    protected function onPropertyChanged(string $propName, $oldValue, $newValue) : void
     {
-        if ($this->listeners) {
-            foreach ($this->listeners as $listener) {
-                $listener->propertyChanged($this, $propName, $oldValue, $newValue);
-            }
+        if ($this->listeners === []) {
+            return;
+        }
+
+        foreach ($this->listeners as $listener) {
+            $listener->propertyChanged($this, $propName, $oldValue, $newValue);
         }
     }
 }

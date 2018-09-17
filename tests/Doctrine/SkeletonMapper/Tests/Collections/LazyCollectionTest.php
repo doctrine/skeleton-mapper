@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -8,14 +10,14 @@ use PHPUnit\Framework\TestCase;
 
 class LazyCollectionTest extends TestCase
 {
-    public function testLoad()
+    public function testLoad() : void
     {
         $wrappedCollection = new ArrayCollection();
 
-        $collection = new LazyCollection(function() use ($wrappedCollection) {
+        $collection = new LazyCollection(function () use ($wrappedCollection) {
             return $wrappedCollection;
         });
 
-        $this->assertSame($wrappedCollection, $collection->getCollection());
+        self::assertSame($wrappedCollection, $collection->getCollection());
     }
 }

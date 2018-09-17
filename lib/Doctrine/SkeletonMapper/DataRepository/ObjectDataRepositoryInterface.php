@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\DataRepository;
+
+use UnexpectedValueException;
 
 /**
  * Interface that object data repositories must implement.
@@ -12,16 +16,16 @@ interface ObjectDataRepositoryInterface
      *
      * @param mixed $id The identifier.
      *
-     * @return array The objects array of data.
+     * @return mixed[] The objects array of data.
      */
-    public function find($id);
+    public function find($id) : ?array;
 
     /**
      * Finds all object data in the repository.
      *
-     * @return array The objects data.
+     * @return mixed[][] The objects data.
      */
-    public function findAll();
+    public function findAll() : array;
 
     /**
      * Finds objects data by a set of criteria.
@@ -30,23 +34,26 @@ interface ObjectDataRepositoryInterface
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
-     * @param array      $criteria
-     * @param array|null $orderBy
-     * @param int|null   $limit
-     * @param int|null   $offset
+     * @param mixed[]      $criteria
+     * @param mixed[]|null $orderBy
      *
-     * @return array The objects.
+     * @return mixed[][] The objects data.
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+    public function findBy(
+        array $criteria,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ) : array;
 
     /**
      * Finds a single objects data by a set of criteria.
      *
-     * @param array $criteria The criteria.
+     * @param mixed[] $criteria The criteria.
      *
-     * @return array The objects array of data
+     * @return mixed[] The objects array of data
      */
-    public function findOneBy(array $criteria);
+    public function findOneBy(array $criteria) : ?array;
 }

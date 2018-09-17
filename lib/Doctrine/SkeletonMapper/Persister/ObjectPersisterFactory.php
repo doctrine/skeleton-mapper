@@ -1,34 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
+
+use function sprintf;
 
 /**
  * Class responsible for retrieving ObjectPersister instances.
  */
 class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
 {
-    /**
-     * @var array
-     */
-    private $persisters = array();
+    /** @var ObjectPersisterInterface[] */
+    private $persisters = [];
 
-    /**
-     * @param string                                                $className
-     * @param \Doctrine\Common\Persistence\ObjectPersisterInterface $objectPersister
-     */
-    public function addObjectPersister($className, ObjectPersisterInterface $objectPersister)
+    public function addObjectPersister(string $className, ObjectPersisterInterface $objectPersister) : void
     {
         $this->persisters[$className] = $objectPersister;
     }
 
-    /**
-     * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\ObjectPersisterInterface
-     */
-    public function getPersister($className)
+    public function getPersister(string $className) : ObjectPersisterInterface
     {
-        if (!isset($this->persisters[$className])) {
+        if (! isset($this->persisters[$className])) {
             throw new \InvalidArgumentException(sprintf('ObjectPersister with class name %s was not found', $className));
         }
 
@@ -36,9 +29,9 @@ class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
     }
 
     /**
-     * @return array
+     * @return ObjectPersisterInterface[]
      */
-    public function getPersisters()
+    public function getPersisters() : array
     {
         return $this->persisters;
     }

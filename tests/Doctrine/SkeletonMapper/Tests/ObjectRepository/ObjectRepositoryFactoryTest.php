@@ -1,9 +1,12 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Functional;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
 
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,29 +14,28 @@ use PHPUnit\Framework\TestCase;
  */
 class ObjectRepositoryFactoryTest extends TestCase
 {
+    /** @var ObjectRepositoryFactory */
     private $factory;
 
-    protected function setUp()
+    public function testAddObjectRepository() : void
     {
-        $this->factory = new ObjectRepositoryFactory();
-    }
-
-    public function testAddObjectRepository()
-    {
-        $repository = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface')
-            ->getMock();
+        $repository = $this->createMock(ObjectRepositoryInterface::class);
 
         $this->factory->addObjectRepository('TestClassName', $repository);
 
-        $this->assertSame($repository, $this->factory->getRepository('TestClassName'));
+        self::assertSame($repository, $this->factory->getRepository('TestClassName'));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedMessage ObjectRepository with class name DoesNotExist was not found
-     */
-    public function testGetRepositoryThrowsInvalidArgumentException()
+    public function testGetRepositoryThrowsInvalidArgumentException() : void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('ObjectRepository with class name DoesNotExist was not found');
+
         $this->factory->getRepository('DoesNotExist');
+    }
+
+    protected function setUp() : void
+    {
+        $this->factory = new ObjectRepositoryFactory();
     }
 }

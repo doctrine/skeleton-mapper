@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
@@ -14,51 +16,49 @@ interface ObjectPersisterInterface
      *
      * @param object $object
      *
-     * @return array
+     * @return mixed[]
      */
-    public function preparePersistChangeSet($object);
+    public function preparePersistChangeSet($object) : array;
 
     /**
      * Prepares an object update changeset for update.
      *
-     * @param object                                        $object
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
+     * @param object $object
      *
-     * @return array
+     * @return mixed[]
      */
-    public function prepareUpdateChangeSet($object, ChangeSet $changeSet);
+    public function prepareUpdateChangeSet($object, ChangeSet $changeSet) : array;
 
     /**
      * Performs operation to write object to the database.
      *
      * @param object $object
      *
-     * @return array $objectData
+     * @return mixed[] $objectData
      */
-    public function persistObject($object);
+    public function persistObject($object) : array;
 
     /**
      * Assign identifier to object.
      *
-     * @param object $object
-     * @param array  $identifier
+     * @param object  $object
+     * @param mixed[] $identifier
      */
-    public function assignIdentifier($object, array $identifier);
+    public function assignIdentifier($object, array $identifier) : void;
 
     /**
      * Performs operation to update object in the database.
      *
-     * @param object                                        $object
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
+     * @param object $object
      *
-     * @return array $objectData
+     * @return mixed[] $objectData
      */
-    public function updateObject($object, ChangeSet $changeSet);
+    public function updateObject($object, ChangeSet $changeSet) : array;
 
     /**
      * Performs operation to remove object in the database.
      *
      * @param object $object
      */
-    public function removeObject($object);
+    public function removeObject($object) : void;
 }

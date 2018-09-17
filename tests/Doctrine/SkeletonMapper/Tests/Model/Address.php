@@ -1,42 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 class Address
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $address1;
 
-    /**
-     * @var string
-     */
+    /** @var string|null */
     private $address2;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $city;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $state;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $zip;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Tests\Model\Profile
-     */
+    /** @var Profile */
     private $profile;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\Tests\Model\Profile $profile
-     */
     public function __construct(Profile $profile)
     {
         $this->profile = $profile;
@@ -45,9 +32,8 @@ class Address
     /**
      * Gets the value of address1.
      *
-     * @return string
      */
-    public function getAddress1()
+    public function getAddress1() : string
     {
         return $this->address1;
     }
@@ -57,20 +43,20 @@ class Address
      *
      * @param string $address1 the address1
      */
-    public function setAddress1($address1)
+    public function setAddress1(string $address1) : void
     {
-        if ($this->address1 !== $address1) {
-            $this->profile->addressChanged('address1', $this->address1, $address1);
-            $this->address1 = $address1;
+        if ($this->address1 === $address1) {
+            return;
         }
+
+        $this->profile->addressChanged('address1', $this->address1, $address1);
+        $this->address1 = $address1;
     }
 
     /**
      * Gets the value of address2.
-     *
-     * @return string
      */
-    public function getAddress2()
+    public function getAddress2() : ?string
     {
         return $this->address2;
     }
@@ -80,20 +66,21 @@ class Address
      *
      * @param string $address2 the address2
      */
-    public function setAddress2($address2)
+    public function setAddress2(string $address2) : void
     {
-        if ($this->address2 !== $address2) {
-            $this->profile->addressChanged('address2', $this->address2, $address2);
-            $this->address2 = $address2;
+        if ($this->address2 === $address2) {
+            return;
         }
+
+        $this->profile->addressChanged('address2', $this->address2, $address2);
+        $this->address2 = $address2;
     }
 
     /**
      * Gets the value of city.
      *
-     * @return string
      */
-    public function getCity()
+    public function getCity() : string
     {
         return $this->city;
     }
@@ -103,20 +90,21 @@ class Address
      *
      * @param string $city the city
      */
-    public function setCity($city)
+    public function setCity(string $city) : void
     {
-        if ($this->city !== $city) {
-            $this->profile->addressChanged('city', $this->city, $city);
-            $this->city = $city;
+        if ($this->city === $city) {
+            return;
         }
+
+        $this->profile->addressChanged('city', $this->city, $city);
+        $this->city = $city;
     }
 
     /**
      * Gets the value of state.
      *
-     * @return string
      */
-    public function getState()
+    public function getState() : string
     {
         return $this->state;
     }
@@ -126,20 +114,21 @@ class Address
      *
      * @param string $state the state
      */
-    public function setState($state)
+    public function setState(string $state) : void
     {
-        if ($this->state !== $state) {
-            $this->profile->addressChanged('state', $this->state, $state);
-            $this->state = $state;
+        if ($this->state === $state) {
+            return;
         }
+
+        $this->profile->addressChanged('state', $this->state, $state);
+        $this->state = $state;
     }
 
     /**
      * Gets the value of zip.
      *
-     * @return string
      */
-    public function getZip()
+    public function getZip() : string
     {
         return $this->zip;
     }
@@ -149,18 +138,17 @@ class Address
      *
      * @param string $zip the zip
      */
-    public function setZip($zip)
+    public function setZip(string $zip) : void
     {
-        if ($this->zip !== $zip) {
-            $this->profile->addressChanged('zip', $this->zip, $zip);
-            $this->zip = $zip;
+        if ($this->zip === $zip) {
+            return;
         }
+
+        $this->profile->addressChanged('zip', $this->zip, $zip);
+        $this->zip = $zip;
     }
 
-    /**
-     * @param \Doctrine\SkeletonMapper\Tests\Model\Profile $profile
-     */
-    public function setProfile(Profile $profile)
+    public function setProfile(Profile $profile) : void
     {
         $this->profile = $profile;
     }

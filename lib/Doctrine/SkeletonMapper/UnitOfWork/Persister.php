@@ -1,55 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectIdentityMap;
-use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork;
 
 class Persister
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var \Doctrine\SkeletonMapper\UnitOfWork
-     */
+    /** @var UnitOfWork */
     private $unitOfWork;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher
-     */
+    /** @var EventDispatcher */
     private $eventDispatcher;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectIdentityMap
-     */
+    /** @var ObjectIdentityMap */
     private $objectIdentityMap;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\SkeletonMapper\UnitOfWork             $unitOfWork
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap      $objectIdentityMap
-     */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         UnitOfWork $unitOfWork,
         EventDispatcher $eventDispatcher,
-        ObjectIdentityMap $objectIdentityMap)
-    {
-        $this->objectManager = $objectManager;
-        $this->unitOfWork = $unitOfWork;
-        $this->eventDispatcher = $eventDispatcher;
+        ObjectIdentityMap $objectIdentityMap
+    ) {
+        $this->unitOfWork        = $unitOfWork;
+        $this->eventDispatcher   = $eventDispatcher;
         $this->objectIdentityMap = $objectIdentityMap;
     }
 
-    public function executePersists()
+    public function executePersists() : void
     {
         foreach ($this->unitOfWork->getObjectsToPersist() as $object) {
-            $persister = $this->unitOfWork->getObjectPersister($object);
+            $persister  = $this->unitOfWork->getObjectPersister($object);
             $repository = $this->unitOfWork->getObjectRepository($object);
 
             $objectData = $persister->persistObject($object);
@@ -62,7 +45,7 @@ class Persister
         }
     }
 
-    public function executeUpdates()
+    public function executeUpdates() : void
     {
         foreach ($this->unitOfWork->getObjectsToUpdate() as $object) {
             $changeSet = $this->unitOfWork->getObjectChangeSet($object);
@@ -74,7 +57,7 @@ class Persister
         }
     }
 
-    public function executeRemoves()
+    public function executeRemoves() : void
     {
         foreach ($this->unitOfWork->getObjectsToRemove() as $object) {
             $this->unitOfWork->getObjectPersister($object)

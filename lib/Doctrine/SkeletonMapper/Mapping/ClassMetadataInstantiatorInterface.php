@@ -1,13 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Mapping;
 
 interface ClassMetadataInstantiatorInterface
 {
-    /**
-     * @param string $className
-     *
-     * @return ClassMetadata
-     */
-    public function instantiate($className);
+    public function instantiate(string $className) : ClassMetadata;
 }
