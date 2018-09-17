@@ -14,7 +14,7 @@ class MongoDBImplementationTest extends BaseImplementationTest
     protected function setUpImplementation()
     {
         if (!extension_loaded('mongo')) {
-            $this->markTestIncomplete(
+            $this->markTestSkipped(
                 'MongoDB extension is not loaded'
             );
         }
