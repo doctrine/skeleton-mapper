@@ -13,9 +13,9 @@ use Doctrine\SkeletonMapper\Tests\Model\ProfileRepository;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
+abstract class BaseImplementationTest extends TestCase
 {
     protected $basicObjectHydrator;
     protected $classMetadataFactory;

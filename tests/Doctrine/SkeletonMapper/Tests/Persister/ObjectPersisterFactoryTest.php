@@ -3,9 +3,9 @@
 namespace Doctrine\SkeletonMapper\Tests\Persister;
 
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ObjectPersisterFactoryTest extends PHPUnit_Framework_TestCase
+class ObjectPersisterFactoryTest extends TestCase
 {
     private $factory;
 

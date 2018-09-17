@@ -3,9 +3,9 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\Event\OnClearEventArgs;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class OnClearEventArgsTest extends PHPUnit_Framework_TestCase
+class OnClearEventArgsTest extends TestCase
 {
     private $objectManager;
     private $event;

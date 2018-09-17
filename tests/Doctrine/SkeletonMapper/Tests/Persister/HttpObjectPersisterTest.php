@@ -7,12 +7,12 @@ use Doctrine\SkeletonMapper\Persister\HttpObjectPersister;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class HttpObjectPersisterTest extends PHPUnit_Framework_TestCase
+class HttpObjectPersisterTest extends TestCase
 {
     private $objectManager;
     private $client;

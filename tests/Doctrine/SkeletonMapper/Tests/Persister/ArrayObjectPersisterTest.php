@@ -8,12 +8,12 @@ use Doctrine\SkeletonMapper\Persister\ArrayObjectPersister;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ArrayObjectPersisterTest extends PHPUnit_Framework_TestCase
+class ArrayObjectPersisterTest extends TestCase
 {
     private $objectManager;
     private $objects;

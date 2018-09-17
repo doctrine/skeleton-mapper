@@ -4,12 +4,12 @@ namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ArrayObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class ArrayObjectDataRepositoryTest extends TestCase
 {
     private $objectManager;
     private $objects;

@@ -3,12 +3,12 @@
 namespace Doctrine\SkeletonMapper\Tests\Persister;
 
 use Doctrine\SkeletonMapper\ObjectFactory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ObjectFactoryTest extends PHPUnit_Framework_TestCase
+class ObjectFactoryTest extends TestCase
 {
     public function testCreate()
     {

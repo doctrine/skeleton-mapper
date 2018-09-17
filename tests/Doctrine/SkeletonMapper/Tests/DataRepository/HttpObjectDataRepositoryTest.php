@@ -4,12 +4,12 @@ namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\HttpObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class HttpObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class HttpObjectDataRepositoryTest extends TestCase
 {
     private $objectManager;
     private $client;

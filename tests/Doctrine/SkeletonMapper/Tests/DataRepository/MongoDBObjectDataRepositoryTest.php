@@ -4,12 +4,12 @@ namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\MongoDBObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class MongoDBObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class MongoDBObjectDataRepositoryTest extends TestCase
 {
     private $objectManager;
     private $mongoCollection;

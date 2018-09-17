@@ -4,9 +4,9 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class PreUpdateEventArgsTest extends PHPUnit_Framework_TestCase
+class PreUpdateEventArgsTest extends TestCase
 {
     private $objectManager;
     private $event;

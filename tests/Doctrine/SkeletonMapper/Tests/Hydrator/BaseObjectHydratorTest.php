@@ -5,12 +5,12 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class BasicObjectHydratorTest extends PHPUnit_Framework_TestCase
+class BasicObjectHydratorTest extends TestCase
 {
     private $objectManager;
 

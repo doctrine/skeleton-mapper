@@ -4,9 +4,9 @@ namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Collections\LazyCollection;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class LazyCollectionTest extends PHPUnit_Framework_TestCase
+class LazyCollectionTest extends TestCase
 {
     public function testLoad()
     {

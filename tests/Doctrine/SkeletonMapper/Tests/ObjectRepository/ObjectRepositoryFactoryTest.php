@@ -4,12 +4,12 @@ namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ObjectRepositoryFactoryTest extends PHPUnit_Framework_TestCase
+class ObjectRepositoryFactoryTest extends TestCase
 {
     private $factory;
 

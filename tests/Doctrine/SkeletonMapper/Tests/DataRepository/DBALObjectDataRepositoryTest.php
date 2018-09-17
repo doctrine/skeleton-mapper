@@ -4,12 +4,12 @@ namespace Doctrine\SkeletonMapper\Tests\Collections;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\DBALObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class DBALObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class DBALObjectDataRepositoryTest extends TestCase
 {
     private $objectManager;
     private $connection;

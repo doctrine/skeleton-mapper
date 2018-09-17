@@ -6,12 +6,12 @@ use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ClassMetadataTest extends PHPUnit_Framework_TestCase
+class ClassMetadataTest extends TestCase
 {
 
     private $class;
@@ -47,7 +47,7 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
     public function testIsIdentifier()
     {
         $this->assertFalse($this->class->isIdentifier('id'));
-    
+
         $this->class->identifierFieldNames = array('id');
 
         $this->assertTrue($this->class->isIdentifier('id'));

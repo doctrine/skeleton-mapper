@@ -5,12 +5,12 @@ namespace Doctrine\SkeletonMapper\Tests\Persister;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ChangeSetsTest extends PHPUnit_Framework_TestCase
+class ChangeSetsTest extends TestCase
 {
     public function testChangeSet()
     {

@@ -3,12 +3,12 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepository;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ObjectRepositoryTest extends PHPUnit_Framework_TestCase
+class ObjectRepositoryTest extends TestCase
 {
     private $objectManager;
     private $objectDataRepository;

@@ -3,9 +3,9 @@
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class PreLoadEventArgsTest extends PHPUnit_Framework_TestCase
+class PreLoadEventArgsTest extends TestCase
 {
     private $objectManager;
     private $event;
