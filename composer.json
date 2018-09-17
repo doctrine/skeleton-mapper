@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Doctrine SkeletonMapper",
     "keywords": ["database", "persistence", "object"],
-    "homepage": "http://www.doctrine-project.org",
+    "homepage": "https://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
         { "name": "Jonathan H. Wage", "email": "jonwage@gmail.com" }
