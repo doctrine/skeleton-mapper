@@ -1,0 +1,14 @@
+{
+    "active": true,
+    "name": "Skeleton Mapper",
+    "slug": "skeleton-mapper",
+    "docsSlug": "doctrine-skeleton-mapper",
+    "versions": [
+        {
+            "name": "1.0",
+            "branchName": "master",
+            "slug": "latest",
+            "current": true
+        }
+    ]
+}
