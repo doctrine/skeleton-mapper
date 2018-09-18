@@ -1,81 +1,91 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+use function max;
 
 class ArrayObjectPersister extends BasicObjectPersister
 {
-    /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
-     */
+    /** @var ArrayCollection */
     protected $objects;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param \Doctrine\Common\Collections\ArrayCollection    $objects
-     * @param string                                          $className
-     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,
-        $className = null)
-    {
+        string $className
+    ) {
         parent::__construct($objectManager, $className);
+
         $this->objects = $objects;
     }
 
-    public function persistObject($object)
+    /**
+     * @param object $object
+     *
+     * @return mixed[]
+     */
+    public function persistObject($object) : array
     {
         $data = $this->preparePersistChangeSet($object);
 
         $class = $this->getClassMetadata();
 
-        if (!isset($data[$class->identifier[0]])) {
-            $data[$class->identifier[0]] = $this->generateNextId($class);
+        if (! isset($data[$class->getIdentifier()[0]])) {
+            $data[$class->getIdentifier()[0]] = $this->generateNextId($class);
         }
 
-        $this->objects[$data[$class->identifier[0]]] = $data;
+        $this->objects[$data[$class->getIdentifier()[0]]] = $data;
 
         return $data;
     }
 
-    public function updateObject($object, ChangeSet $changeSet)
+    /**
+     * @param object $object
+     *
+     * @return mixed[]
+     */
+    public function updateObject($object, ChangeSet $changeSet) : array
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
-        $class = $this->getClassMetadata();
+        $class      = $this->getClassMetadata();
         $identifier = $this->getObjectIdentifier($object);
 
-        $objectData = $this->objects[$identifier[$class->identifier[0]]];
+        $objectData = $this->objects[$identifier[$class->getIdentifier()[0]]];
 
         foreach ($changeSet as $key => $value) {
             $objectData[$key] = $value;
         }
 
-        $this->objects[$objectData[$class->identifier[0]]] = $objectData;
+        $this->objects[$objectData[$class->getIdentifier()[0]]] = $objectData;
 
         return $objectData;
     }
 
-    public function removeObject($object)
+    /**
+     * @param object $object
+     */
+    public function removeObject($object) : void
     {
-        $class = $this->getClassMetadata();
+        $class      = $this->getClassMetadata();
         $identifier = $this->getObjectIdentifier($object);
 
-        unset($this->objects[$identifier[$class->identifier[0]]]);
+        unset($this->objects[$identifier[$class->getIdentifier()[0]]]);
     }
 
-    private function generateNextId(ClassMetadataInterface $class)
+    private function generateNextId(ClassMetadataInterface $class) : int
     {
-        $ids = array();
+        $ids = [];
         foreach ($this->objects as $objectData) {
-            $ids[] = $objectData[$class->identifier[0]];
+            $ids[] = $objectData[$class->getIdentifier()[0]];
         }
 
-        return $ids ? max($ids) + 1 : 1;
+        return $ids !== [] ? (int) (max($ids) + 1) : 1;
     }
 }

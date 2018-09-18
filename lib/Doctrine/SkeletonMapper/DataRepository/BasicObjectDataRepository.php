@@ -1,80 +1,60 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use function array_combine;
+use function assert;
+use function is_array;
 
 abstract class BasicObjectDataRepository extends ObjectDataRepository
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
+    /** @var ObjectManagerInterface */
     protected $objectManager;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $className;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
-     * @param string                                          $className
-     */
-    public function __construct(ObjectManagerInterface $objectManager, $className = null)
+    public function __construct(ObjectManagerInterface $objectManager, string $className)
     {
         $this->objectManager = $objectManager;
-        $this->className = $className;
+        $this->className     = $className;
     }
 
-    /**
-     * @return string $className
-     */
-    public function getClassName()
+    public function getClassName() : string
     {
         return $this->className;
     }
 
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
+    public function setClassName(string $className) : void
     {
         $this->className = $className;
     }
 
-    public function find($id)
+    /**
+     * @param mixed $id
+     *
+     * @return mixed[]
+     */
+    public function find($id) : ?array
     {
         $identifier = $this->getIdentifier();
 
-        $identifierValues = is_array($id) ? $id : array($id);
+        $identifierValues = is_array($id) ? $id : [$id];
 
         $criteria = array_combine($identifier, $identifierValues);
+
+        assert($criteria !== false);
 
         return $this->findOneBy($criteria);
     }
 
     /**
-     * @return array $identifier
+     * @return mixed[]
      */
-    protected function getIdentifier()
+    protected function getIdentifier() : array
     {
         return $this->objectManager
             ->getClassMetadata($this->getClassName())
@@ -84,9 +64,9 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     /**
      * @param object $object
      *
-     * @return array
+     * @return mixed[]
      */
-    protected function getObjectIdentifier($object)
+    protected function getObjectIdentifier($object) : array
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

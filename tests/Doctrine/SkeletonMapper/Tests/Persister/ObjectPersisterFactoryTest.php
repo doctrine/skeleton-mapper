@@ -1,27 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Persister;
 
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-use PHPUnit_Framework_TestCase;
+use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
+use PHPUnit\Framework\TestCase;
 
-class ObjectPersisterFactoryTest extends PHPUnit_Framework_TestCase
+class ObjectPersisterFactoryTest extends TestCase
 {
+    /** @var ObjectPersisterFactory */
     private $factory;
 
-    protected function setUp()
+    public function testPersisterFactory() : void
     {
-        $this->factory = new ObjectPersisterFactory();
-    }
-
-    public function testPersisterFactory()
-    {
-        $persister = $this->getMockBuilder('Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface')
-            ->getMock();
+        $persister = $this->createMock(ObjectPersisterInterface::class);
 
         $this->factory->addObjectPersister('TestClassName', $persister);
 
-        $this->assertSame($persister, $this->factory->getPersister('TestClassName'));
-        $this->assertSame(array('TestClassName' => $persister), $this->factory->getPersisters());
+        self::assertSame($persister, $this->factory->getPersister('TestClassName'));
+        self::assertSame(['TestClassName' => $persister], $this->factory->getPersisters());
+    }
+
+    protected function setUp() : void
+    {
+        $this->factory = new ObjectPersisterFactory();
     }
 }

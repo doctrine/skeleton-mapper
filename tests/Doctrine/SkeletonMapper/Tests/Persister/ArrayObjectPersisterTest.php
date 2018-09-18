@@ -1,88 +1,79 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Persister;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\ArrayObjectPersister;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ArrayObjectPersisterTest extends PHPUnit_Framework_TestCase
+class ArrayObjectPersisterTest extends TestCase
 {
+    /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
+
+    /** @var ArrayCollection */
     private $objects;
+
+    /** @var ArrayObjectPersister */
     private $persister;
-    private $testClassName = 'Doctrine\SkeletonMapper\Tests\Persister\ArrayObjectPersisterTestModel';
 
-    protected function setUp()
-    {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+    /** @var string */
+    private $testClassName = ArrayObjectPersisterTestModel::class;
 
-        $classMetadata = new ClassMetadata($this->testClassName);
-        $classMetadata->identifier = array('id');
-
-        $this->objectManager->expects($this->any())
-            ->method('getClassMetadata')
-            ->with($this->testClassName)
-            ->will($this->returnValue($classMetadata));
-
-        $this->objects = new ArrayCollection();
-        $this->persister = new ArrayObjectPersister(
-            $this->objectManager, $this->objects, $this->testClassName
-        );
-    }
-
-    public function testPersistObject()
+    public function testPersistObject() : void
     {
         $object = new ArrayObjectPersisterTestModel();
 
-        $this->assertEquals(array('username' => 'jwage', 'id' => 1), $this->persister->persistObject($object));
-        $this->assertEquals(array(1 => array('username' => 'jwage', 'id' => 1)), $this->objects->toArray());
+        self::assertEquals(['username' => 'jwage', 'id' => 1], $this->persister->persistObject($object));
+        self::assertEquals([1 => ['username' => 'jwage', 'id' => 1]], $this->objects->toArray());
     }
 
-    public function testUpdateObject()
+    public function testUpdateObject() : void
     {
-        $this->objects[1] = array(
+        $this->objects[1] = [
             'id' => 1,
             'username' => 'jwage',
-        );
+        ];
 
         $object = new ArrayObjectPersisterTestModel();
 
-        $changeSet = new ChangeSet($object, array(new Change('username', 'jwage', 'jonwage')));
+        $changeSet = new ChangeSet($object, [new Change('username', 'jwage', 'jonwage')]);
 
         $repository = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('getObjectIdentifier')
             ->with($object)
-            ->will($this->returnValue(array('id' => 1)));
+            ->will(self::returnValue(['id' => 1]));
 
-        $this->objectManager->expects($this->once())
+        $this->objectManager->expects(self::once())
             ->method('getRepository')
             ->with($this->testClassName)
-            ->will($this->returnValue($repository));
+            ->will(self::returnValue($repository));
 
-        $this->assertEquals(array('username' => 'jonwage', 'id' => 1), $this->persister->updateObject($object, $changeSet));
-        $this->assertEquals(array(1 => array('username' => 'jonwage', 'id' => 1)), $this->objects->toArray());
+        self::assertEquals(['username' => 'jonwage', 'id' => 1], $this->persister->updateObject($object, $changeSet));
+        self::assertEquals([1 => ['username' => 'jonwage', 'id' => 1]], $this->objects->toArray());
     }
 
-    public function testRemoveObject()
+    public function testRemoveObject() : void
     {
-        $this->objects[1] = array(
+        $this->objects[1] = [
             'id' => 1,
             'username' => 'jwage',
-        );
+        ];
 
         $object = new ArrayObjectPersisterTestModel();
 
@@ -90,32 +81,58 @@ class ArrayObjectPersisterTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('getObjectIdentifier')
             ->with($object)
-            ->will($this->returnValue(array('id' => 1)));
+            ->will(self::returnValue(['id' => 1]));
 
-        $this->objectManager->expects($this->once())
+        $this->objectManager->expects(self::once())
             ->method('getRepository')
             ->with($this->testClassName)
-            ->will($this->returnValue($repository));
+            ->will(self::returnValue($repository));
 
         $this->persister->removeObject($object);
 
-        $this->assertCount(0, $this->objects);
+        self::assertCount(0, $this->objects);
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $classMetadata             = new ClassMetadata($this->testClassName);
+        $classMetadata->identifier = ['id'];
+
+        $this->objectManager->expects(self::any())
+            ->method('getClassMetadata')
+            ->with($this->testClassName)
+            ->will(self::returnValue($classMetadata));
+
+        $this->objects   = new ArrayCollection();
+        $this->persister = new ArrayObjectPersister(
+            $this->objectManager,
+            $this->objects,
+            $this->testClassName
+        );
     }
 }
 
 class ArrayObjectPersisterTestModel implements PersistableInterface
 {
-    public function preparePersistChangeSet()
+    /**
+     * @return string[]
+     */
+    public function preparePersistChangeSet() : array
     {
-        return array('username' => 'jwage');
+        return ['username' => 'jwage'];
     }
 
-    public function prepareUpdateChangeSet(ChangeSet $changeSet)
+    /**
+     * @return string[]
+     */
+    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
-        $changes = array();
+        $changes = [];
 
         foreach ($changeSet->getChanges() as $change) {
             $changes[$change->getPropertyName()] = $change->getNewValue();

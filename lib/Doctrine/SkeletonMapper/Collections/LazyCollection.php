@@ -1,41 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Collections;
 
-use Closure;
 use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
+use function call_user_func;
 
 class LazyCollection extends AbstractLazyCollection
 {
-    /**
-     * @var \Closure
-     */
+    /** @var callable|null */
     private $callback;
 
-    /**
-     * @param \Closure $callback
-     */
-    public function __construct(Closure $callback)
+    public function __construct(callable $callback)
     {
         $this->callback = $callback;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection
+     * @return object[]|Collection
      */
-    public function getCollection()
+    public function getCollection() : Collection
     {
         $this->initialize();
 
         return $this->collection;
     }
 
-    /**
-     * Initializes the collection.
-     */
-    protected function doInitialize()
+    protected function doInitialize() : void
     {
-        $this->collection = $this->callback->__invoke();
-        $this->callback = null;
+        if ($this->callback === null) {
+            return;
+        }
+
+        $this->collection = call_user_func($this->callback);
+        $this->callback   = null;
     }
 }

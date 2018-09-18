@@ -1,57 +1,42 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Hydrator;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use InvalidArgumentException;
+use function get_class;
+use function sprintf;
 
 /**
  * Basic object hydrator that delegates hydration
  * to a method on the object that is being hydrated
  * or uses a dynamic hydration algorithm.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class BasicObjectHydrator extends ObjectHydrator
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectManagerInterface
-     */
+    /** @var ObjectManagerInterface */
     protected $objectManager;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager $eventManager
-     */
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
 
     /**
-     * @param \Doctrine\SkeletonMapper\Hydrator\HydratableInterface $object
-     * @param array                                                 $data
+     * @param object  $object
+     *
+     * @param mixed[] $data
      */
-    public function hydrate($object, array $data)
+    public function hydrate($object, array $data) : void
     {
-        if (!$object instanceof HydratableInterface) {
-            throw new \InvalidArgumentException(sprintf('%s must implement HydratableInterface.', get_class($object)));
+        if (! $object instanceof HydratableInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'Class %s does not implement %s.',
+                get_class($object),
+                HydratableInterface::class
+            ));
         }
 
         $object->hydrate($data, $this->objectManager);

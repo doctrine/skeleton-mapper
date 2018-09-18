@@ -1,23 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests;
 
 use Doctrine\SkeletonMapper\ObjectRepository\BasicObjectRepository;
+use Doctrine\SkeletonMapper\Tests\Model\Identifiable;
+use Doctrine\SkeletonMapper\Tests\Model\User;
+use function assert;
 
 class ObjectRepository extends BasicObjectRepository
 {
-    public function getObjectIdentifier($object)
+    /**
+     * @param object $object
+     *
+     * @return mixed[]
+     */
+    public function getObjectIdentifier($object) : array
     {
-        return array('_id' => (int) $object->getId());
+        assert($object instanceof Identifiable);
+
+        return ['_id' => $object->getId()];
     }
 
-    public function getObjectIdentifierFromData(array $data)
+    /**
+     * @param mixed[] $data
+     *
+     * @return mixed[]
+     */
+    public function getObjectIdentifierFromData(array $data) : array
     {
-        return array('_id' => (int) $data['_id']);
+        return ['_id' => $data['_id']];
     }
 
-    public function merge($object)
+    /**
+     * @param object $object
+     */
+    public function merge($object) : void
     {
+        assert($object instanceof User);
+
+        /** @var User $user */
         $user = $this->find($object->getId());
 
         $user->setUsername($object->getUsername());

@@ -1,22 +1,6 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
@@ -24,40 +8,45 @@ use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterfac
 
 /**
  * Interface that object repositories must implement.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {
     /**
      * Returns the objects identifier.
      *
-     * @return array
+     * @param object $object
+     *
+     * @return mixed[]
      */
-    public function getObjectIdentifier($object);
+    public function getObjectIdentifier($object) : array;
 
     /**
      * Returns the identifier.
      *
-     * @return array
-     */
-    public function getObjectIdentifierFromData(array $data);
-
-    /**
-     * @param object $object
-     */
-    public function merge($object);
-
-    /**
-     * @param object $object
-     * @param array  $data
-     */
-    public function hydrate($object, array $data);
-
-    /**
-     * @param string $className
+     * @param mixed[] $data
      *
+     * @return mixed[]
+     */
+    public function getObjectIdentifierFromData(array $data) : array;
+
+    /**
+     * @param object $object
+     */
+    public function merge($object) : void;
+
+    /**
+     * @param object  $object
+     * @param mixed[] $data
+     */
+    public function hydrate($object, array $data) : void;
+
+    /**
      * @return object
      */
-    public function create($className);
+    public function create(string $className);
+
+    /**
+     * @param object $object
+     */
+    public function refresh($object) : void;
 }

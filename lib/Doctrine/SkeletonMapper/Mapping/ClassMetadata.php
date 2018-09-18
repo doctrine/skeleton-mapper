@@ -1,89 +1,75 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionProperty;
+use function array_keys;
+use function call_user_func_array;
+use function get_class;
+use function in_array;
+use function sprintf;
+
 /**
  * Class used to hold metadata about mapped classes.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ClassMetadata implements ClassMetadataInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $name;
 
-    /**
-     * @var array
-     */
-    public $identifier = array();
+    /** @var mixed[] */
+    public $identifier = [];
 
-    /**
-     * @var array
-     */
-    public $identifierFieldNames = array();
+    /** @var string[] */
+    public $identifierFieldNames = [];
 
-    /**
-     * @var array
-     */
-    public $fieldMappings = array();
+    /** @var mixed[][] */
+    public $fieldMappings = [];
 
-    /**
-     * @var array
-     */
-    public $associationMappings = array();
+    /** @var mixed[][] */
+    public $associationMappings = [];
 
-    /**
-     * The registered lifecycle callbacks for this class.
-     *
-     * @var array
-     */
-    public $lifecycleCallbacks = array();
+    /** @var string[][] */
+    public $lifecycleCallbacks = [];
 
-    /**
-     * @var \ReflectionClass
-     */
+    /** @var ReflectionClass */
     public $reflClass;
 
-    /**
-     * @var array
-     */
-    public $reflFields = array();
+    /** @var ReflectionProperty[] */
+    public $reflFields = [];
 
-    /**
-     * @param string $className
-     */
-    public function __construct($className)
+    public function __construct(string $className)
     {
-        $this->name = $className;
-        $this->reflClass = new \ReflectionClass($className);
+        $this->name      = $className;
+        $this->reflClass = new ReflectionClass($className);
     }
 
     /**
-     * @param array $mapping
+     * @param mixed[] $identifier
      */
-    public function mapField(array $mapping)
+    public function setIdentifier(array $identifier) : void
     {
-        if (!isset($mapping['name'])) {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * @param string[] $identifierFieldNames
+     */
+    public function setIdentifierFieldNames(array $identifierFieldNames) : void
+    {
+        $this->identifierFieldNames = $identifierFieldNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mapField(array $mapping) : void
+    {
+        if (! isset($mapping['name'])) {
             $mapping['name'] = $mapping['fieldName'];
         }
 
@@ -98,10 +84,8 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Gets the fully-qualified class name of this persistent class.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -111,43 +95,33 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * The returned structure is an array of the identifier field names.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getIdentifier()
+    public function getIdentifier() : array
     {
         return $this->identifier;
     }
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
-     *
-     * @return \ReflectionClass
      */
-    public function getReflectionClass()
+    public function getReflectionClass() : ReflectionClass
     {
         return $this->reflClass;
     }
 
     /**
-     * Checks if the given field name is a mapped identifier for this class.
-     *
-     * @param string $fieldName
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    public function isIdentifier($fieldName)
+    public function isIdentifier($fieldName) : bool
     {
-        return in_array($fieldName, $this->getIdentifierFieldNames());
+        return in_array($fieldName, $this->getIdentifierFieldNames(), true);
     }
 
     /**
-     * Checks if the given field is a mapped property for this class.
-     *
-     * @param string $fieldName
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    public function hasField($fieldName)
+    public function hasField($fieldName) : bool
     {
         return isset($this->fieldMappings[$fieldName]);
     }
@@ -157,9 +131,9 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * This array includes identifier fields if present on this class.
      *
-     * @return array
+     * @return string[]
      */
-    public function getFieldNames()
+    public function getFieldNames() : array
     {
         return array_keys($this->fieldMappings);
     }
@@ -167,9 +141,9 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * An array of field mappings for this persistent class indexed by field name.
      *
-     * @return array
+     * @return mixed[][]
      */
-    public function getFieldMappings()
+    public function getFieldMappings() : array
     {
         return $this->fieldMappings;
     }
@@ -177,7 +151,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getAssociationNames()
+    public function getAssociationNames() : array
     {
         return array_keys($this->associationMappings);
     }
@@ -185,19 +159,20 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getTypeOfField($fieldName)
+    public function getTypeOfField($fieldName) : ?string
     {
-        return isset($this->fieldMappings[$fieldName]['type']) ?
-            $this->fieldMappings[$fieldName]['type'] : null;
+        return $this->fieldMappings[$fieldName]['type'] ?? null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass($assocName) : string
     {
-        if (!isset($this->associationMappings[$assocName])) {
-            throw new \InvalidArgumentException("Association name expected, '".$assocName."' is not an association.");
+        if (! isset($this->associationMappings[$assocName])) {
+            throw new InvalidArgumentException(
+                sprintf("Association name expected, '%s' is not an association.", $assocName)
+            );
         }
 
         return $this->associationMappings[$assocName]['targetObject'];
@@ -206,9 +181,9 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierValues($object)
+    public function getIdentifierValues($object) : array
     {
-        $identifier = array();
+        $identifier = [];
         foreach ($this->identifierFieldNames as $identifierFieldName) {
             $identifier[$this->fieldMappings[$identifierFieldName]['name']] = $this->reflFields[$identifierFieldName]->getValue($object);
         }
@@ -221,7 +196,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * Checks whether the class has a mapped association (embed or reference) with the given field name.
      */
-    public function hasAssociation($fieldName)
+    public function hasAssociation($fieldName) : bool
     {
         return isset($this->associationMappings[$fieldName]);
     }
@@ -232,7 +207,7 @@ class ClassMetadata implements ClassMetadataInterface
      * Checks whether the class has a mapped reference or embed for the specified field and
      * is a single valued association.
      */
-    public function isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation($fieldName) : bool
     {
         return isset($this->associationMappings[$fieldName]['type']) &&
             $this->associationMappings[$fieldName]['type'] === 'one';
@@ -244,32 +219,29 @@ class ClassMetadata implements ClassMetadataInterface
      * Checks whether the class has a mapped reference or embed for the specified field and
      * is a collection valued association.
      */
-    public function isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation($fieldName) : bool
     {
         return isset($this->associationMappings[$fieldName]['type']) &&
             $this->associationMappings[$fieldName]['type'] === 'many';
     }
 
     /**
-     * Dispatches the lifecycle event of the given object by invoking all
-     * registered callbacks.
-     *
-     * @param string $event     Lifecycle event
-     * @param object $object    Object on which the event occurred
-     * @param array  $arguments Arguments to pass to all callbacks
-     *
-     * @throws \InvalidArgumentException if object is not this class or
-     *                                   a Proxy of this class
+     * {@inheritDoc}
      */
-    public function invokeLifecycleCallbacks($event, $object, array $arguments = null)
+    public function invokeLifecycleCallbacks(string $event, $object, ?array $arguments = null) : void
     {
-        if (!$object instanceof $this->name) {
-            throw new \InvalidArgumentException(sprintf('Expected class "%s"; found: "%s"', $this->name, get_class($object)));
+        if (! $object instanceof $this->name) {
+            throw new InvalidArgumentException(
+                sprintf('Expected class "%s"; found: "%s"', $this->name, get_class($object))
+            );
         }
 
         foreach ($this->lifecycleCallbacks[$event] as $callback) {
             if ($arguments !== null) {
-                call_user_func_array(array($object, $callback), $arguments);
+                /** @var callable $callable */
+                $callable = [$object, $callback];
+
+                call_user_func_array($callable, $arguments);
             } else {
                 $object->$callback();
             }
@@ -281,36 +253,31 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * @param string $event Lifecycle event
      *
-     * @return bool
      */
-    public function hasLifecycleCallbacks($event)
+    public function hasLifecycleCallbacks(string $event) : bool
     {
-        return !empty($this->lifecycleCallbacks[$event]);
+        return isset($this->lifecycleCallbacks[$event]);
     }
 
     /**
      * Gets the registered lifecycle callbacks for an event.
      *
-     * @param string $event
      *
-     * @return array
+     * @return string[]
      */
-    public function getLifecycleCallbacks($event)
+    public function getLifecycleCallbacks(string $event) : array
     {
-        return isset($this->lifecycleCallbacks[$event]) ? $this->lifecycleCallbacks[$event] : array();
+        return $this->lifecycleCallbacks[$event] ?? [];
     }
 
     /**
      * Adds a lifecycle callback for objects of this class.
      *
      * If the callback is already registered, this is a NOOP.
-     *
-     * @param string $callback
-     * @param string $event
      */
-    public function addLifecycleCallback($callback, $event)
+    public function addLifecycleCallback(string $callback, string $event) : void
     {
-        if (isset($this->lifecycleCallbacks[$event]) && in_array($callback, $this->lifecycleCallbacks[$event])) {
+        if (isset($this->lifecycleCallbacks[$event]) && in_array($callback, $this->lifecycleCallbacks[$event], true)) {
             return;
         }
 
@@ -322,9 +289,9 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * Any previously registered callbacks are overwritten.
      *
-     * @param array $callbacks
+     * @param string[][] $callbacks
      */
-    public function setLifecycleCallbacks(array $callbacks)
+    public function setLifecycleCallbacks(array $callbacks) : void
     {
         $this->lifecycleCallbacks = $callbacks;
     }
@@ -332,9 +299,9 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * Returns an array of identifier field names numerically indexed.
      *
-     * @return array
+     * @return string[]
      */
-    public function getIdentifierFieldNames()
+    public function getIdentifierFieldNames() : array
     {
         return $this->identifierFieldNames;
     }
@@ -344,7 +311,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getAssociationMappedByTargetField($fieldName)
     {
-        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+        throw new \BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
 
     /**
@@ -352,18 +319,20 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function isAssociationInverseSide($fieldName)
     {
-        throw new \BadMethodCallException(__METHOD__.'() is not implemented yet.');
+        throw new \BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
 
     /**
-     * @param array $mapping
+     * @param mixed[] $mapping
      */
-    private function initReflField(array $mapping)
+    private function initReflField(array $mapping) : void
     {
-        if ($this->reflClass->hasProperty($mapping['fieldName'])) {
-            $reflProp = $this->reflClass->getProperty($mapping['fieldName']);
-            $reflProp->setAccessible(true);
-            $this->reflFields[$mapping['fieldName']] = $reflProp;
+        if (! $this->reflClass->hasProperty($mapping['fieldName'])) {
+            return;
         }
+
+        $reflProp = $this->reflClass->getProperty($mapping['fieldName']);
+        $reflProp->setAccessible(true);
+        $this->reflFields[$mapping['fieldName']] = $reflProp;
     }
 }

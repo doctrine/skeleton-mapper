@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\SkeletonMapper\Collections\LazyCollection;
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
@@ -10,38 +13,31 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+use function array_map;
+use function call_user_func;
+use function explode;
+use function implode;
+use function is_callable;
 
 class User extends BaseObject
 {
-    /**
-     * @var id
-     */
+    /** @var int|null */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $username;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $password;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Tests\Model\Profile
-     */
+    /** @var callable|Profile */
     private $profile;
 
-    /**
-     * @var array
-     */
+    /** @var Group[]|Collection */
     private $groups;
 
-    /**
-     * @var array
-     */
-    public $called = array();
+    /** @var string[] */
+    public $called = [];
 
     public function __construct()
     {
@@ -51,115 +47,115 @@ class User extends BaseObject
     /**
      * Assign identifier to object.
      *
-     * @param array $identifier
+     * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier)
+    public function assignIdentifier(array $identifier) : void
     {
-        $this->id = (int) $identifier['_id'];
+        $this->id = $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata)
+    public static function loadMetadata(ClassMetadataInterface $metadata) : void
     {
-        $metadata->identifier = array('_id');
-        $metadata->identifierFieldNames = array('id');
-        $metadata->mapField(array(
+        $metadata->setIdentifier(['_id']);
+        $metadata->setIdentifierFieldNames(['id']);
+        $metadata->mapField([
             'name' => '_id',
             'fieldName' => 'id',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'username',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'password',
-        ));
-        $metadata->mapField(array(
+        ]);
+        $metadata->mapField(['fieldName' => 'username']);
+        $metadata->mapField(['fieldName' => 'password']);
+        $metadata->mapField([
             'name' => 'profileId',
             'fieldName' => 'profile',
-        ));
-        $metadata->mapField(array(
+        ]);
+        $metadata->mapField([
             'name' => 'groupIds',
             'fieldName' => 'groups',
-        ));
+        ]);
     }
 
-    public function getId()
+    public function getId() : ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id) : void
     {
-        $id = (int) $id;
-
-        if ($this->id !== $id) {
-            $this->onPropertyChanged('id', $this->id, $id);
-            $this->id = $id;
+        if ($this->id === $id) {
+            return;
         }
+
+        $this->onPropertyChanged('id', $this->id, $id);
+        $this->id = $id;
     }
 
-    public function getUsername()
+    public function getUsername() : string
     {
         return $this->username;
     }
 
-    public function setUsername($username)
+    public function setUsername(string $username) : void
     {
-        $username = (string) $username;
-
-        if ($this->username !== $username) {
-            $this->onPropertyChanged('username', $this->username, $username);
-            $this->username = $username;
+        if ($this->username === $username) {
+            return;
         }
+
+        $this->onPropertyChanged('username', $this->username, $username);
+        $this->username = $username;
     }
 
-    public function getPassword()
+    public function getPassword() : string
     {
         return $this->password;
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password) : void
     {
-        $password = (string) $password;
-
-        if ($this->password !== $password) {
-            $this->onPropertyChanged('password', $this->password, $password);
-            $this->password = $password;
+        if ($this->password === $password) {
+            return;
         }
+
+        $this->onPropertyChanged('password', $this->password, $password);
+        $this->password = $password;
     }
 
-    public function getProfile()
+    public function getProfile() : Profile
     {
-        if ($this->profile instanceof \Closure) {
-            $this->profile = $this->profile->__invoke();
+        if (is_callable($this->profile)) {
+            $this->profile = call_user_func($this->profile);
         }
 
         return $this->profile;
     }
 
-    public function setProfile(Profile $profile)
+    public function setProfile(Profile $profile) : void
     {
-        if ($this->profile !== $profile) {
-            $this->onPropertyChanged('profile', $this->profile, $profile);
-            $this->profile = $profile;
+        if ($this->profile === $profile) {
+            return;
         }
+
+        $this->onPropertyChanged('profile', $this->profile, $profile);
+        $this->profile = $profile;
     }
 
-    public function addGroup(Group $group)
+    public function addGroup(Group $group) : void
     {
         $this->groups->add($group);
         $this->onPropertyChanged('groups', $this->groups, $this->groups);
     }
 
-    public function getGroups()
+    /**
+     * @return Group[]|Collection
+     */
+    public function getGroups() : Collection
     {
         return $this->groups;
     }
 
     /**
-     * @param string $method
-     * @param array  $arguments
+     * @param mixed[] $arguments
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments) : void
     {
         $this->called[] = $method;
     }
@@ -167,28 +163,27 @@ class User extends BaseObject
     /**
      * @see HydratableInterface
      *
-     * @param array                                           $data
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager)
+    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
     {
         if (isset($data['_id'])) {
-            $this->id = (int) $data['_id'];
+            $this->id = $data['_id'];
         }
 
         if (isset($data['username'])) {
-            $this->username = (string) $data['username'];
+            $this->username = $data['username'];
         }
 
         if (isset($data['password'])) {
-            $this->password = (string) $data['password'];
+            $this->password = $data['password'];
         }
 
         if (isset($data['profileId']) && isset($data['profileName'])) {
-            $profileData = array(
-                '_id' => (int) $data['profileId'],
+            $profileData = [
+                '_id' => $data['profileId'],
                 'name' => $data['profileName'],
-            );
+            ];
 
             $this->profile = function () use ($objectManager, $profileData) {
                 return $objectManager->getOrCreateObject(
@@ -199,50 +194,50 @@ class User extends BaseObject
         } elseif (isset($data['profileId'])) {
             $this->profile = function () use ($objectManager, $data) {
                 return $objectManager->find(
-                    'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                    (int) $data['profileId']
+                    Profile::class,
+                    $data['profileId']
                 );
             };
         }
 
-        if (isset($data['groupIds'])) {
-            $this->groups = new LazyCollection(function () use ($objectManager, $data) {
-                return new ArrayCollection(array_map(function ($groupId) use ($objectManager) {
-                    return $objectManager->find(
-                        'Doctrine\SkeletonMapper\Tests\Model\Group',
-                        (int) $groupId
-                    );
-                }, explode(',', $data['groupIds'])));
-            });
+        if (! isset($data['groupIds'])) {
+            return;
         }
+
+        $this->groups = new LazyCollection(function () use ($objectManager, $data) {
+            return new ArrayCollection(array_map(function (int $groupId) use ($objectManager) {
+                return $objectManager->find(
+                    Group::class,
+                    $groupId
+                );
+            }, explode(',', $data['groupIds'])));
+        });
     }
 
     /**
      * @see PersistableInterface
      *
-     * @return array
+     * @return mixed[]
      */
-    public function preparePersistChangeSet()
+    public function preparePersistChangeSet() : array
     {
-        $changeSet = array(
+        $changeSet = [
             'username' => $this->username,
             'password' => $this->password,
-        );
+        ];
 
         if ($this->profile !== null) {
-            $changeSet['profileId'] = $this->profile->getId();
+            $changeSet['profileId'] = $this->getProfile()->getId();
         }
 
-        if ($this->groups) {
-            $groupIds = $this->groups->map(function (Group $group) {
-                return $group->getId();
-            })->toArray();
+        $groupIds = $this->groups->map(function (Group $group) {
+            return $group->getId();
+        })->toArray();
 
-            $changeSet['groupIds'] = implode(',', $groupIds);
-        }
+        $changeSet['groupIds'] = implode(',', $groupIds);
 
         if ($this->id !== null) {
-            $changeSet['_id'] = (int) $this->id;
+            $changeSet['_id'] = $this->id;
         }
 
         return $changeSet;
@@ -251,17 +246,16 @@ class User extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
-     * @return array
+     * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet)
+    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
         $changeSet = array_map(function (Change $change) {
             return $change->getNewValue();
         }, $changeSet->getChanges());
 
-        $changeSet['_id'] = (int) $this->id;
+        $changeSet['_id'] = $this->id;
 
         if (isset($changeSet['profile'])) {
             $changeSet['profileId'] = $changeSet['profile']->getId();

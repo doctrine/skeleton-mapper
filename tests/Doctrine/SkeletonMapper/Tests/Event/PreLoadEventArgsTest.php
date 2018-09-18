@@ -1,33 +1,44 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Functional;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\Event;
 
 use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
-use PHPUnit_Framework_TestCase;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
-class PreLoadEventArgsTest extends PHPUnit_Framework_TestCase
+class PreLoadEventArgsTest extends TestCase
 {
+    /** @var ObjectManagerInterface */
     private $objectManager;
+
+    /** @var stdClass */
+    private $object;
+
+    /** @var mixed[] */
+    private $data;
+
+    /** @var PreLoadEventArgs */
     private $event;
 
-    protected function setUp()
-    {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->object = new \stdClass();
-        $this->data = array();
-
-        $this->event = new PreLoadEventArgs($this->object, $this->objectManager, $this->data);
-    }
-
-    public function testGetData()
+    public function testGetData() : void
     {
         $data = &$this->event->getData();
 
         $data['test'] = true;
 
-        $this->assertEquals($data, $this->event->getData());
+        self::assertEquals($data, $this->event->getData());
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $this->object = new stdClass();
+        $this->data   = [];
+
+        $this->event = new PreLoadEventArgs($this->object, $this->objectManager, $this->data);
     }
 }

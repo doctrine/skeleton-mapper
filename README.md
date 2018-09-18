@@ -210,46 +210,4 @@ $objectManager->remove($user);
 $objectManager->flush();
 ```
 
-If you want to store the users somewhere else you just need to swap out the `ObjectDataRepository` and `ObjectPersister`. Doctrine provides implementations for the Doctrine DBAL and MongoDB.
-
-Here is an example using the DBAL:
-
-```php
-use Doctrine\SkeletonMapper\DataRepository\DBALObjectDataRepository;
-use Doctrine\SkeletonMapper\DataRepository\DBALObjectPersister;
-
-$userDataRepository = new DBALObjectDataRepository(
-    $objectManager, $connection, 'Model\User', 'users'
-);
-$userPersister = new DBALObjectPersister(
-    $objectManager, $connection, 'Model\User', 'users'
-);
-```
-
-Other out of the box implementations:
-
-- Doctrine\Common\Collections\ArrayCollection (ArrayObjectDataRepository + ArrayObjectPersister)
-- Doctrine\Cache (CacheObjectDataRepository + CacheObjectPersister)
-- MongoDB (MongoDBObjectDataRepository + MongoDBObjectPersister)
-- HTTP (HttpObjectDataRepository + HttpObjectPersister)
-
-Here is an example using the HTTP implementation:
-
-```php
-use Doctrine\SkeletonMapper\DataRepository\HttpObjectDataRepository;
-use Doctrine\SkeletonMapper\DataRepository\HttpObjectPersister;
-
-$userDataRepository = new HttpObjectDataRepository(
-    $objectManager, $connection, 'Model\User', 'http://myapi.example.com/users'
-);
-$userPersister = new HttpObjectPersister(
-    $objectManager, $connection, 'Model\User', 'http://myapi.example.com/users'
-);
-```
-
-- When an object is read it will perform a GET request to http://myapi.example.com/users/{id}
-- When an object is persisted it will perform a POST request to http://myapi.example.com/users
-- When an object is updated it will perform a PUT request to http://myapi.example.com/users/{id}
-- When an object is removed it will perform a DELETE request to http://myapi.example.com/users/{id}
-
 Of course if you want to be in complete control and implement custom code for all the above interfaces you can do so. You could write and read from a CSV file, an XML document or any data source you can imagine.

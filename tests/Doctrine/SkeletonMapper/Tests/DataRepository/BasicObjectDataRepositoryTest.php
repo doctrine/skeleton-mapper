@@ -1,68 +1,90 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Collections;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\DataRepository;
 
 use Doctrine\SkeletonMapper\DataRepository\BasicObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class BasicObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class BasicObjectDataRepositoryTest extends TestCase
 {
+    /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
+
+    /** @var BasicObjectDataRepository */
     private $objectDataRepository;
 
-    protected function setUp()
+    public function testGetClassName() : void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->getMock();
+        self::assertEquals('TestClassName', $this->objectDataRepository->getClassName());
+    }
+
+    public function testFind() : void
+    {
+        $class = $this->createMock(ClassMetadata::class);
+
+        $class->expects(self::once())
+            ->method('getIdentifier')
+            ->will(self::returnValue(['_id' => 1]));
+
+        $this->objectManager->expects(self::once())
+            ->method('getClassMetadata')
+            ->with('TestClassName')
+            ->will(self::returnValue($class));
+
+        self::assertEquals(['username' => 'jwage'], $this->objectDataRepository->find(1));
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
         $this->objectDataRepository = new TestBasicObjectDataRepository(
             $this->objectManager,
             'TestClassName'
         );
     }
-
-    public function testGetClassName()
-    {
-        $this->assertEquals('TestClassName', $this->objectDataRepository->getClassName());
-    }
-
-    public function testFind()
-    {
-        $class = $this->getMockBuilder('Doctrine\SkeletonMapper\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $class->expects($this->once())
-            ->method('getIdentifier')
-            ->will($this->returnValue(array('_id' => 1)));
-
-        $this->objectManager->expects($this->once())
-            ->method('getClassMetadata')
-            ->with('TestClassName')
-            ->will($this->returnValue($class));
-
-        $this->assertEquals(array('username' => 'jwage'), $this->objectDataRepository->find(1));
-    }
 }
-
 
 class TestBasicObjectDataRepository extends BasicObjectDataRepository
 {
-    public function findAll()
+    /**
+     * @return string[][]
+     */
+    public function findAll() : array
     {
-        return array(array('username' => 'jwage'));
+        return [['username' => 'jwage']];
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
-    {
-        return array(array('username' => 'jwage'));
+    /**
+     * @param mixed[]  $criteria
+     * @param string[] $orderBy
+     *
+     * @return string[][]
+     */
+    public function findBy(
+        array $criteria,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ) : array {
+        return [['username' => 'jwage']];
     }
 
-    public function findOneBy(array $criteria)
+    /**
+     * @param mixed[] $criteria
+     *
+     * @return string[]
+     */
+    public function findOneBy(array $criteria) : array
     {
-        return array('username' => 'jwage');
+        return ['username' => 'jwage'];
     }
 }

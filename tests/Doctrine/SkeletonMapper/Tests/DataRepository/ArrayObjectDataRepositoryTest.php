@@ -1,66 +1,72 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Collections;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\DataRepository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
-use PHPUnit_Framework_TestCase;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ArrayObjectDataRepositoryTest extends PHPUnit_Framework_TestCase
+class ArrayObjectDataRepositoryTest extends TestCase
 {
+    /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
+
+    /** @var object[]|ArrayCollection */
     private $objects;
+
+    /** @var ArrayObjectDataRepository */
     private $objectDataRepository;
 
-    protected function setUp()
+    public function testFindAll() : void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->getMock();
+        self::assertSame([['username' => 'jwage']], $this->objectDataRepository->findAll());
+    }
 
-        $this->objects = new ArrayCollection(array(
-            array(
-                'username' => 'jwage'
-            )
-        ));
+    public function testFindBy() : void
+    {
+        $criteria = ['username' => 'jwage'];
+        $orderBy  = ['username' => 'desc'];
+        $limit    = 20;
+        $offset   = 20;
+
+        self::assertSame(
+            [['username' => 'jwage']],
+            $this->objectDataRepository->findBy($criteria, $orderBy, $limit, $offset)
+        );
+    }
+
+    public function testFindOneBy() : void
+    {
+        $criteria = ['username' => 'jwage'];
+        $orderBy  = ['username' => 'desc'];
+        $limit    = 20;
+        $offset   = 20;
+
+        self::assertSame(
+            ['username' => 'jwage'],
+            $this->objectDataRepository->findOneBy($criteria)
+        );
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $this->objects = new ArrayCollection([
+            ['username' => 'jwage'],
+        ]);
 
         $this->objectDataRepository = new ArrayObjectDataRepository(
             $this->objectManager,
             $this->objects,
             'TestClassName'
-        );
-    }
-
-    public function testFindAll()
-    {
-        $this->assertSame(array(array('username' => 'jwage')), $this->objectDataRepository->findAll());
-    }
-
-    public function testFindBy()
-    {
-        $criteria = array('username' => 'jwage');
-        $orderBy = array('username' => 'desc');
-        $limit = 20;
-        $offset = 20;
-
-        $this->assertSame(
-            array(array('username' => 'jwage')),
-            $this->objectDataRepository->findBy($criteria, $orderBy, $limit, $offset)
-        );
-    }
-
-    public function testFindOneBy()
-    {
-        $criteria = array('username' => 'jwage');
-        $orderBy = array('username' => 'desc');
-        $limit = 20;
-        $offset = 20;
-
-        $this->assertSame(
-            array('username' => 'jwage'),
-            $this->objectDataRepository->findOneBy($criteria)
         );
     }
 }

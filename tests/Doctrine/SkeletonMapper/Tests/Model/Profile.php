@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Model;
 
 use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
@@ -8,98 +10,97 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+use function array_map;
+use function call_user_func;
+use function is_callable;
 
 class Profile extends BaseObject
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Tests\Model\Address
-     */
+    /** @var callable|Address */
     private $address;
 
     /**
      * Assign identifier to object.
      *
-     * @param array $identifier
+     * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier)
+    public function assignIdentifier(array $identifier) : void
     {
-        $this->id = (int) $identifier['_id'];
+        $this->id = $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata)
+    public static function loadMetadata(ClassMetadataInterface $metadata) : void
     {
-        $metadata->identifier = array('_id');
-        $metadata->identifierFieldNames = array('id');
-        $metadata->mapField(array(
+        $metadata->setIdentifier(['_id']);
+        $metadata->setIdentifierFieldNames(['id']);
+        $metadata->mapField([
             'name' => '_id',
             'fieldName' => 'id',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'name',
-        ));
-        $metadata->mapField(array(
-            'fieldName' => 'address',
-        ));
+        ]);
+        $metadata->mapField(['fieldName' => 'name']);
+        $metadata->mapField(['fieldName' => 'address']);
     }
 
-    public function getId()
+    public function getId() : int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id) : void
     {
-        $id = (int) $id;
-
-        if ($this->id !== $id) {
-            $this->onPropertyChanged('id', $this->id, $id);
-            $this->id = $id;
+        if ($this->id === $id) {
+            return;
         }
+
+        $this->onPropertyChanged('id', $this->id, $id);
+        $this->id = $id;
     }
 
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
-    public function setName($name)
+    public function setName(string $name) : void
     {
-        $name = (string) $name;
-
-        if ($this->name !== $name) {
-            $this->onPropertyChanged('name', $this->name, $name);
-            $this->name = $name;
+        if ($this->name === $name) {
+            return;
         }
+
+        $this->onPropertyChanged('name', $this->name, $name);
+        $this->name = $name;
     }
 
-    public function getAddress()
+    public function getAddress() : Address
     {
-        if ($this->address instanceof \Closure) {
-            $this->address = $this->address->__invoke();
+        if (is_callable($this->address)) {
+            $this->address = call_user_func($this->address);
         }
 
         return $this->address;
     }
 
-    public function setAddress(Address $address)
+    public function setAddress(Address $address) : void
     {
-        if ($this->address != $address) {
-            $this->onPropertyChanged('address', $this->address, $address);
-            $this->address = $address;
+        if ($this->address === $address) {
+            return;
         }
+
+        $this->onPropertyChanged('address', $this->address, $address);
+        $this->address = $address;
     }
 
-    public function addressChanged($propName, $oldValue, $newValue)
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     */
+    public function addressChanged(string $propName, $oldValue, $newValue) : void
     {
         $this->onPropertyChanged('address', $this->address, $this->address);
     }
@@ -107,76 +108,78 @@ class Profile extends BaseObject
     /**
      * @see HydratableInterface
      *
-     * @param array                                           $data
-     * @param \Doctrine\SkeletonMapper\ObjectManagerInterface $objectManager
+     * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager)
+    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
     {
         if (isset($data['_id'])) {
-            $this->id = (int) $data['_id'];
+            $this->id = $data['_id'];
         }
 
         if (isset($data['name'])) {
-            $this->name = (string) $data['name'];
+            $this->name = $data['name'];
         }
 
-        if (isset($data['address1'])
-            || isset($data['address2'])
-            || isset($data['city'])
-            || isset($data['state'])
-            || isset($data['zip'])) {
-            $profile = $this;
-            $this->address = function () use ($data, $profile) {
-                $address = new Address($profile);
-
-                if (isset($data['address1'])) {
-                    $address->setAddress1($data['address1']);
-                }
-
-                if (isset($data['address2'])) {
-                    $address->setAddress2($data['address2']);
-                }
-
-                if (isset($data['city'])) {
-                    $address->setCity($data['city']);
-                }
-
-                if (isset($data['state'])) {
-                    $address->setState($data['state']);
-                }
-
-                if (isset($data['zip'])) {
-                    $address->setZip($data['zip']);
-                }
-
-                return $address;
-            };
+        if (! isset($data['address1'])
+            && ! isset($data['address2'])
+            && ! isset($data['city'])
+            && ! isset($data['state'])
+            && ! isset($data['zip'])) {
+            return;
         }
+
+        $profile       = $this;
+        $this->address = function () use ($data, $profile) {
+            $address = new Address($profile);
+
+            if (isset($data['address1'])) {
+                $address->setAddress1($data['address1']);
+            }
+
+            if (isset($data['address2'])) {
+                $address->setAddress2($data['address2']);
+            }
+
+            if (isset($data['city'])) {
+                $address->setCity($data['city']);
+            }
+
+            if (isset($data['state'])) {
+                $address->setState($data['state']);
+            }
+
+            if (isset($data['zip'])) {
+                $address->setZip($data['zip']);
+            }
+
+            return $address;
+        };
     }
 
     /**
      * @see PersistableInterface
      *
-     * @param \Doctrine\SkeletonMapper\UnitOfWork\ChangeSet $changeSet
      *
-     * @return array
+     * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet)
+    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
         $changeSet = array_map(function (Change $change) {
             return $change->getNewValue();
         }, $changeSet->getChanges());
 
-        $changeSet['_id'] = (int) $this->id;
+        $changeSet['_id'] = $this->id;
 
-        if ($address = $changeSet['address']) {
+        $address = $changeSet['address'];
+
+        if ($address !== null) {
             unset($changeSet['address']);
 
             $changeSet['address1'] = $address->getAddress1();
             $changeSet['address2'] = $address->getAddress2();
-            $changeSet['city'] = $address->getCity();
-            $changeSet['state'] = $address->getState();
-            $changeSet['zip'] = $address->getZip();
+            $changeSet['city']     = $address->getCity();
+            $changeSet['state']    = $address->getState();
+            $changeSet['zip']      = $address->getZip();
         }
 
         return $changeSet;
@@ -185,24 +188,26 @@ class Profile extends BaseObject
     /**
      * @see PersistableInterface
      *
-     * @return array
+     * @return mixed[]
      */
-    public function preparePersistChangeSet()
+    public function preparePersistChangeSet() : array
     {
-        $changeSet = array(
+        $changeSet = [
             'name' => $this->name,
-        );
+        ];
 
         if ($this->address !== null) {
-            $changeSet['address1'] = $this->address->getAddress1();
-            $changeSet['address2'] = $this->address->getAddress2();
-            $changeSet['city'] = $this->address->getCity();
-            $changeSet['state'] = $this->address->getState();
-            $changeSet['zip'] = $this->address->getZip();
+            $address = $this->getAddress();
+
+            $changeSet['address1'] = $address->getAddress1();
+            $changeSet['address2'] = $address->getAddress2();
+            $changeSet['city']     = $address->getCity();
+            $changeSet['state']    = $address->getState();
+            $changeSet['zip']      = $address->getZip();
         }
 
         if ($this->id !== null) {
-            $changeSet['_id'] = (int) $this->id;
+            $changeSet['_id'] = $this->id;
         }
 
         return $changeSet;

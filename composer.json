@@ -3,20 +3,22 @@
     "type": "library",
     "description": "Doctrine SkeletonMapper",
     "keywords": ["database", "persistence", "object"],
-    "homepage": "http://www.doctrine-project.org",
+    "homepage": "https://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
         { "name": "Jonathan H. Wage", "email": "jonwage@gmail.com" }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "doctrine/collections": "~1.1",
-        "doctrine/common": "~2.4"
+        "php": "^7.1",
+        "doctrine/collections": "~1.5",
+        "doctrine/common": "~2.9"
     },
     "require-dev": {
-        "doctrine/dbal": "~2.4",
-        "guzzlehttp/guzzle": "~5.0",
-        "phpunit/phpunit": "5.6.*"
+        "phpunit/phpunit": "~7.0",
+        "guzzlehttp/guzzle": "~5.0"
+    },
+    "config": {
+        "sort-packages": true
     },
     "autoload": {
         "psr-0": {

@@ -1,84 +1,151 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper;
+use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepository;
 use Doctrine\SkeletonMapper\Events;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+use Doctrine\SkeletonMapper\Persister\ObjectPersister;
+use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
 use Doctrine\SkeletonMapper\Tests\Model\Address;
 use Doctrine\SkeletonMapper\Tests\Model\Group;
-use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\GroupRepository;
+use Doctrine\SkeletonMapper\Tests\Model\Profile;
 use Doctrine\SkeletonMapper\Tests\Model\ProfileRepository;
+use Doctrine\SkeletonMapper\Tests\Model\User;
 use Doctrine\SkeletonMapper\Tests\Model\UserRepository;
+use Doctrine\SkeletonMapper\UnitOfWork;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
+abstract class BaseImplementationTest extends TestCase
 {
+    /** @var SkeletonMapper\Hydrator\BasicObjectHydrator */
     protected $basicObjectHydrator;
+
+    /** @var SkeletonMapper\Mapping\ClassMetadataFactory */
     protected $classMetadataFactory;
+
+    /** @var SkeletonMapper\Mapping\ClassMetadataInstantiator */
     protected $classMetadataInstantiator;
+
+    /** @var SkeletonMapper\ObjectFactory */
     protected $objectFactory;
+
+    /** @var SkeletonMapper\ObjectRepository\ObjectRepositoryFactory */
     protected $objectRepositoryFactory;
+
+    /** @var SkeletonMapper\Persister\ObjectPersisterFactory */
     protected $objectPersisterFactory;
+
+    /** @var SkeletonMapper\ObjectIdentityMap */
     protected $objectIdentityMap;
+
+    /** @var EventManager */
     protected $eventManager;
+
+    /** @var ClassMetadataInterface */
     protected $userClassMetadata;
-    protected $userRepository;
-    protected $profileRepository;
-    protected $userPersister;
-    protected $profilePersister;
+
+    /** @var SkeletonMapper\ObjectManager */
     protected $objectManager;
+
+    /** @var UnitOfWork */
     protected $unitOfWork;
+
+    /** @var User[]|ArrayCollection */
     protected $users;
+
+    /** @var Profile[]|ArrayCollection */
     protected $profiles;
+
+    /** @var Group[]|ArrayCollection */
     protected $groups;
+
+    /** @var DataTesterInterface */
     protected $usersTester;
+
+    /** @var DataTesterInterface */
     protected $profilesTester;
+
+    /** @var DataTesterInterface */
     protected $groupsTester;
-    protected $groupClassName = 'Doctrine\SkeletonMapper\Tests\Model\Group';
-    protected $profileClassName = 'Doctrine\SkeletonMapper\Tests\Model\Profile';
-    protected $userClassName = 'Doctrine\SkeletonMapper\Tests\Model\User';
+
+    /** @var string */
+    protected $userClassName = User::class;
+
+    /** @var EventTester */
     protected $eventTester;
 
-    abstract protected function setUpImplementation();
+    /** @var ObjectDataRepository */
+    protected $userDataRepository;
 
-    abstract protected function createUserDataRepository();
-    abstract protected function createUserPersister();
+    /** @var UserRepository */
+    protected $userRepository;
 
-    abstract protected function createProfileDataRepository();
-    abstract protected function createProfilePersister();
+    /** @var ObjectPersister */
+    protected $userPersister;
 
-    abstract protected function createGroupDataRepository();
-    abstract protected function createGroupPersister();
+    /** @var ObjectDataRepository */
+    protected $profileDataRepository;
 
-    protected function setUp()
+    /** @var ProfileRepository */
+    protected $profileRepository;
+
+    /** @var ObjectPersister */
+    protected $profilePersister;
+
+    /** @var ObjectDataRepository */
+    protected $groupDataRepository;
+
+    /** @var GroupRepository */
+    protected $groupRepository;
+
+    /** @var ObjectPersister */
+    protected $groupPersister;
+
+    abstract protected function setUpImplementation() : void;
+
+    abstract protected function createUserDataRepository() : ObjectDataRepository;
+    abstract protected function createUserPersister() : ObjectPersister;
+
+    abstract protected function createProfileDataRepository() : ObjectDataRepository;
+    abstract protected function createProfilePersister() : ObjectPersister;
+
+    abstract protected function createGroupDataRepository() : ObjectDataRepository;
+    abstract protected function createGroupPersister() : ObjectPersister;
+
+    protected function setUp() : void
     {
         $this->setUpImplementation();
         $this->setUpCommon();
 
         $this->userDataRepository = $this->createUserDataRepository();
-        $this->userRepository = $this->createUserRepository();
-        $this->userPersister = $this->createUserPersister();
+        $this->userRepository     = $this->createUserRepository();
+        $this->userPersister      = $this->createUserPersister();
 
         $this->profileDataRepository = $this->createProfileDataRepository();
-        $this->profileRepository = $this->createProfileRepository();
-        $this->profilePersister = $this->createProfilePersister();
+        $this->profileRepository     = $this->createProfileRepository();
+        $this->profilePersister      = $this->createProfilePersister();
 
         $this->groupDataRepository = $this->createGroupDataRepository();
-        $this->groupRepository = $this->createGroupRepository();
-        $this->groupPersister = $this->createGroupPersister();
+        $this->groupRepository     = $this->createGroupRepository();
+        $this->groupPersister      = $this->createGroupPersister();
 
         $this->registerServices();
     }
 
-    protected function setUpCommon()
+    protected function setUpCommon() : void
     {
         $this->eventTester = new EventTester();
 
-        $events = array(
+        $events = [
             Events::preRemove,
             Events::postRemove,
             Events::prePersist,
@@ -91,7 +158,7 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             Events::onFlush,
             Events::postFlush,
             Events::onClear,
-        );
+        ];
 
         $this->eventManager = new EventManager();
         foreach ($events as $event) {
@@ -99,23 +166,24 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         }
 
         $this->classMetadataInstantiator = new SkeletonMapper\Mapping\ClassMetadataInstantiator();
-        $this->classMetadataFactory = new SkeletonMapper\Mapping\ClassMetadataFactory($this->classMetadataInstantiator);
-        $this->objectFactory = new SkeletonMapper\ObjectFactory();
-        $this->objectRepositoryFactory = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
-        $this->objectPersisterFactory = new SkeletonMapper\Persister\ObjectPersisterFactory();
-        $this->objectIdentityMap = new SkeletonMapper\ObjectIdentityMap(
-            $this->objectRepositoryFactory, $this->classMetadataFactory
+        $this->classMetadataFactory      = new SkeletonMapper\Mapping\ClassMetadataFactory($this->classMetadataInstantiator);
+        $this->objectFactory             = new SkeletonMapper\ObjectFactory();
+        $this->objectRepositoryFactory   = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
+        $this->objectPersisterFactory    = new SkeletonMapper\Persister\ObjectPersisterFactory();
+        $this->objectIdentityMap         = new SkeletonMapper\ObjectIdentityMap(
+            $this->objectRepositoryFactory
         );
 
         // user class metadata
-        $this->userClassMetadata = $this->classMetadataFactory->getMetadataFor($this->userClassName);
+        $this->userClassMetadata = $this->classMetadataFactory->getMetadataFor(User::class);
 
         foreach ($events as $event) {
             $this->userClassMetadata->addLifecycleCallback($event, $event);
         }
 
         $this->classMetadataFactory->setMetadataFor(
-            $this->userClassName, $this->userClassMetadata
+            User::class,
+            $this->userClassMetadata
         );
 
         $this->objectManager = new SkeletonMapper\ObjectManager(
@@ -129,202 +197,208 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator(
             $this->objectManager
         );
-        $this->unitOfWork = $this->objectManager->getUnitOfWork();
+        $this->unitOfWork          = $this->objectManager->getUnitOfWork();
     }
 
-    protected function registerServices()
+    protected function registerServices() : void
     {
         $this->objectRepositoryFactory->addObjectRepository(
-            $this->userClassName, $this->userRepository
+            User::class,
+            $this->userRepository
         );
         $this->objectRepositoryFactory->addObjectRepository(
-            $this->profileClassName, $this->profileRepository
+            Profile::class,
+            $this->profileRepository
         );
         $this->objectRepositoryFactory->addObjectRepository(
-            $this->groupClassName, $this->groupRepository
+            Group::class,
+            $this->groupRepository
         );
 
         $this->objectPersisterFactory->addObjectPersister(
-            $this->userClassName, $this->userPersister
+            User::class,
+            $this->userPersister
         );
         $this->objectPersisterFactory->addObjectPersister(
-            $this->profileClassName, $this->profilePersister
+            Profile::class,
+            $this->profilePersister
         );
         $this->objectPersisterFactory->addObjectPersister(
-            $this->groupClassName, $this->groupPersister
+            Group::class,
+            $this->groupPersister
         );
     }
 
-    public function testGetClassMetadata()
+    public function testGetClassMetadata() : void
     {
-        $class = $this->objectManager->getClassMetadata($this->userClassName);
+        $class = $this->objectManager->getClassMetadata(User::class);
 
-        $fieldMappings = array(
-            'id' => array(
+        $fieldMappings = [
+            'id' => [
                 'name' => '_id',
                 'fieldName' => 'id',
-            ),
-            'username' => array(
+            ],
+            'username' => [
                 'name' => 'username',
                 'fieldName' => 'username',
-            ),
-            'password' => array(
+            ],
+            'password' => [
                 'name' => 'password',
                 'fieldName' => 'password',
-            ),
-            'profile' => array(
+            ],
+            'profile' => [
                 'name' => 'profileId',
                 'fieldName' => 'profile',
-            ),
-            'groups' => array(
+            ],
+            'groups' => [
                 'name' => 'groupIds',
                 'fieldName' => 'groups',
-            ),
-        );
+            ],
+        ];
 
-        $this->assertEquals($this->userClassName, $class->getName());
-        $this->assertEquals(array('_id'), $class->getIdentifier());
-        $this->assertEquals(array('id'), $class->getIdentifierFieldNames());
-        $this->assertInstanceOf('ReflectionClass', $class->getReflectionClass());
+        self::assertEquals(User::class, $class->getName());
+        self::assertEquals(['_id'], $class->getIdentifier());
+        self::assertEquals(['id'], $class->getIdentifierFieldNames());
+        self::assertSame(User::class, $class->getReflectionClass()->getName());
 
-        $this->assertTrue($class->isIdentifier('id'));
-        $this->assertFalse($class->isIdentifier('username'));
+        self::assertTrue($class->isIdentifier('id'));
+        self::assertFalse($class->isIdentifier('username'));
 
-        $this->assertTrue($class->hasField('username'));
-        $this->assertFalse($class->hasField('nope'));
+        self::assertTrue($class->hasField('username'));
+        self::assertFalse($class->hasField('nope'));
 
-        $this->assertEquals(array('id', 'username', 'password', 'profile', 'groups'), $class->getFieldNames());
-        $this->assertEquals($fieldMappings, $class->getFieldMappings());
+        self::assertEquals(['id', 'username', 'password', 'profile', 'groups'], $class->getFieldNames());
+        self::assertEquals($fieldMappings, $class->getFieldMappings());
     }
 
-    public function testFind()
+    public function testFind() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
+        $user1 = $this->objectManager->find(User::class, 1);
 
-        $this->assertInstanceOf($this->userClassName, $user1);
+        self::assertInstanceOf(User::class, $user1);
 
-        $this->assertEquals(1, $user1->getId());
-        $this->assertEquals('jwage', $user1->getUsername());
-        $this->assertEquals('password', $user1->getPassword());
+        self::assertEquals(1, $user1->getId());
+        self::assertEquals('jwage', $user1->getUsername());
+        self::assertEquals('password', $user1->getPassword());
 
-        $user2 = $this->objectManager->find($this->userClassName, 2);
+        $user2 = $this->objectManager->find(User::class, 2);
 
-        $this->assertInstanceOf($this->userClassName, $user2);
+        self::assertInstanceOf(User::class, $user2);
 
-        $this->assertSame($user2, $this->objectManager->find($this->userClassName, 2));
+        self::assertSame($user2, $this->objectManager->find(User::class, 2));
 
-        $this->assertEquals(2, $user2->getId());
-        $this->assertEquals('romanb', $user2->getUsername());
-        $this->assertEquals('password', $user2->getPassword());
+        self::assertEquals(2, $user2->getId());
+        self::assertEquals('romanb', $user2->getUsername());
+        self::assertEquals('password', $user2->getPassword());
     }
 
-    public function testFindAll()
+    public function testFindAll() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
-        $user2 = $this->objectManager->find($this->userClassName, 2);
+        $user1 = $this->objectManager->find(User::class, 1);
+        $user2 = $this->objectManager->find(User::class, 2);
 
         $users = $this->objectManager
-            ->getRepository($this->userClassName)
+            ->getRepository(User::class)
             ->findAll();
 
-        $this->assertSame(array($user1, $user2), $users);
+        self::assertSame([$user1, $user2], $users);
     }
 
-    public function testFindBy()
+    public function testFindBy() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
+        $user1 = $this->objectManager->find(User::class, 1);
 
         $users = $this->objectManager
-            ->getRepository($this->userClassName)
-            ->findBy(array('username' => 'jwage'));
+            ->getRepository(User::class)
+            ->findBy(['username' => 'jwage']);
 
-        $this->assertSame(array($user1), $users);
+        self::assertSame([$user1], $users);
     }
 
-    public function testIdentityMap()
+    public function testIdentityMap() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user1 = $this->objectManager->find(User::class, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
-        $this->assertSame($user1, $user2);
+        self::assertSame($user1, $user2);
     }
 
-    public function testPersist()
+    public function testPersist() : void
     {
         $user = $this->createTestObject();
         $user->setId(3);
         $user->setUsername('benjamin');
         $user->setPassword('password');
 
-        $this->assertEquals(2, $this->usersTester->count());
+        self::assertEquals(2, $this->usersTester->count());
 
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $this->assertEquals(3, $this->usersTester->count());
-        $this->assertSame($user, $this->objectManager->find($this->userClassName, 3));
+        self::assertEquals(3, $this->usersTester->count());
+        self::assertSame($user, $this->objectManager->find(User::class, 3));
     }
 
-    public function testUpdates()
+    public function testUpdates() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('jonwage');
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
-        $this->assertEquals('jonwage', $user2->getUsername());
+        self::assertEquals('jonwage', $user2->getUsername());
     }
 
-    public function testRemove()
+    public function testRemove() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 2);
+        $user = $this->objectManager->find(User::class, 2);
 
         $this->objectManager->remove($user);
         $this->objectManager->flush();
 
-        $this->assertEquals(1, $this->usersTester->count());
+        self::assertEquals(1, $this->usersTester->count());
 
-        $this->assertNull($this->objectManager->find($this->userClassName, 2));
+        self::assertNull($this->objectManager->find(User::class, 2));
     }
 
-    public function testRefresh()
+    public function testRefresh() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
         $user->setPassword('yeehaw');
 
         $this->objectManager->refresh($user);
 
-        $this->assertEquals('password', $user->getPassword());
+        self::assertEquals('password', $user->getPassword());
     }
 
-    public function testClear()
+    public function testClear() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
+        $user1 = $this->objectManager->find(User::class, 1);
 
-        $this->objectManager->clear($this->userClassName);
+        $this->objectManager->clear(User::class);
 
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
-        $this->assertNotSame($user1, $user2);
+        self::assertNotSame($user1, $user2);
 
         $this->objectManager->clear();
 
-        $user3 = $this->objectManager->find($this->userClassName, 1);
+        $user3 = $this->objectManager->find(User::class, 1);
 
-        $this->assertNotSame($user2, $user3);
+        self::assertNotSame($user2, $user3);
 
         $user = $this->createTestObject();
         $user->setId(10);
 
         $this->objectManager->persist($user);
-        $this->objectManager->clear($this->userClassName);
+        $this->objectManager->clear(User::class);
         $this->objectManager->flush();
 
-        $this->assertNull($this->objectManager->find($this->userClassName, 10));
+        self::assertNull($this->objectManager->find(User::class, 10));
 
         $user = $this->createTestObject();
         $user->setId(10);
@@ -333,55 +407,55 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->clear();
         $this->objectManager->flush();
 
-        $this->assertNull($this->objectManager->find($this->userClassName, 10));
+        self::assertNull($this->objectManager->find(User::class, 10));
     }
 
-    public function testDetach()
+    public function testDetach() : void
     {
-        $user1 = $this->objectManager->find($this->userClassName, 1);
+        $user1 = $this->objectManager->find(User::class, 1);
 
         $this->objectManager->detach($user1);
 
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
-        $this->assertNotSame($user1, $user2);
+        self::assertNotSame($user1, $user2);
     }
 
-    public function testMerge()
+    public function testMerge() : void
     {
         $user1 = $this->createTestObject();
         $user1->setId(1);
         $user1->setUsername('jonwage');
         $user1->setPassword('password');
 
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
         $this->objectManager->merge($user1);
 
-        $this->assertEquals('jonwage', $user2->getUsername());
+        self::assertEquals('jonwage', $user2->getUsername());
     }
 
-    public function testContains()
+    public function testContains() : void
     {
         $user = $this->createTestObject();
         $user->setId(3);
 
-        $this->assertFalse($this->objectManager->contains($user));
+        self::assertFalse($this->objectManager->contains($user));
 
         $this->objectManager->persist($user);
 
-        $this->assertTrue($this->objectManager->contains($user));
+        self::assertTrue($this->objectManager->contains($user));
 
         $this->objectManager->flush();
 
-        $this->assertTrue($this->objectManager->contains($user));
+        self::assertTrue($this->objectManager->contains($user));
 
         $this->objectManager->clear();
 
-        $this->assertFalse($this->objectManager->contains($user));
+        self::assertFalse($this->objectManager->contains($user));
     }
 
-    public function testEvents()
+    public function testEvents() : void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -389,68 +463,68 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::prePersist,
             Events::preFlush,
             Events::onFlush,
             Events::postPersist,
             Events::postFlush,
-        );
+        ];
 
-        $this->assertEquals($expected, $this->eventTester->called);
+        self::assertEquals($expected, $this->eventTester->called);
 
-        $this->eventTester->called = array();
+        $this->eventTester->called = [];
 
         $user->setUsername('jmikola');
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::preUpdate,
             Events::preFlush,
             Events::onFlush,
             Events::postUpdate,
             Events::postFlush,
-        );
+        ];
 
-        $this->assertEquals($expected, $this->eventTester->called);
+        self::assertEquals($expected, $this->eventTester->called);
 
-        $this->eventTester->called = array();
+        $this->eventTester->called = [];
         $this->objectManager->clear();
 
-        $expected = array(
+        $expected = [
             Events::onClear,
-        );
+        ];
 
-        $this->assertEquals($expected, $this->eventTester->called);
+        self::assertEquals($expected, $this->eventTester->called);
 
-        $this->eventTester->called = array();
+        $this->eventTester->called = [];
 
         $this->objectManager->remove($user);
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::preRemove,
             Events::preFlush,
             Events::onFlush,
             Events::postRemove,
             Events::postFlush,
-        );
+        ];
 
-        $this->assertEquals($expected, $this->eventTester->called);
+        self::assertEquals($expected, $this->eventTester->called);
 
-        $this->eventTester->called = array();
+        $this->eventTester->called = [];
 
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
-        $expected = array(
+        $expected = [
             Events::preLoad,
             Events::postLoad,
-        );
+        ];
 
-        $this->assertEquals($expected, $this->eventTester->called);
+        self::assertEquals($expected, $this->eventTester->called);
     }
 
-    public function testLifecycleCallbacks()
+    public function testLifecycleCallbacks() : void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -458,128 +532,128 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::prePersist,
             Events::preFlush,
             Events::postPersist,
-        );
+        ];
 
-        $this->assertEquals($expected, $user->called);
+        self::assertEquals($expected, $user->called);
 
-        $user->called = array();
+        $user->called = [];
 
         $user->setUsername('jmikola');
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::preUpdate,
             Events::preFlush,
             Events::postUpdate,
-        );
+        ];
 
-        $this->assertEquals($expected, $user->called);
+        self::assertEquals($expected, $user->called);
 
-        $user->called = array();
+        $user->called = [];
 
         $this->objectManager->remove($user);
         $this->objectManager->flush();
 
-        $expected = array(
+        $expected = [
             Events::preRemove,
             Events::preFlush,
             Events::postRemove,
-        );
+        ];
 
-        $this->assertEquals($expected, $user->called);
+        self::assertEquals($expected, $user->called);
 
-        $user->called = array();
+        $user->called = [];
 
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
-        $expected = array(
+        $expected = [
             Events::preLoad,
             Events::postLoad,
-        );
+        ];
 
-        $this->assertEquals($expected, $user->called);
+        self::assertEquals($expected, $user->called);
     }
 
-    public function testPropertyChangedListeners()
+    public function testPropertyChangedListeners() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('changed');
 
-        $this->assertEquals(
-            new ChangeSet($user, array('username' => new Change('username', 'jwage', 'changed'))),
+        self::assertEquals(
+            new ChangeSet($user, ['username' => new Change('username', 'jwage', 'changed')]),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $this->assertEquals(
-            new ChangeSet($user, array()),
+        self::assertEquals(
+            new ChangeSet($user, []),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 
-        $user2 = $this->objectManager->find($this->userClassName, 1);
+        $user2 = $this->objectManager->find(User::class, 1);
 
-        $this->assertEquals('changed', $user2->getUsername());
+        self::assertEquals('changed', $user2->getUsername());
 
         $user3 = $this->createTestObject();
         $user3->setId(3);
         $user3->setUsername('another');
 
-        $this->assertEquals(
-            new ChangeSet($user3, array()),
+        self::assertEquals(
+            new ChangeSet($user3, []),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $this->assertNull($this->objectManager->find($this->userClassName, 3));
+        self::assertNull($this->objectManager->find(User::class, 3));
 
         $this->objectManager->persist($user3);
         $this->objectManager->flush();
 
-        $this->assertNotNull($this->objectManager->find($this->userClassName, 3));
+        self::assertNotNull($this->objectManager->find(User::class, 3));
 
         $user3->setUsername('changed');
 
-        $this->assertEquals(
-            new ChangeSet($user3, array('username' => new Change('username', 'another', 'changed'))),
+        self::assertEquals(
+            new ChangeSet($user3, ['username' => new Change('username', 'another', 'changed')]),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user3 = $this->objectManager->find($this->userClassName, 3);
+        $user3 = $this->objectManager->find(User::class, 3);
 
-        $this->assertEquals('changed', $user3->getUsername());
+        self::assertEquals('changed', $user3->getUsername());
 
         $user3->setUsername('testing');
 
-        $this->assertEquals(
-            new ChangeSet($user3, array('username' => new Change('username', 'changed', 'testing'))),
+        self::assertEquals(
+            new ChangeSet($user3, ['username' => new Change('username', 'changed', 'testing')]),
             $this->unitOfWork->getObjectChangeSet($user3)
         );
 
         $this->objectManager->clear();
         $this->objectManager->flush();
 
-        $this->assertEquals(
-            new ChangeSet($user, array()),
+        self::assertEquals(
+            new ChangeSet($user, []),
             $this->unitOfWork->getObjectChangeSet($user)
         );
 
-        $user3 = $this->objectManager->find($this->userClassName, 3);
+        $user3 = $this->objectManager->find(User::class, 3);
 
-        $this->assertEquals('changed', $user3->getUsername());
+        self::assertEquals('changed', $user3->getUsername());
     }
 
-    public function testIdentifierGeneration()
+    public function testIdentifierGeneration() : void
     {
         $user = $this->createTestObject();
         $user->setUsername('jwage');
@@ -587,58 +661,58 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->persist($user);
         $this->objectManager->flush();
 
-        $this->assertEquals(3, $user->getId());
+        self::assertEquals(3, $user->getId());
     }
 
-    public function testClassMetadata()
+    public function testClassMetadata() : void
     {
         $object = $this->createTestObject();
         $object->setId(1);
 
-        $class = $this->classMetadataFactory->getMetadataFor($this->userClassName);
-        $this->assertEquals($this->userClassName, $class->name);
-        $this->assertTrue($class->hasField('id'));
-        $this->assertTrue($class->hasField('username'));
-        $this->assertTrue($class->hasField('password'));
-        $this->assertFalse($class->hasAssociation('password'));
-        $this->assertFalse($class->isSingleValuedAssociation('password'));
-        $this->assertFalse($class->isCollectionValuedAssociation('password'));
-        $this->assertTrue($class->isIdentifier('id'));
-        $this->assertFalse($class->isIdentifier('username'));
-        $this->assertEquals(array('_id'), $class->getIdentifier());
-        $this->assertEquals(array('id'), $class->getIdentifierFieldNames());
-        $this->assertEquals(array('id', 'username', 'password', 'profile', 'groups'), $class->getFieldNames());
-        $this->assertInstanceOf('ReflectionClass', $class->getReflectionClass());
-        $this->assertEquals(array(
-            'id' => array(
+        $class = $this->classMetadataFactory->getMetadataFor(User::class);
+        self::assertEquals(User::class, $class->getName());
+        self::assertTrue($class->hasField('id'));
+        self::assertTrue($class->hasField('username'));
+        self::assertTrue($class->hasField('password'));
+        self::assertFalse($class->hasAssociation('password'));
+        self::assertFalse($class->isSingleValuedAssociation('password'));
+        self::assertFalse($class->isCollectionValuedAssociation('password'));
+        self::assertTrue($class->isIdentifier('id'));
+        self::assertFalse($class->isIdentifier('username'));
+        self::assertEquals(['_id'], $class->getIdentifier());
+        self::assertEquals(['id'], $class->getIdentifierFieldNames());
+        self::assertEquals(['id', 'username', 'password', 'profile', 'groups'], $class->getFieldNames());
+        self::assertSame(User::class, $class->getReflectionClass()->getName());
+        self::assertEquals([
+            'id' => [
                 'name' => '_id',
                 'fieldName' => 'id',
-            ),
-            'username' => array(
+            ],
+            'username' => [
                 'name' => 'username',
                 'fieldName' => 'username',
-            ),
-            'password' => array(
+            ],
+            'password' => [
                 'name' => 'password',
                 'fieldName' => 'password',
-            ),
-            'profile' => array(
+            ],
+            'profile' => [
                 'name' => 'profileId',
                 'fieldName' => 'profile',
-            ),
-            'groups' => array(
+            ],
+            'groups' => [
                 'name' => 'groupIds',
                 'fieldName' => 'groups',
-            ),
-        ), $class->getFieldMappings());
-        $this->assertEquals(array(), $class->getAssociationNames());
-        $this->assertNull($class->getTypeOfField('username'));
-        $this->assertEquals(array('_id' => 1), $class->getIdentifierValues($object));
+            ],
+        ], $class->getFieldMappings());
+        self::assertEquals([], $class->getAssociationNames());
+        self::assertEquals('', $class->getTypeOfField('username'));
+        self::assertEquals(['_id' => 1], $class->getIdentifierValues($object));
     }
 
-    public function testOnlyUpdatesWhatChanged()
+    public function testOnlyUpdatesWhatChanged() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('changed');
 
         $this->usersTester->set(1, 'password', 'changed password');
@@ -646,17 +720,17 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, 1);
-        $this->assertEquals('changed', $user->getUsername());
+        $user = $this->objectManager->find(User::class, 1);
+        self::assertEquals('changed', $user->getUsername());
 
         $data = $this->usersTester->find(1);
 
-        $this->assertEquals('changed password', $data['password']);
+        self::assertEquals('changed password', $data['password']);
     }
 
-    public function testReferences()
+    public function testReferences() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
         $profile = new Profile();
         $profile->setName('Jonathan H. Wage');
@@ -666,11 +740,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $profile = $this->objectManager->find($this->profileClassName, 1);
-        $this->assertEquals('Jonathan H. Wage', $profile->getName());
+        $profile = $this->objectManager->find(Profile::class, 1);
+        self::assertEquals('Jonathan H. Wage', $profile->getName());
 
-        $user = $this->objectManager->find($this->userClassName, 1);
-        $this->assertSame($profile, $user->getProfile());
+        $user = $this->objectManager->find(User::class, 1);
+        self::assertSame($profile, $user->getProfile());
 
         $profile = new Profile();
         $profile->setName('John Caplan');
@@ -683,13 +757,13 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, $user->getId());
-        $this->assertEquals('John Caplan', $user->getProfile()->getName());
+        $user = $this->objectManager->find(User::class, $user->getId());
+        self::assertEquals('John Caplan', $user->getProfile()->getName());
     }
 
-    public function testEmbeddedAddress()
+    public function testEmbeddedAddress() : void
     {
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
         $profile = new Profile();
         $address = new Address($profile);
@@ -706,26 +780,26 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
-        $this->assertNotNull($user->getProfile()->getAddress());
-        $this->assertEquals($address, $user->getProfile()->getAddress());
+        self::assertNotNull($user->getProfile()->getAddress());
+        self::assertEquals($address, $user->getProfile()->getAddress());
 
         $user->getProfile()->getAddress()->setState('Tennessee');
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, 1);
+        $user = $this->objectManager->find(User::class, 1);
 
-        $this->assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
+        self::assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
     }
 
-    public function testReferenceMany()
+    public function testReferenceMany() : void
     {
         $adminGroup = new Group('Admin');
-        $techGroup = new Group('Tech');
-        $user = $this->createTestObject();
+        $techGroup  = new Group('Tech');
+        $user       = $this->createTestObject();
 
         $this->objectManager->persist($adminGroup);
         $this->objectManager->persist($techGroup);
@@ -738,14 +812,14 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, $user->getId());
+        $user = $this->objectManager->find(User::class, $user->getId());
 
-        $this->assertCount(2, $user->getGroups());
+        self::assertCount(2, $user->getGroups());
 
         $groups = $user->getGroups();
 
-        $this->assertEquals('Admin', $groups[0]->getName());
-        $this->assertEquals('Tech', $groups[1]->getName());
+        self::assertEquals('Admin', $groups[0]->getName());
+        self::assertEquals('Tech', $groups[1]->getName());
 
         $moderatorGroup = new Group('Moderator');
         $user->addGroup($moderatorGroup);
@@ -754,13 +828,13 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
         $this->objectManager->flush();
         $this->objectManager->clear();
 
-        $user = $this->objectManager->find($this->userClassName, $user->getId());
+        $user = $this->objectManager->find(User::class, $user->getId());
 
-        $this->assertCount(3, $user->getGroups());
-        $this->assertEquals('Moderator', $groups[2]->getName());
+        self::assertCount(3, $user->getGroups());
+        self::assertEquals('Moderator', $groups[2]->getName());
     }
 
-    protected function createUserRepository()
+    protected function createUserRepository() : UserRepository
     {
         return new UserRepository(
             $this->objectManager,
@@ -768,11 +842,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            $this->userClassName
+            User::class
         );
     }
 
-    protected function createProfileRepository()
+    protected function createProfileRepository() : ProfileRepository
     {
         return new ProfileRepository(
             $this->objectManager,
@@ -780,11 +854,11 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            $this->profileClassName
+            Profile::class
         );
     }
 
-    protected function createGroupRepository()
+    protected function createGroupRepository() : GroupRepository
     {
         return new GroupRepository(
             $this->objectManager,
@@ -792,23 +866,25 @@ abstract class BaseImplementationTest extends PHPUnit_Framework_TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            $this->groupClassName
+            Group::class
         );
     }
 
-    private function createTestObject()
+    private function createTestObject() : User
     {
-        $className = $this->userClassName;
-
-        return new $className();
+        return new User();
     }
 }
 
 class EventTester
 {
-    public $called = array();
+    /** @var string[] */
+    public $called = [];
 
-    public function __call($method, array $arguments)
+    /**
+     * @param mixed[] $arguments
+     */
+    public function __call(string $method, array $arguments) : void
     {
         $this->called[] = $method;
     }

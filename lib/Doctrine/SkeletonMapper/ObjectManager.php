@@ -1,113 +1,68 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper;
 
+use BadMethodCallException;
 use Doctrine\Common\EventManager;
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
  * Class for managing the persistence of objects.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectManager implements ObjectManagerInterface
 {
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface
-     */
+    /** @var ObjectRepositoryFactoryInterface */
     private $objectRepositoryFactory;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface
-     */
+    /** @var ObjectPersisterFactoryInterface */
     private $objectPersisterFactory;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectIdentityMap
-     */
+    /** @var ObjectIdentityMap */
     private $objectIdentityMap;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\UnitOfWork
-     */
+    /** @var UnitOfWork */
     private $unitOfWork;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory
-     */
+    /** @var ClassMetadataFactory*/
     private $metadataFactory;
 
-    /**
-     * @var \Doctrine\Common\EventManager
-     */
+    /** @var EventManager */
     private $eventManager;
 
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface         $objectPersisterFactory
-     * @param \Doctrine\SkeletonMapper\ObjectIdentityMap                                 $objectIdentityMap
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory                      $metadataFactory
-     * @param \Doctrine\Common\EventManager                                              $eventManager
-     */
     public function __construct(
         ObjectRepositoryFactoryInterface $objectRepositoryFactory,
         ObjectPersisterFactoryInterface $objectPersisterFactory,
         ObjectIdentityMap $objectIdentityMap,
         ClassMetadataFactory $metadataFactory,
-        EventManager $eventManager = null)
-    {
+        ?EventManager $eventManager = null
+    ) {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
-        $this->objectPersisterFactory = $objectPersisterFactory;
-        $this->objectIdentityMap = $objectIdentityMap;
-        $this->metadataFactory = $metadataFactory;
-        $this->eventManager = $eventManager ?: new EventManager();
+        $this->objectPersisterFactory  = $objectPersisterFactory;
+        $this->objectIdentityMap       = $objectIdentityMap;
+        $this->metadataFactory         = $metadataFactory;
+        $this->eventManager            = $eventManager ?: new EventManager();
 
         $this->unitOfWork = new UnitOfWork(
             $this,
-            $this->objectRepositoryFactory,
             $this->objectPersisterFactory,
             $this->objectIdentityMap,
             $this->eventManager
         );
     }
 
-    /**
-     * @return UnitOfWork
-     */
-    public function getUnitOfWork()
+    public function getUnitOfWork() : UnitOfWork
     {
         return $this->unitOfWork;
     }
 
     /**
-     * Finds an object by its identifier.
-     *
-     * This is just a convenient shortcut for getRepository($className)->find($id).
-     *
-     * @param string $className The class name of the object to find.
-     * @param mixed  $id        The identity of the object to find.
-     *
-     * @return object The found object.
+     * {@inheritDoc}
      */
     public function find($className, $id)
     {
@@ -115,16 +70,9 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Tells the ObjectManager to make an instance managed and persistent.
-     *
-     * The object will be entered into the database as a result of the flush operation.
-     *
-     * NOTE: The persist operation always considers objects that are not yet known to
-     * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
-     *
-     * @param object $object The instance to make managed and persistent.
+     * {@inheritDoc}
      */
-    public function persist($object)
+    public function persist($object) : void
     {
         $this->unitOfWork->persist($object);
     }
@@ -136,89 +84,63 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object The instance to update
      */
-    public function update($object)
+    public function update($object) : void
     {
         $this->unitOfWork->update($object);
     }
 
     /**
-     * Removes an object instance.
-     *
-     * A removed object will be removed from the database as a result of the flush operation.
-     *
-     * @param object $object The object instance to remove.
+     * {@inheritDoc}
      */
-    public function remove($object)
+    public function remove($object) : void
     {
         $this->unitOfWork->remove($object);
     }
 
     /**
-     * Merges the state of a detached object into the persistence context
-     * of this ObjectManager and returns the managed copy of the object.
-     * The object passed to merge will not become associated/managed with this ObjectManager.
-     *
-     * @param object $object
-     *
-     * @return object
+     * {@inheritDoc}
      */
-    public function merge($object)
+    public function merge($object) : void
     {
         $this->unitOfWork->merge($object);
     }
 
     /**
-     * Clears the ObjectManager. All objects that are currently managed
-     * by this ObjectManager become detached.
-     *
-     * @param string|null $objectName if given, only objects of this type will get detached.
+     * {@inheritDoc}
      */
-    public function clear($objectName = null)
+    public function clear($objectName = null) : void
     {
         $this->unitOfWork->clear($objectName);
     }
 
     /**
-     * Detaches an object from the ObjectManager, causing a managed object to
-     * become detached. Unflushed changes made to the object if any
-     * (including removal of the object), will not be synchronized to the database.
-     * Objects which previously referenced the detached object will continue to
-     * reference it.
-     *
-     * @param object $object The object to detach.
+     * {@inheritDoc}
      */
-    public function detach($object)
+    public function detach($object) : void
     {
         $this->unitOfWork->detach($object);
     }
 
     /**
-     * Refreshes the persistent state of an object from the database,
-     * overriding any local changes that have not yet been persisted.
-     *
-     * @param object $object The object to refresh.
+     * {@inheritDoc}
      */
-    public function refresh($object)
+    public function refresh($object) : void
     {
         $this->unitOfWork->refresh($object);
     }
 
     /**
-     * Flushes all changes to objects that have been queued up to now to the database.
-     * This effectively synchronizes the in-memory state of managed objects with the
-     * database.
+     * {@inheritDoc}
      */
-    public function flush()
+    public function flush() : void
     {
         $this->unitOfWork->commit();
     }
 
     /**
-     * Gets the repository for a class.
-     *
      * @param string $className
      *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return ObjectRepositoryInterface
      */
     public function getRepository($className)
     {
@@ -226,26 +148,17 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * Returns the ClassMetadata descriptor for a class.
-     *
-     * The class name must be the fully-qualified class name without a leading backslash
-     * (as it is returned by get_class($obj)).
-     *
      * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    public function getClassMetadata($className)
+    public function getClassMetadata($className) : ClassMetadataInterface
     {
         return $this->metadataFactory->getMetadataFor($className);
     }
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
-     *
-     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
-    public function getMetadataFactory()
+    public function getMetadataFactory() : ClassMetadataFactory
     {
         return $this->metadataFactory;
     }
@@ -257,9 +170,9 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $obj
      */
-    public function initializeObject($obj)
+    public function initializeObject($obj) : void
     {
-        throw new \BadMethodCallException('Not supported.');
+        throw new BadMethodCallException('Not supported.');
     }
 
     /**
@@ -267,19 +180,18 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object
      *
-     * @return bool
      */
-    public function contains($object)
+    public function contains($object) : bool
     {
         return $this->unitOfWork->contains($object);
     }
 
     /**
-     * @param array $data
+     * @param mixed[] $data
      *
      * @return object
      */
-    public function getOrCreateObject($className, array $data)
+    public function getOrCreateObject(string $className, array $data)
     {
         return $this->unitOfWork->getOrCreateObject($className, $data);
     }

@@ -1,86 +1,103 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\SkeletonMapper\Tests\Functional;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectDataRepository;
-use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectPersister;
+use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepository;
+use Doctrine\SkeletonMapper\Persister\ObjectPersister;
+use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectDataRepository as ArrayObjectDataRepository;
+use Doctrine\SkeletonMapper\Tests\ArrayImplementation\ObjectPersister as ArrayObjectPersister;
 use Doctrine\SkeletonMapper\Tests\DataTesterInterface;
+use Doctrine\SkeletonMapper\Tests\Model\Group;
+use Doctrine\SkeletonMapper\Tests\Model\Profile;
+use Doctrine\SkeletonMapper\Tests\Model\User;
 
-/**
- * @group functional
- */
 class ArrayImplementationTest extends BaseImplementationTest
 {
-    protected function setUpImplementation()
+    protected function setUpImplementation() : void
     {
-        $this->users = new ArrayCollection(array(
-            1 => array(
+        $this->users    = new ArrayCollection([
+            1 => [
                 '_id' => 1,
                 'username' => 'jwage',
                 'password' => 'password',
-            ),
-            2 => array(
+            ],
+            2 => [
                 '_id' => 2,
                 'username' => 'romanb',
                 'password' => 'password',
-            ),
-        ));
+            ],
+        ]);
         $this->profiles = new ArrayCollection();
-        $this->groups = new ArrayCollection();
+        $this->groups   = new ArrayCollection();
 
-        $this->usersTester = new ArrayTester($this->users);
+        $this->usersTester    = new ArrayTester($this->users);
         $this->profilesTester = new ArrayTester($this->profiles);
-        $this->groupsTester = new ArrayTester($this->groups);
+        $this->groupsTester   = new ArrayTester($this->groups);
 
         $this->setUpCommon();
     }
 
-    protected function createUserDataRepository()
+    protected function createUserDataRepository() : ObjectDataRepository
     {
-        return new ObjectDataRepository(
-            $this->objectManager, $this->users, $this->userClassName
+        return new ArrayObjectDataRepository(
+            $this->objectManager,
+            $this->users,
+            User::class
         );
     }
 
-    protected function createUserPersister()
+    protected function createUserPersister() : ObjectPersister
     {
-        return new ObjectPersister(
-            $this->objectManager, $this->users, $this->userClassName
+        return new ArrayObjectPersister(
+            $this->objectManager,
+            $this->users,
+            User::class
         );
     }
 
-    protected function createProfileDataRepository()
+    protected function createProfileDataRepository() : ObjectDataRepository
     {
-        return new ObjectDataRepository(
-            $this->objectManager, $this->profiles, $this->profileClassName
+        return new ArrayObjectDataRepository(
+            $this->objectManager,
+            $this->profiles,
+            Profile::class
         );
     }
 
-    protected function createProfilePersister()
+    protected function createProfilePersister() : ObjectPersister
     {
-        return new ObjectPersister(
-            $this->objectManager, $this->profiles, $this->profileClassName
+        return new ArrayObjectPersister(
+            $this->objectManager,
+            $this->profiles,
+            Profile::class
         );
     }
 
-    protected function createGroupDataRepository()
+    protected function createGroupDataRepository() : ObjectDataRepository
     {
-        return new ObjectDataRepository(
-            $this->objectManager, $this->groups, $this->groupClassName
+        return new ArrayObjectDataRepository(
+            $this->objectManager,
+            $this->groups,
+            Group::class
         );
     }
 
-    protected function createGroupPersister()
+    protected function createGroupPersister() : ObjectPersister
     {
-        return new ObjectPersister(
-            $this->objectManager, $this->groups, $this->groupClassName
+        return new ArrayObjectPersister(
+            $this->objectManager,
+            $this->groups,
+            Group::class
         );
     }
 }
 
 class ArrayTester implements DataTesterInterface
 {
+    /** @var ArrayCollection */
     private $objects;
 
     public function __construct(ArrayCollection $objects)
@@ -88,23 +105,31 @@ class ArrayTester implements DataTesterInterface
         $this->objects = $objects;
     }
 
-    public function find($id)
+    /**
+     * @return mixed[]
+     */
+    public function find(int $id) : ?array
     {
         foreach ($this->objects as $object) {
             if ($object['_id'] === $id) {
                 return $object;
             }
         }
+
+        return null;
     }
 
-    public function set($id, $key, $value)
+    /**
+     * @param mixed $value
+     */
+    public function set(int $id, string $key, $value) : void
     {
-        $object = $this->objects[$id];
-        $object[$key] = $value;
+        $object             = $this->objects[$id];
+        $object[$key]       = $value;
         $this->objects[$id] = $object;
     }
 
-    public function count()
+    public function count() : int
     {
         return $this->objects->count();
     }

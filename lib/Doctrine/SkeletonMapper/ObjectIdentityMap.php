@@ -1,68 +1,34 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
+use function count;
+use function get_class;
+use function serialize;
 
 /**
  * Class for maintaining an object identity map.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ObjectIdentityMap
 {
-    /**
-     * @var array
-     */
-    private $identityMap = array();
+    /** @var object[][] */
+    private $identityMap = [];
 
-    /**
-     * @var \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface
-     */
+    /** @var ObjectRepositoryFactoryInterface */
     private $objectRepositoryFactory;
 
-    /**
-     * @var \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory
-     */
-    private $classMetadataFactory;
-
-    /**
-     * @param \Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface $objectRepositoryFactory
-     * @param \Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory                      $classMetadataFactory
-     */
-    public function __construct(
-        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
-        ClassMetadataFactory $classMetadataFactory)
+    public function __construct(ObjectRepositoryFactoryInterface $objectRepositoryFactory)
     {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
-        $this->classMetadataFactory = $classMetadataFactory;
     }
 
     /**
      * @param object $object
-     *
-     * @return bool
      */
-    public function contains($object)
+    public function contains($object) : bool
     {
         $className = get_class($object);
 
@@ -74,30 +40,31 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param string $className
-     * @param array  $data
+     * @param mixed[] $data
      *
-     * @return object
+     * @return null|object
      */
-    public function tryGetById($className, array $data)
+    public function tryGetById(string $className, array $data)
     {
         $serialized = serialize($this->extractIdentifierFromData($className, $data));
 
         if (isset($this->identityMap[$className][$serialized])) {
             return $this->identityMap[$className][$serialized];
         }
+
+        return null;
     }
 
     /**
-     * @param object $object
-     * @param array  $data
+     * @param object  $object
+     * @param mixed[] $data
      */
-    public function addToIdentityMap($object, array $data)
+    public function addToIdentityMap($object, array $data) : void
     {
         $className = get_class($object);
 
-        if (!isset($this->identityMap[$className])) {
-            $this->identityMap[get_class($object)] = array();
+        if (! isset($this->identityMap[$className])) {
+            $this->identityMap[get_class($object)] = [];
         }
 
         $serialized = serialize($this->getObjectIdentifier($object));
@@ -105,22 +72,19 @@ class ObjectIdentityMap
         $this->identityMap[get_class($object)][$serialized] = $object;
     }
 
-    /**
-     * @param string|null $objectName
-     */
-    public function clear($objectName = null)
+    public function clear(?string $objectName = null) : void
     {
         if ($objectName !== null) {
             unset($this->identityMap[$objectName]);
         } else {
-            $this->identityMap = array();
+            $this->identityMap = [];
         }
     }
 
     /**
      * @param object $object
      */
-    public function detach($object)
+    public function detach($object) : void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -128,10 +92,7 @@ class ObjectIdentityMap
         unset($this->identityMap[get_class($object)][$serialized]);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         return count($this->identityMap);
     }
@@ -139,9 +100,9 @@ class ObjectIdentityMap
     /**
      * @param object $object
      *
-     * @return array $identifier
+     * @return mixed[] $identifier
      */
-    private function getObjectIdentifier($object)
+    private function getObjectIdentifier($object) : array
     {
         return $this->objectRepositoryFactory
             ->getRepository(get_class($object))
@@ -149,12 +110,11 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param string $className
-     * @param array  $data
+     * @param mixed[] $data
      *
-     * @return array $identifier
+     * @return mixed[] $identifier
      */
-    private function extractIdentifierFromData($className, array $data)
+    private function extractIdentifierFromData(string $className, array $data) : array
     {
         return $this->objectRepositoryFactory
             ->getRepository($className)

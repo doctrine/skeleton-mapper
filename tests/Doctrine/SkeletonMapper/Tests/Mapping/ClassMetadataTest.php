@@ -1,298 +1,300 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Functional;
+declare(strict_types=1);
 
-use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
-use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
+namespace Doctrine\SkeletonMapper\Tests\Mapping;
+
+use BadMethodCallException;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
-use Doctrine\SkeletonMapper\ObjectManagerInterface;
-use PHPUnit_Framework_TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
  */
-class ClassMetadataTest extends PHPUnit_Framework_TestCase
+class ClassMetadataTest extends TestCase
 {
-
+    /** @var ClassMetadata */
     private $class;
 
-    protected function setUp()
+    public function testMapField() : void
     {
-        $this->class = new ClassMetadata('Doctrine\SkeletonMapper\Tests\Functional\ClassMetadataTestModel');
+        $this->class->mapField(['fieldName' => 'name']);
+
+        self::assertEquals(['name' => ['fieldName' => 'name', 'name' => 'name']], $this->class->fieldMappings);
     }
 
-    public function testMapField()
+    public function testGetName() : void
     {
-        $this->class->mapField(array('fieldName' => 'name'));
-
-        $this->assertEquals(array('name' => array('fieldName' => 'name', 'name' => 'name')), $this->class->fieldMappings);
+        self::assertEquals(ClassMetadataTestModel::class, $this->class->getName());
     }
 
-    public function testGetName()
+    public function testGetIdentifier() : void
     {
-        $this->assertEquals('Doctrine\SkeletonMapper\Tests\Functional\ClassMetadataTestModel', $this->class->getName());
+        $this->class->identifier = ['id'];
+        self::assertEquals(['id'], $this->class->getIdentifier());
     }
 
-    public function testGetIdentifier()
+    public function testGetReflectionClass() : void
     {
-        $this->class->identifier = array('id');
-        $this->assertEquals(array('id'), $this->class->getIdentifier());
+        self::assertSame(ClassMetadataTestModel::class, $this->class->getReflectionClass()->getName());
     }
 
-    public function testGetReflectionClass()
+    public function testIsIdentifier() : void
     {
-        $this->assertInstanceOf('ReflectionClass', $this->class->getReflectionClass());
+        self::assertFalse($this->class->isIdentifier('id'));
+
+        $this->class->identifierFieldNames = ['id'];
+
+        self::assertTrue($this->class->isIdentifier('id'));
     }
 
-    public function testIsIdentifier()
+    public function testHasField() : void
     {
-        $this->assertFalse($this->class->isIdentifier('id'));
-    
-        $this->class->identifierFieldNames = array('id');
+        self::assertFalse($this->class->hasField('username'));
 
-        $this->assertTrue($this->class->isIdentifier('id'));
+        $this->class->mapField(['fieldName' => 'username']);
+
+        self::assertTrue($this->class->hasField('username'));
     }
 
-    public function testHasField()
+    public function testGetFieldNames() : void
     {
-        $this->assertFalse($this->class->hasField('username'));
-
-        $this->class->mapField(array('fieldName' => 'username'));
-
-        $this->assertTrue($this->class->hasField('username'));
+        $this->class->mapField(['fieldName' => 'username']);
+        self::assertEquals(['username'], $this->class->getFieldNames());
     }
 
-    public function testGetFieldNames()
+    public function testGetAssociationNames() : void
     {
-        $this->class->mapField(array('fieldName' => 'username'));
-        $this->assertEquals(array('username'), $this->class->getFieldNames());
+        self::assertEquals([], $this->class->getAssociationNames());
     }
 
-    public function testGetAssociationNames()
+    public function testGetTypeOfField() : void
     {
-        $this->assertEquals(array(), $this->class->getAssociationNames());
+        self::assertEquals('', $this->class->getTypeOfField('username'));
+
+        $this->class->mapField(['fieldName' => 'username', 'type' => 'string']);
+
+        self::assertEquals('string', $this->class->getTypeOfField('username'));
     }
 
-    public function testGetTypeOfField()
+    public function testGetAssociationTargetClass() : void
     {
-        $this->assertEquals('', $this->class->getTypeOfField('username'));
-
-        $this->class->mapField(array('fieldName' => 'username', 'type' => 'string'));
-
-        $this->assertEquals('string', $this->class->getTypeOfField('username'));
-    }
-
-    public function testGetAssociationTargetClass()
-    {
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'groups',
             'targetObject' => 'Test',
             'type' => 'many',
-        ));
-        $this->assertEquals('Test', $this->class->getAssociationTargetClass('groups'));
+        ]);
+        self::assertEquals('Test', $this->class->getAssociationTargetClass('groups'));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Association name expected, 'groups' is not an association.
-     */
-    public function testGetAssociationTargetClassThrowsInvalidArgumentException()
+    public function testGetAssociationTargetClassThrowsInvalidArgumentException() : void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Association name expected, 'groups' is not an association.");
+
         $this->class->getAssociationTargetClass('groups');
     }
 
-    public function testGetIdentifierValues()
+    public function testGetIdentifierValues() : void
     {
-        $this->class->identifier = array('id');
-        $this->class->identifierFieldNames = array('id');
-        $this->class->mapField(array(
-            'fieldName' => 'id',
-        ));
-        $this->class->mapField(array(
-            'fieldName' => 'username',
-        ));
+        $this->class->identifier           = ['id'];
+        $this->class->identifierFieldNames = ['id'];
+        $this->class->mapField(['fieldName' => 'id']);
+        $this->class->mapField(['fieldName' => 'username']);
 
-        $object = new ClassMetadataTestModel();
+        $object     = new ClassMetadataTestModel();
         $object->id = 1;
 
-        $this->assertEquals(array('id' => 1), $this->class->getIdentifierValues($object));
+        self::assertEquals(['id' => 1], $this->class->getIdentifierValues($object));
     }
 
-    public function testHasAssociation()
+    public function testHasAssociation() : void
     {
-        $this->assertFalse($this->class->hasAssociation('groups'));
+        self::assertFalse($this->class->hasAssociation('groups'));
 
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'groups',
             'targetObject' => 'Test',
             'type' => 'many',
-        ));
+        ]);
 
-        $this->assertTrue($this->class->hasAssociation('groups'));
+        self::assertTrue($this->class->hasAssociation('groups'));
     }
 
-    public function testAddingAssociationMappingDoesNotAddFieldMapping()
+    public function testAddingAssociationMappingDoesNotAddFieldMapping() : void
     {
-        $this->assertFalse($this->class->hasAssociation('groups'));
+        self::assertFalse($this->class->hasAssociation('groups'));
 
         $this->class->mapField(
-            array(
+            [
                 'fieldName' => 'groups',
                 'targetObject' => 'Test',
                 'type' => 'many',
-            )
+            ]
         );
 
-        $this->assertFalse($this->class->hasField('groups'));
+        self::assertFalse($this->class->hasField('groups'));
     }
 
-    public function testIsSingleValuedAssociation()
+    public function testIsSingleValuedAssociation() : void
     {
-        $this->assertFalse($this->class->isSingleValuedAssociation('groups'));
+        self::assertFalse($this->class->isSingleValuedAssociation('groups'));
 
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'groups',
             'targetObject' => 'Test',
             'type' => 'many',
-        ));
+        ]);
 
-        $this->assertFalse($this->class->isSingleValuedAssociation('groups'));
+        self::assertFalse($this->class->isSingleValuedAssociation('groups'));
 
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'profile',
             'targetObject' => 'Test',
             'type' => 'one',
-        ));
+        ]);
 
-        $this->assertTrue($this->class->isSingleValuedAssociation('profile'));
+        self::assertTrue($this->class->isSingleValuedAssociation('profile'));
     }
 
-    public function testIsCollectionValuedAssociation()
+    public function testIsCollectionValuedAssociation() : void
     {
-        $this->assertFalse($this->class->isCollectionValuedAssociation('profile'));
+        self::assertFalse($this->class->isCollectionValuedAssociation('profile'));
 
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'groups',
             'targetObject' => 'Test',
             'type' => 'many',
-        ));
+        ]);
 
-        $this->assertTrue($this->class->isCollectionValuedAssociation('groups'));
+        self::assertTrue($this->class->isCollectionValuedAssociation('groups'));
 
-        $this->class->mapField(array(
+        $this->class->mapField([
             'fieldName' => 'profile',
             'targetObject' => 'Test',
             'type' => 'one',
-        ));
+        ]);
 
-        $this->assertFalse($this->class->isCollectionValuedAssociation('profile'));
+        self::assertFalse($this->class->isCollectionValuedAssociation('profile'));
     }
 
-    public function testInvokeLifecycleCallbacksWithArguments()
+    public function testInvokeLifecycleCallbacksWithArguments() : void
     {
         $object = new ClassMetadataTestModel();
-        $data = array('test');
+        $data   = ['test'];
 
-        $this->class->lifecycleCallbacks['test'] = array('testEvent');
+        $this->class->lifecycleCallbacks['test'] = ['testEvent'];
 
-        $this->class->invokeLifecycleCallbacks('test', $object, array($data));
+        $this->class->invokeLifecycleCallbacks('test', $object, [$data]);
 
-        $this->assertEquals($data, $object->testEventCalled);
+        self::assertEquals($data, $object->testEventCalled);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Expected class "Doctrine\SkeletonMapper\Tests\Functional\ClassMetadataTestModel"; found: "stdClass"
-     */
-    public function testInvokeLifecycleCallbacksThrowsInvalidArgumentException()
+    public function testInvokeLifecycleCallbacksThrowsInvalidArgumentException() : void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected class "Doctrine\SkeletonMapper\Tests\Mapping\ClassMetadataTestModel"; found: "stdClass"');
+
         $this->class->invokeLifecycleCallbacks('test', new \stdClass());
     }
 
-    public function testInvokeLifecycleCallbacksWithoutArguments()
+    public function testInvokeLifecycleCallbacksWithoutArguments() : void
     {
         $object = new ClassMetadataTestModel();
-        $data = array('test');
+        $data   = ['test'];
 
-        $this->class->lifecycleCallbacks['test'] = array('testEvent');
+        $this->class->lifecycleCallbacks['test'] = ['testEvent'];
 
         $this->class->invokeLifecycleCallbacks('test', $object);
 
-        $this->assertTrue($object->testEventCalled);
+        self::assertTrue($object->testEventCalled);
     }
 
-    public function testHasLifecycleCallbacks()
+    public function testHasLifecycleCallbacks() : void
     {
-        $this->assertFalse($this->class->hasLifecycleCallbacks('test'));
+        self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
-        $this->class->lifecycleCallbacks['test'] = array('testEvent');
+        $this->class->lifecycleCallbacks['test'] = ['testEvent'];
 
-        $this->assertTrue($this->class->hasLifecycleCallbacks('test'));
+        self::assertTrue($this->class->hasLifecycleCallbacks('test'));
     }
 
-    public function testGetLifecycleCallbacks()
+    public function testGetLifecycleCallbacks() : void
     {
-        $this->assertEquals(array(), $this->class->getLifecycleCallbacks('test'));
+        self::assertEquals([], $this->class->getLifecycleCallbacks('test'));
 
-        $this->class->lifecycleCallbacks['test'] = array('testEvent');
+        $this->class->lifecycleCallbacks['test'] = ['testEvent'];
 
-        $this->assertEquals(array('testEvent'), $this->class->getLifecycleCallbacks('test'));
+        self::assertEquals(['testEvent'], $this->class->getLifecycleCallbacks('test'));
     }
 
-    public function testAddLifecycleCallback()
+    public function testAddLifecycleCallback() : void
     {
-        $this->assertFalse($this->class->hasLifecycleCallbacks('test'));
+        self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
         $this->class->addLifecycleCallback('testEvent', 'test');
         $this->class->addLifecycleCallback('testEvent', 'test');
 
-        $this->assertTrue($this->class->hasLifecycleCallbacks('test'));
-        $this->assertCount(1, $this->class->lifecycleCallbacks['test']);
+        self::assertTrue($this->class->hasLifecycleCallbacks('test'));
+        self::assertCount(1, $this->class->lifecycleCallbacks['test']);
     }
 
-    public function testSetLifecycleCallbacks()
+    public function testSetLifecycleCallbacks() : void
     {
-        $this->assertFalse($this->class->hasLifecycleCallbacks('test'));
+        self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
-        $this->class->setLifeCycleCallbacks(array('test' => array('testEvent')));
+        $this->class->setLifecycleCallbacks(['test' => ['testEvent']]);
 
-        $this->assertTrue($this->class->hasLifecycleCallbacks('test'));
+        self::assertTrue($this->class->hasLifecycleCallbacks('test'));
     }
 
-    public function testGetIdentifierFieldNames()
+    public function testGetIdentifierFieldNames() : void
     {
-        $this->class->identifierFieldNames = array('id');
-        $this->assertEquals(array('id'), $this->class->getIdentifierFieldNames());
+        $this->class->identifierFieldNames = ['id'];
+        self::assertEquals(['id'], $this->class->getIdentifierFieldNames());
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage Doctrine\SkeletonMapper\Mapping\ClassMetadata::getAssociationMappedByTargetField() is not implemented yet.
-     */
-    public function testGetAssociationMappedByTargetField()
+    public function testGetAssociationMappedByTargetField() : void
     {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Doctrine\SkeletonMapper\Mapping\ClassMetadata::getAssociationMappedByTargetField() is not implemented yet.');
+
         $this->class->getAssociationMappedByTargetField('test');
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage Doctrine\SkeletonMapper\Mapping\ClassMetadata::isAssociationInverseSide() is not implemented yet.
-     */
-    public function testIsAssociationInverseSide()
+    public function testIsAssociationInverseSide() : void
     {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Doctrine\SkeletonMapper\Mapping\ClassMetadata::isAssociationInverseSide() is not implemented yet.');
+
         $this->class->isAssociationInverseSide('test');
+    }
+
+    protected function setUp() : void
+    {
+        $this->class = new ClassMetadata(ClassMetadataTestModel::class);
     }
 }
 
 class ClassMetadataTestModel
 {
+    /** @var int */
     public $id;
+
+    /** @var string */
     public $name;
+
+    /** @var LifecycleEventArgs|true */
     public $testEventCalled;
 
-    public function testEvent($args = null)
+    /**
+     * @param LifecycleEventArgs|true $args
+     */
+    public function testEvent($args = null) : void
     {
-        if ($args) {
+        if ($args !== null) {
             $this->testEventCalled = $args;
         } else {
             $this->testEventCalled = true;

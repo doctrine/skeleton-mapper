@@ -1,35 +1,39 @@
 <?php
 
-namespace Doctrine\SkeletonMapper\Tests\Functional;
+declare(strict_types=1);
+
+namespace Doctrine\SkeletonMapper\Tests\Event;
 
 use Doctrine\SkeletonMapper\Event\OnClearEventArgs;
-use PHPUnit_Framework_TestCase;
+use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use PHPUnit\Framework\TestCase;
 
-class OnClearEventArgsTest extends PHPUnit_Framework_TestCase
+class OnClearEventArgsTest extends TestCase
 {
+    /** @var ObjectManagerInterface */
     private $objectManager;
+
+    /** @var OnClearEventArgs */
     private $event;
 
-    protected function setUp()
+    public function testGetObjectClass() : void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\SkeletonMapper\ObjectManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->event = new OnClearEventArgs($this->objectManager, 'TestClassName');
+        self::assertEquals('TestClassName', $this->event->getObjectClass());
     }
 
-    public function testGetObjectClass()
+    public function testClearsAllObjects() : void
     {
-        $this->assertEquals('TestClassName', $this->event->getObjectClass());
-    }
-
-    public function testClearsAllObjects()
-    {
-        $this->assertFalse($this->event->clearsAllObjects());
+        self::assertFalse($this->event->clearsAllObjects());
 
         $event = new OnClearEventArgs($this->objectManager);
 
-        $this->assertTrue($event->clearsAllObjects());
+        self::assertTrue($event->clearsAllObjects());
+    }
+
+    protected function setUp() : void
+    {
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $this->event = new OnClearEventArgs($this->objectManager, 'TestClassName');
     }
 }
