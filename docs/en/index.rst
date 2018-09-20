@@ -19,7 +19,7 @@ Interfaces
 
 The ``ObjectDataRepository`` interface is responsible for reading the the raw data.
 
-.. code-block::
+.. code-block:: php
 
     namespace Doctrine\SkeletonMapper\DataRepository;
 
@@ -33,7 +33,7 @@ The ``ObjectDataRepository`` interface is responsible for reading the the raw da
 
 The ``ObjectHydrator`` interface is responsible for hydrating the raw data to an object:
 
-.. code-block::
+.. code-block:: php
 
     namespace Doctrine\SkeletonMapper\Hydrator;
 
@@ -44,7 +44,7 @@ The ``ObjectHydrator`` interface is responsible for hydrating the raw data to an
 
 The ``ObjectRepository`` interface is responsible for reading objects:
 
-.. code-block::
+.. code-block:: php
 
     namespace Doctrine\SkeletonMapper\ObjectRepository;
 
@@ -69,7 +69,7 @@ The ``ObjectRepository`` interface is responsible for reading objects:
 
 The ``ObjectPersisterInterface`` interface is responsible for persisting the state of an object to the raw data source:
 
-.. code-block::
+.. code-block:: php
 
     namespace Doctrine\SkeletonMapper\Persister;
 
@@ -90,7 +90,7 @@ Now lets put it all together with an example implementation:
 Model
 -----
 
-.. code-block::
+.. code-block:: php
 
     class User implements HydratableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged, PersistableInterface
     {
@@ -245,7 +245,7 @@ Mapper Services
 
 Create all the necessary services for the mapper:
 
-.. code-block::
+.. code-block:: php
 
     use Doctrine\Common\Collections\ArrayCollection;
     use Doctrine\Common\EventManager;
@@ -343,7 +343,7 @@ Manage User Instances
 Now you can manage ``User`` instances and they will be persisted to the
 ``ArrayCollection`` instance we created above:
 
-.. code-block::
+.. code-block:: php
 
     // create and persist a new user
     $user = new User();
