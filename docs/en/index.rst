@@ -321,6 +321,10 @@ Create all the necessary services for the mapper:
     $userDataRepository = new ArrayObjectDataRepository(
         $objectManager, $users, User::class
     );
+    $userPersister = new ArrayObjectPersister(
+        $objectManager, $users, User::class
+    );
+
     $userHydrator = new BasicObjectHydrator($objectManager);
     $userRepository = new BasicObjectRepository(
         $objectManager,
@@ -329,9 +333,6 @@ Create all the necessary services for the mapper:
         $userHydrator,
         $eventManager,
         User::class
-    );
-    $userPersister = new ArrayObjectPersister(
-        $objectManager, $users, User::class
     );
 
     $objectRepositoryFactory->addObjectRepository(User::class, $userRepository);
@@ -376,3 +377,175 @@ Of course if you want to be in complete control and implement custom
 code for all the above interfaces you can do so. You could write and
 read from a CSV file, an XML document or any data source you can
 imagine.
+
+Custom Implementation
+=====================
+
+To implement your own custom reading and writing, you need to implement
+the ``ObjectDataRepositoryInterface`` and ``ObjectPersisterInterface`` interfaces
+and use those concrete implementations instead of the ``ArrayObjectDataRepository``
+and ``ArrayObjectPersister`` that we did our test with before.
+
+Base Classes
+------------
+
+The Skeleton Mapper comes with some base classes that give you some boiler plate code
+so you can more quickly implement all the required interfaces.
+
+To implement your data reading, extend the ``BasicObjectDataRepository`` class:
+
+.. code-block:: php
+
+    use Doctrine\Common\Collections\ArrayCollection;
+    use Doctrine\SkeletonMapper\ObjectManagerInterface;
+
+    class MyObjectDataRepository extends BasicObjectDataRepository
+    {
+        public function __construct(
+            ObjectManagerInterface $objectManager,
+            string $className
+        ) {
+            parent::__construct($objectManager, $className);
+
+            // inject some other dependencies to the class
+        }
+
+        /**
+         * @return mixed[][]
+         */
+        public function findAll() : array
+        {
+            // get $objectsData
+
+            return $objectsData;
+        }
+
+        /**
+         * @param mixed[] $criteria
+         * @param mixed[] $orderBy
+         *
+         * @return mixed[][]
+         */
+        public function findBy(
+            array $criteria,
+            ?array $orderBy = null,
+            ?int $limit = null,
+            ?int $offset = null
+        ) : array {
+            // get $objectsData
+
+            return $objectsData;
+        }
+
+        /**
+         * @param mixed[] $criteria
+         *
+         * @return null|mixed[]
+         */
+        public function findOneBy(array $criteria) : ?array
+        {
+            // get $objectData
+
+            return $objectData;
+        }
+    }
+
+
+To implement your persistence, extend the ``BasicObjectPersister`` class:
+
+.. code-block:: php
+
+    use Doctrine\Common\Collections\ArrayCollection;
+    use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+    use Doctrine\SkeletonMapper\ObjectManagerInterface;
+    use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+    use function max;
+
+    class MyObjectPersister extends BasicObjectPersister
+    {
+        public function __construct(
+            ObjectManagerInterface $objectManager,
+            string $className
+        ) {
+            parent::__construct($objectManager, $className);
+
+            // inject some other dependencies to the class
+        }
+
+        /**
+         * @param object $object
+         *
+         * @return mixed[]
+         */
+        public function persistObject($object) : array
+        {
+            $data = $this->preparePersistChangeSet($object);
+
+            $class = $this->getClassMetadata();
+
+            // write the $data
+
+            return $data;
+        }
+
+        /**
+         * @param object $object
+         *
+         * @return mixed[]
+         */
+        public function updateObject($object, ChangeSet $changeSet) : array
+        {
+            $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
+
+            $class      = $this->getClassMetadata();
+            $identifier = $this->getObjectIdentifier($object);
+
+            $objectData = [];
+
+            foreach ($changeSet as $key => $value) {
+                $objectData[$key] = $value;
+            }
+
+            // update the $objectData
+
+            return $objectData;
+        }
+
+        /**
+         * @param object $object
+         */
+        public function removeObject($object) : void
+        {
+            $class      = $this->getClassMetadata();
+            $identifier = $this->getObjectIdentifier($object);
+
+            // remove the object
+        }
+    }
+
+Now you can use them like this:
+
+.. code-block:: php
+
+    $userDataRepository = new MyObjectDataRepository(
+        $objectManager, User::class
+    );
+    $userPersister = new MyObjectPersister(
+        $objectManager, User::class
+    );
+
+    $userHydrator = new BasicObjectHydrator($objectManager);
+    $userRepository = new BasicObjectRepository(
+        $objectManager,
+        $userDataRepository,
+        $objectFactory,
+        $userHydrator,
+        $eventManager,
+        User::class
+    );
+
+    $objectRepositoryFactory->addObjectRepository(User::class, $userRepository);
+    $objectPersisterFactory->addObjectPersister(User::class, $userPersister);
+
+When you flush the ``ObjectManager``, the methods on the ``MyObjectDataRepository``
+and ``MyObjectPersister`` will be called to handle writing the data.
