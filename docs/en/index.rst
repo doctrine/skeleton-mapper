@@ -1,5 +1,5 @@
-Doctrine SkeletonMapper
-=======================
+Introduction
+============
 
 The Doctrine SkeletonMapper is a skeleton object mapper where you are
 100% responsible for implementing the guts of the persistence
@@ -7,10 +7,17 @@ operations. This means you write plain old PHP code for the data
 repositories, object repositories, object hydrators and object
 persisters.
 
-Interfaces
-----------
+Installation
+============
 
-ObjectDataRepository:
+.. code-block:: console
+
+    composer require doctrine/skeleton-mapper
+
+Interfaces
+==========
+
+The ``ObjectDataRepository`` interface is responsible for reading the the raw data.
 
 .. code-block::
 
@@ -24,7 +31,7 @@ ObjectDataRepository:
         public function findOneBy(array $criteria)
     }
 
-ObjectHydrator:
+The ``ObjectHydrator`` interface is responsible for hydrating the raw data to an object:
 
 .. code-block::
 
@@ -35,7 +42,7 @@ ObjectHydrator:
         public function hydrate($object, array $data);
     }
 
-ObjectRepository:
+The ``ObjectRepository`` interface is responsible for reading objects:
 
 .. code-block::
 
@@ -60,6 +67,8 @@ ObjectRepository:
         public function getClassName();
     }
 
+The ``ObjectPersisterInterface`` interface is responsible for persisting the state of an object to the raw data source:
+
 .. code-block::
 
     namespace Doctrine\SkeletonMapper\Persister;
@@ -74,31 +83,165 @@ ObjectRepository:
     }
 
 Example Implementation
-----------------------
+======================
 
 Now lets put it all together with an example implementation:
 
+Model
+-----
+
 .. code-block::
 
-    namespace Model;
-
-    class User
+    class User implements HydratableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged, PersistableInterface
     {
-        /**
-         * @var int
-         */
-        public $id;
+        /** @var int */
+        private $id;
+
+        /** @var string */
+        private $username;
+
+        /** @var string */
+        private $password;
+
+        /** @var PropertyChangedListener[] */
+        private $listeners = [];
+
+        public function getId() : ?int
+        {
+            return $this->id;
+        }
+
+        public function setId(int $id) : void
+        {
+            $this->id = $id;
+
+            $this->onPropertyChanged('id', $this->id, $id);
+        }
+
+        public function getUsername() : string
+        {
+            return $this->username;
+        }
+
+        public function setUsername(string $username) : void
+        {
+            $this->username = $username;
+
+            $this->onPropertyChanged('username', $this->username, $username);
+        }
+
+        public function getPassword() : string
+        {
+            return $this->password;
+        }
+
+        public function setPassword(string $password) : void
+        {
+            $this->password = $password;
+
+            $this->onPropertyChanged('password', $this->password, $password);
+        }
+
+        public function addPropertyChangedListener(PropertyChangedListener $listener) : void
+        {
+            $this->listeners[] = $listener;
+        }
 
         /**
-         * @var string
+         * @param mixed $oldValue
+         * @param mixed $newValue
          */
-        public $username;
+        protected function onPropertyChanged(string $propName, $oldValue, $newValue) : void
+        {
+            if ($this->listeners === []) {
+                return;
+            }
+
+            foreach ($this->listeners as $listener) {
+                $listener->propertyChanged($this, $propName, $oldValue, $newValue);
+            }
+        }
+
+        public static function loadMetadata(ClassMetadataInterface $metadata) : void
+        {
+            $metadata->setIdentifier(['id']);
+            $metadata->setIdentifierFieldNames(['id']);
+            $metadata->mapField([
+                'fieldName' => 'id',
+            ]);
+            $metadata->mapField(['fieldName' => 'username']);
+            $metadata->mapField(['fieldName' => 'password']);
+        }
 
         /**
-         * @var string
+         * @see HydratableInterface
+         *
+         * @param mixed[] $data
          */
-        public $password;
+        public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+        {
+            if (isset($data['id'])) {
+                $this->id = $data['id'];
+            }
+
+            if (isset($data['username'])) {
+                $this->username = $data['username'];
+            }
+
+            if (isset($data['password'])) {
+                $this->password = $data['password'];
+            }
+        }
+
+        /**
+         * @see PersistableInterface
+         *
+         * @return mixed[]
+         */
+        public function preparePersistChangeSet() : array
+        {
+            $changeSet = [
+                'username' => $this->username,
+                'password' => $this->password,
+            ];
+
+            if ($this->id !== null) {
+                $changeSet['id'] = $this->id;
+            }
+
+            return $changeSet;
+        }
+
+        /**
+         * @see PersistableInterface
+         *
+         *
+         * @return mixed[]
+         */
+        public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+        {
+            $changeSet = array_map(function (Change $change) {
+                return $change->getNewValue();
+            }, $changeSet->getChanges());
+
+            $changeSet['id'] = $this->id;
+
+            return $changeSet;
+        }
+
+        /**
+         * Assign identifier to object.
+         *
+         * @param mixed[] $identifier
+         */
+        public function assignIdentifier(array $identifier) : void
+        {
+            $this->id = $identifier['id'];
+        }
     }
+
+Mapper Services
+---------------
 
 Create all the necessary services for the mapper:
 
@@ -106,20 +249,31 @@ Create all the necessary services for the mapper:
 
     use Doctrine\Common\Collections\ArrayCollection;
     use Doctrine\Common\EventManager;
+    use Doctrine\Common\NotifyPropertyChanged;
+    use Doctrine\Common\PropertyChangedListener;
     use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
     use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
+    use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
     use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
     use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
+    use Doctrine\SkeletonMapper\Mapping\ClassMetadataInstantiator;
+    use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+    use Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface;
     use Doctrine\SkeletonMapper\ObjectFactory;
     use Doctrine\SkeletonMapper\ObjectIdentityMap;
     use Doctrine\SkeletonMapper\ObjectManager;
+    use Doctrine\SkeletonMapper\ObjectManagerInterface;
     use Doctrine\SkeletonMapper\ObjectRepository\BasicObjectRepository;
-    use Doctrine\SkeletonMapper\Persister\BasicObjectPersister;
+    use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
+    use Doctrine\SkeletonMapper\Persister\ArrayObjectPersister;
+    use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
     use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-    use Doctrine\SkeletonMapper\Repository\ObjectRepositoryFactory;
+    use Doctrine\SkeletonMapper\Persister\PersistableInterface;
+    use Doctrine\SkeletonMapper\UnitOfWork\Change;
+    use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
     $eventManager            = new EventManager();
-    $classMetadataFactory    = new ClassMetadataFactory();
+    $classMetadataFactory    = new ClassMetadataFactory(new ClassMetadataInstantiator());
     $objectFactory           = new ObjectFactory();
     $objectRepositoryFactory = new ObjectRepositoryFactory();
     $objectPersisterFactory  = new ObjectPersisterFactory();
@@ -129,10 +283,9 @@ Create all the necessary services for the mapper:
     );
 
     $userClassMetadata = new ClassMetadata(User::class);
-    $userClassMetadata->setIdentifier(['_id']);
+    $userClassMetadata->setIdentifier(['id']);
     $userClassMetadata->setIdentifierFieldNames(['id']);
     $userClassMetadata->mapField([
-        'name' => '_id',
         'fieldName' => 'id',
     ]);
     $userClassMetadata->mapField([
@@ -154,12 +307,12 @@ Create all the necessary services for the mapper:
 
     $users = new ArrayCollection([
         1 => [
-            '_id' => 1,
+            'id' => 1,
             'username' => 'jwage',
             'password' => 'password',
         ],
         2 => [
-            '_id' => 2,
+            'id' => 2,
             'username' => 'romanb',
             'password' => 'password',
         ],
@@ -177,36 +330,47 @@ Create all the necessary services for the mapper:
         $eventManager,
         User::class
     );
-    $userPersister = new BasicObjectPersister(
+    $userPersister = new ArrayObjectPersister(
         $objectManager, $users, User::class
     );
 
     $objectRepositoryFactory->addObjectRepository(User::class, $userRepository);
     $objectPersisterFactory->addObjectPersister(User::class, $userPersister);
 
-Now you can manage user instances and they will be persisted to the
+Manage User Instances
+---------------------
+
+Now you can manage ``User`` instances and they will be persisted to the
 ``ArrayCollection`` instance we created above:
 
 .. code-block::
 
     // create and persist a new user
     $user = new User();
-    $user->id = 1;
-    $user->username = 'jwage';
-    $user->password = 'test';
+    $user->setId(3);
+    $user->setUsername('ocramius');
+    $user->setPassword('test');
 
     $objectManager->persist($user);
     $objectManager->flush();
+    $objectManager->clear();
+
+    print_r($users);
+
+    $user = $objectManager->find(User::class, 3);
 
     // modify the user
-    $user->username = 'jonwage';
+    $user->setUsername('guilherme');
 
-    $objectManager->update($user);
     $objectManager->flush();
+
+    print_r($users);
 
     // remove the user
     $objectManager->remove($user);
     $objectManager->flush();
+
+    print_r($users);
 
 Of course if you want to be in complete control and implement custom
 code for all the above interfaces you can do so. You could write and
