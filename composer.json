@@ -1,9 +1,9 @@
 {
     "name": "doctrine/skeleton-mapper",
     "type": "library",
-    "description": "Doctrine SkeletonMapper",
+    "description": "The Doctrine SkeletonMapper is a skeleton object mapper where you are 100% responsible for implementing the guts of the persistence operations. This means you write plain old PHP code for the data repositories, object repositories, object hydrators and object persisters.",
     "keywords": ["database", "persistence", "object"],
-    "homepage": "https://www.doctrine-project.org",
+    "homepage": "https://www.doctrine-project.org/projects/skeleton-mapper.html",
     "license": "MIT",
     "authors": [
         { "name": "Jonathan H. Wage", "email": "jonwage@gmail.com" }
