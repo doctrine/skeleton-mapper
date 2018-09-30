@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Persister;
 
+use InvalidArgumentException;
 use function sprintf;
 
 /**
@@ -22,7 +23,7 @@ class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
     public function getPersister(string $className) : ObjectPersisterInterface
     {
         if (! isset($this->persisters[$className])) {
-            throw new \InvalidArgumentException(sprintf('ObjectPersister with class name %s was not found', $className));
+            throw new InvalidArgumentException(sprintf('ObjectPersister with class name %s was not found', $className));
         }
 
         return $this->persisters[$className];

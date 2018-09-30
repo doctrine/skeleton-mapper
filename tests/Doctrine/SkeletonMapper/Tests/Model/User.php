@@ -185,14 +185,14 @@ class User extends BaseObject
                 'name' => $data['profileName'],
             ];
 
-            $this->profile = function () use ($objectManager, $profileData) {
+            $this->profile = static function () use ($objectManager, $profileData) {
                 return $objectManager->getOrCreateObject(
                     'Doctrine\SkeletonMapper\Tests\Model\Profile',
                     $profileData
                 );
             };
         } elseif (isset($data['profileId'])) {
-            $this->profile = function () use ($objectManager, $data) {
+            $this->profile = static function () use ($objectManager, $data) {
                 return $objectManager->find(
                     Profile::class,
                     $data['profileId']
@@ -204,8 +204,8 @@ class User extends BaseObject
             return;
         }
 
-        $this->groups = new LazyCollection(function () use ($objectManager, $data) {
-            return new ArrayCollection(array_map(function (int $groupId) use ($objectManager) {
+        $this->groups = new LazyCollection(static function () use ($objectManager, $data) {
+            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager) {
                 return $objectManager->find(
                     Group::class,
                     $groupId
@@ -230,7 +230,7 @@ class User extends BaseObject
             $changeSet['profileId'] = $this->getProfile()->getId();
         }
 
-        $groupIds = $this->groups->map(function (Group $group) {
+        $groupIds = $this->groups->map(static function (Group $group) {
             return $group->getId();
         })->toArray();
 
@@ -246,12 +246,11 @@ class User extends BaseObject
     /**
      * @see PersistableInterface
      *
-     *
      * @return mixed[]
      */
     public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
-        $changeSet = array_map(function (Change $change) {
+        $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();
         }, $changeSet->getChanges());
 
@@ -263,7 +262,7 @@ class User extends BaseObject
         }
 
         if (isset($changeSet['groups'])) {
-            $groupIds = $changeSet['groups']->map(function (Group $group) {
+            $groupIds = $changeSet['groups']->map(static function (Group $group) {
                 return $group->getId();
             })->toArray();
 

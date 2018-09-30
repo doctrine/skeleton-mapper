@@ -15,6 +15,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
 use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
 use Doctrine\SkeletonMapper\UnitOfWork\Persister;
+use InvalidArgumentException;
 use function array_merge;
 use function get_class;
 use function spl_object_hash;
@@ -88,7 +89,7 @@ class UnitOfWork implements PropertyChangedListener
     public function persist($object) : void
     {
         if ($this->isScheduledForPersist($object)) {
-            throw new \InvalidArgumentException('Object is already scheduled for persist.');
+            throw new InvalidArgumentException('Object is already scheduled for persist.');
         }
 
         $this->eventDispatcher->dispatchPrePersist($object);
@@ -108,7 +109,7 @@ class UnitOfWork implements PropertyChangedListener
     public function update($object) : void
     {
         if ($this->isScheduledForUpdate($object)) {
-            throw new \InvalidArgumentException('Object is already scheduled for update.');
+            throw new InvalidArgumentException('Object is already scheduled for update.');
         }
 
         $this->eventDispatcher->dispatchPreUpdate(
@@ -125,7 +126,7 @@ class UnitOfWork implements PropertyChangedListener
     public function remove($object) : void
     {
         if ($this->isScheduledForRemove($object)) {
-            throw new \InvalidArgumentException('Object is already scheduled for remove.');
+            throw new InvalidArgumentException('Object is already scheduled for remove.');
         }
 
         $this->eventDispatcher->dispatchPreRemove($object);
@@ -207,7 +208,6 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * @param object $object
-     *
      */
     public function isScheduledForPersist($object) : bool
     {

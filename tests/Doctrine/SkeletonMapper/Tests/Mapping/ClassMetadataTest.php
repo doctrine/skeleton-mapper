@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @group unit
@@ -197,7 +198,7 @@ class ClassMetadataTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected class "Doctrine\SkeletonMapper\Tests\Mapping\ClassMetadataTestModel"; found: "stdClass"');
 
-        $this->class->invokeLifecycleCallbacks('test', new \stdClass());
+        $this->class->invokeLifecycleCallbacks('test', new stdClass());
     }
 
     public function testInvokeLifecycleCallbacksWithoutArguments() : void

@@ -115,12 +115,11 @@ class Group extends BaseObject
     /**
      * @see PersistableInterface
      *
-     *
      * @return mixed[]
      */
     public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
-        $changeSet = array_map(function (Change $change) {
+        $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();
         }, $changeSet->getChanges());
 

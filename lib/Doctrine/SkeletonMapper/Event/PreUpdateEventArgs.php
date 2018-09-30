@@ -17,8 +17,6 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     private $objectChangeSet;
 
     /**
-     *
-     *
      * @param object $object
      */
     public function __construct(
@@ -32,7 +30,6 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Retrieves the object changeset.
-     *
      */
     public function getObjectChangeSet() : ChangeSet
     {
@@ -41,8 +38,6 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Checks if field has a changeset.
-     *
-     *
      */
     public function hasChangedField(string $field) : bool
     {
@@ -51,7 +46,6 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Gets the old value of the changeset of the changed field.
-     *
      *
      * @return mixed
      */
@@ -66,7 +60,6 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Gets the new value of the changeset of the changed field.
-     *
      *
      * @return mixed
      */

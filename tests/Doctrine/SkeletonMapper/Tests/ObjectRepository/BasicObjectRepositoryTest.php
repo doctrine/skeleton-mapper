@@ -14,6 +14,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\BasicObjectRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @group unit
@@ -64,7 +65,7 @@ class BasicObjectRepositoryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Not implemented.');
 
-        $this->repository->merge(new \stdClass());
+        $this->repository->merge(new stdClass());
     }
 
     protected function setUp() : void

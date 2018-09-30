@@ -67,7 +67,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     /**
      * @param mixed[] $criteria
      *
-     * @return null|mixed[]
+     * @return mixed[]|null
      */
     public function findOneBy(array $criteria) : ?array
     {

@@ -14,7 +14,7 @@ class LazyCollectionTest extends TestCase
     {
         $wrappedCollection = new ArrayCollection();
 
-        $collection = new LazyCollection(function () use ($wrappedCollection) {
+        $collection = new LazyCollection(static function () use ($wrappedCollection) {
             return $wrappedCollection;
         });
 

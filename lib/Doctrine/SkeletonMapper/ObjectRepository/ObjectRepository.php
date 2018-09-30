@@ -166,7 +166,6 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     *
      * @return object
      */
     public function create(string $className)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
+use BadMethodCallException;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
@@ -252,7 +253,6 @@ class ClassMetadata implements ClassMetadataInterface
      * Checks whether the class has callbacks registered for a lifecycle event.
      *
      * @param string $event Lifecycle event
-     *
      */
     public function hasLifecycleCallbacks(string $event) : bool
     {
@@ -261,7 +261,6 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Gets the registered lifecycle callbacks for an event.
-     *
      *
      * @return string[]
      */
@@ -311,7 +310,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function getAssociationMappedByTargetField($fieldName)
     {
-        throw new \BadMethodCallException(__METHOD__ . '() is not implemented yet.');
+        throw new BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
 
     /**
@@ -319,7 +318,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function isAssociationInverseSide($fieldName)
     {
-        throw new \BadMethodCallException(__METHOD__ . '() is not implemented yet.');
+        throw new BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
 
     /**

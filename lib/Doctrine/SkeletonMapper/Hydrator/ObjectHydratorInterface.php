@@ -11,7 +11,6 @@ interface ObjectHydratorInterface
 {
     /**
      * @param object  $object
-     *
      * @param mixed[] $data
      */
     public function hydrate($object, array $data) : void;
