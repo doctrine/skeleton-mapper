@@ -179,7 +179,6 @@ class ObjectManager implements ObjectManagerInterface
      * Checks if the object is part of the current UnitOfWork and therefore managed.
      *
      * @param object $object
-     *
      */
     public function contains($object) : bool
     {

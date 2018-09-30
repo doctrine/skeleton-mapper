@@ -14,7 +14,6 @@ class OnClearEventArgs extends BaseOnClearEventArgs
     /**
      * Returns the name of the object class that is cleared, or null if all
      * are cleared.
-     *
      */
     public function getObjectClass() : ?string
     {
@@ -23,7 +22,6 @@ class OnClearEventArgs extends BaseOnClearEventArgs
 
     /**
      * Returns whether this event clears all objects.
-     *
      */
     public function clearsAllObjects() : bool
     {

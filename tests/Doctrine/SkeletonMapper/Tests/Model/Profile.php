@@ -129,7 +129,7 @@ class Profile extends BaseObject
         }
 
         $profile       = $this;
-        $this->address = function () use ($data, $profile) {
+        $this->address = static function () use ($data, $profile) {
             $address = new Address($profile);
 
             if (isset($data['address1'])) {
@@ -159,12 +159,11 @@ class Profile extends BaseObject
     /**
      * @see PersistableInterface
      *
-     *
      * @return mixed[]
      */
     public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
     {
-        $changeSet = array_map(function (Change $change) {
+        $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();
         }, $changeSet->getChanges());
 

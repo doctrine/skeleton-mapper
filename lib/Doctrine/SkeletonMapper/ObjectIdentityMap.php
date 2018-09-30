@@ -42,7 +42,7 @@ class ObjectIdentityMap
     /**
      * @param mixed[] $data
      *
-     * @return null|object
+     * @return object|null
      */
     public function tryGetById(string $className, array $data)
     {

@@ -70,7 +70,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     public function prepareUpdateChangeSet($object, ChangeSet $changeSet) : array
     {
         if (! $object instanceof PersistableInterface) {
-            throw new \InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
+            throw new InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
         }
 
         return $object->prepareUpdateChangeSet($changeSet);
@@ -85,7 +85,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     public function assignIdentifier($object, array $identifier) : void
     {
         if (! $object instanceof IdentifiableInterface) {
-            throw new \InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', get_class($object)));
+            throw new InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', get_class($object)));
         }
 
         $object->assignIdentifier($identifier);

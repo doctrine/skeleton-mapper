@@ -35,7 +35,7 @@ interface ClassMetadataInterface extends BaseClassMetadata
 
     /**
      * @param object       $object
-     * @param null|mixed[] $arguments
+     * @param mixed[]|null $arguments
      */
     public function invokeLifecycleCallbacks(string $event, $object, ?array $arguments = null) : void;
 

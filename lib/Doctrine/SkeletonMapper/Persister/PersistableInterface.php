@@ -17,7 +17,6 @@ interface PersistableInterface
     public function preparePersistChangeSet() : array;
 
     /**
-     *
      * @return mixed[]
      */
     public function prepareUpdateChangeSet(ChangeSet $changeSet) : array;

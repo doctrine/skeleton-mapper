@@ -31,7 +31,6 @@ class Address
 
     /**
      * Gets the value of address1.
-     *
      */
     public function getAddress1() : string
     {
@@ -78,7 +77,6 @@ class Address
 
     /**
      * Gets the value of city.
-     *
      */
     public function getCity() : string
     {
@@ -102,7 +100,6 @@ class Address
 
     /**
      * Gets the value of state.
-     *
      */
     public function getState() : string
     {
@@ -126,7 +123,6 @@ class Address
 
     /**
      * Gets the value of zip.
-     *
      */
     public function getZip() : string
     {
