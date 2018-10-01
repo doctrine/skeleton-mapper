@@ -113,9 +113,9 @@ Model
 
         public function setId(int $id) : void
         {
-            $this->id = $id;
-
             $this->onPropertyChanged('id', $this->id, $id);
+
+            $this->id = $id;
         }
 
         public function getUsername() : string
@@ -125,9 +125,9 @@ Model
 
         public function setUsername(string $username) : void
         {
-            $this->username = $username;
-
             $this->onPropertyChanged('username', $this->username, $username);
+
+            $this->username = $username;
         }
 
         public function getPassword() : string
@@ -137,9 +137,9 @@ Model
 
         public function setPassword(string $password) : void
         {
-            $this->password = $password;
-
             $this->onPropertyChanged('password', $this->password, $password);
+
+            $this->password = $password;
         }
 
         public function addPropertyChangedListener(PropertyChangedListener $listener) : void
