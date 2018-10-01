@@ -11,7 +11,8 @@
     "require": {
         "php": "^7.1",
         "doctrine/collections": "~1.5",
-        "doctrine/common": "~2.9"
+        "doctrine/common": "~2.9",
+        "doctrine/instantiator": "^1.2"
     },
     "require-dev": {
         "doctrine/coding-standard": "^5.0",
