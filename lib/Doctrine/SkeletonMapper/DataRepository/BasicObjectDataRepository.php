@@ -6,7 +6,6 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use function array_combine;
-use function assert;
 use function is_array;
 
 abstract class BasicObjectDataRepository extends ObjectDataRepository
@@ -45,8 +44,6 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         $identifierValues = is_array($id) ? $id : [$id];
 
         $criteria = array_combine($identifier, $identifierValues);
-
-        assert($criteria !== false);
 
         return $this->findOneBy($criteria);
     }
