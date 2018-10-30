@@ -27,8 +27,8 @@ The ``ObjectDataRepository`` interface is responsible for reading the the raw da
     {
         public function find($id);
         public function findAll();
-        public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
-        public function findOneBy(array $criteria)
+        public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+        public function findOneBy(array $criteria);
     }
 
 The ``ObjectHydrator`` interface is responsible for hydrating the raw data to an object:
