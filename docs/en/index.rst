@@ -282,21 +282,6 @@ Create all the necessary services for the mapper:
         $classMetadataFactory
     );
 
-    $userClassMetadata = new ClassMetadata(User::class);
-    $userClassMetadata->setIdentifier(['id']);
-    $userClassMetadata->setIdentifierFieldNames(['id']);
-    $userClassMetadata->mapField([
-        'fieldName' => 'id',
-    ]);
-    $userClassMetadata->mapField([
-        'fieldName' => 'username',
-    ]);
-    $userClassMetadata->mapField([
-        'fieldName' => 'password',
-    ]);
-
-    $classMetadataFactory->setMetadataFor(User::class, $userClassMetadata);
-
     $objectManager = new ObjectManager(
         $objectRepositoryFactory,
         $objectPersisterFactory,
