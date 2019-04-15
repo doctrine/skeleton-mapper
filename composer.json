@@ -9,7 +9,7 @@
         { "name": "Jonathan H. Wage", "email": "jonwage@gmail.com" }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "doctrine/collections": "~1.5",
         "doctrine/common": "~2.9",
         "doctrine/instantiator": "^1.1"
@@ -20,7 +20,7 @@
         "phpstan/phpstan-deprecation-rules": "^0.10",
         "phpstan/phpstan-phpunit": "^0.10",
         "phpstan/phpstan-strict-rules": "^0.10",
-        "phpunit/phpunit": "~7.0"
+        "phpunit/phpunit": "~8.0"
     },
     "config": {
         "sort-packages": true
