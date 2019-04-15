@@ -113,12 +113,15 @@ abstract class BaseImplementationTest extends TestCase
     abstract protected function setUpImplementation() : void;
 
     abstract protected function createUserDataRepository() : ObjectDataRepository;
+
     abstract protected function createUserPersister() : ObjectPersister;
 
     abstract protected function createProfileDataRepository() : ObjectDataRepository;
+
     abstract protected function createProfilePersister() : ObjectPersister;
 
     abstract protected function createGroupDataRepository() : ObjectDataRepository;
+
     abstract protected function createGroupPersister() : ObjectPersister;
 
     protected function setUp() : void
