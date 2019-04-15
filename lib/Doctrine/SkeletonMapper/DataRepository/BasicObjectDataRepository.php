@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+use RuntimeException;
 use function array_combine;
 use function is_array;
 
@@ -44,6 +45,10 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         $identifierValues = is_array($id) ? $id : [$id];
 
         $criteria = array_combine($identifier, $identifierValues);
+
+        if ($criteria === false) {
+            throw new RuntimeException('array_combine failed. Make sure you passed a value for each identifier.');
+        }
 
         return $this->findOneBy($criteria);
     }
