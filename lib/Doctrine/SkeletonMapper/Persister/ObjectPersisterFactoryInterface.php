@@ -12,7 +12,7 @@ interface ObjectPersisterFactoryInterface
     public function getPersister(string $className) : ObjectPersisterInterface;
 
     /**
-     * @return ObjectPersisterInterface[]
+     * @return array<string, ObjectPersisterInterface>
      */
     public function getPersisters() : array;
 }

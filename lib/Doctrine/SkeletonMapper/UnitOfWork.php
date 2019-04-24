@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
-use Doctrine\Common\NotifyPropertyChanged;
-use Doctrine\Common\PropertyChangedListener;
+use Doctrine\Persistence\NotifyPropertyChanged;
+use Doctrine\Persistence\PropertyChangedListener;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
@@ -17,6 +17,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
 use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 use InvalidArgumentException;
 use function array_merge;
+use function array_values;
 use function get_class;
 use function spl_object_hash;
 
@@ -40,13 +41,13 @@ class UnitOfWork implements PropertyChangedListener
     /** @var Persister */
     private $persister;
 
-    /** @var object[] */
+    /** @var array<string, object> */
     private $objectsToPersist = [];
 
-    /** @var object[] */
+    /** @var array<string, object> */
     private $objectsToUpdate = [];
 
-    /** @var object[] */
+    /** @var array<string, object> */
     private $objectsToRemove = [];
 
     /** @var ChangeSets */
@@ -75,18 +76,12 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectChangeSets = new ChangeSets();
     }
 
-    /**
-     * @param object $object
-     */
-    public function merge($object) : void
+    public function merge(object $object) : object
     {
-        $this->getObjectRepository($object)->merge($object);
+        return $this->getObjectRepository($object)->merge($object);
     }
 
-    /**
-     * @param object $object
-     */
-    public function persist($object) : void
+    public function persist(object $object) : void
     {
         if ($this->isScheduledForPersist($object)) {
             throw new InvalidArgumentException('Object is already scheduled for persist.');
@@ -106,7 +101,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object The instance to update
      */
-    public function update($object) : void
+    public function update(object $object) : void
     {
         if ($this->isScheduledForUpdate($object)) {
             throw new InvalidArgumentException('Object is already scheduled for update.');
@@ -123,7 +118,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object The object instance to remove.
      */
-    public function remove($object) : void
+    public function remove(object $object) : void
     {
         if ($this->isScheduledForRemove($object)) {
             throw new InvalidArgumentException('Object is already scheduled for remove.');
@@ -146,26 +141,17 @@ class UnitOfWork implements PropertyChangedListener
         $this->eventDispatcher->dispatchOnClearEvent($objectName);
     }
 
-    /**
-     * @param object $object
-     */
-    public function detach($object) : void
+    public function detach(object $object) : void
     {
         $this->objectIdentityMap->detach($object);
     }
 
-    /**
-     * @param object $object
-     */
-    public function refresh($object) : void
+    public function refresh(object $object) : void
     {
         $this->getObjectRepository($object)->refresh($object);
     }
 
-    /**
-     * @param object $object
-     */
-    public function contains($object) : bool
+    public function contains(object $object) : bool
     {
         return $this->objectIdentityMap->contains($object)
             || $this->isScheduledForPersist($object);
@@ -185,11 +171,11 @@ class UnitOfWork implements PropertyChangedListener
             return; // Nothing to do.
         }
 
-        $objects = array_merge(
+        $objects = array_values(array_merge(
             $this->objectsToPersist,
             $this->objectsToUpdate,
             $this->objectsToRemove
-        );
+        ));
         $this->eventDispatcher->dispatchPreFlushLifecycleCallbacks($objects);
 
         $this->eventDispatcher->dispatchOnFlush();
@@ -206,52 +192,43 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectChangeSets = new ChangeSets();
     }
 
-    /**
-     * @param object $object
-     */
-    public function isScheduledForPersist($object) : bool
+    public function isScheduledForPersist(object $object) : bool
     {
         return isset($this->objectsToPersist[spl_object_hash($object)]);
     }
 
     /**
-     * @return object[]
+     * @return array<int, object>
      */
     public function getObjectsToPersist() : array
     {
-        return $this->objectsToPersist;
+        return array_values($this->objectsToPersist);
     }
 
-    /**
-     * @param object $object
-     */
-    public function isScheduledForUpdate($object) : bool
+    public function isScheduledForUpdate(object $object) : bool
     {
         return isset($this->objectsToUpdate[spl_object_hash($object)]);
     }
 
     /**
-     * @return object[]
+     * @return array<int, object>
      */
     public function getObjectsToUpdate() : array
     {
-        return $this->objectsToUpdate;
+        return array_values($this->objectsToUpdate);
     }
 
-    /**
-     * @param object $object
-     */
-    public function isScheduledForRemove($object) : bool
+    public function isScheduledForRemove(object $object) : bool
     {
         return isset($this->objectsToRemove[spl_object_hash($object)]);
     }
 
     /**
-     * @return object[]
+     * @return array<int, object>
      */
     public function getObjectsToRemove() : array
     {
-        return $this->objectsToRemove;
+        return array_values($this->objectsToRemove);
     }
 
     /* PropertyChangedListener implementation */
@@ -264,7 +241,7 @@ class UnitOfWork implements PropertyChangedListener
      * @param mixed  $oldValue     The old value of the property.
      * @param mixed  $newValue     The new value of the property.
      */
-    public function propertyChanged($object, $propertyName, $oldValue, $newValue) : void
+    public function propertyChanged(object $object, string $propertyName, $oldValue, $newValue) : void
     {
         if (! $this->isInIdentityMap($object)) {
             return;
@@ -282,30 +259,24 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * Gets the changeset for a object.
-     *
-     * @param object $object
      */
-    public function getObjectChangeSet($object) : ChangeSet
+    public function getObjectChangeSet(object $object) : ChangeSet
     {
         return $this->objectChangeSets->getObjectChangeSet($object);
     }
 
     /**
      * Checks whether an object is registered in the identity map of this UnitOfWork.
-     *
-     * @param object $object
      */
-    public function isInIdentityMap($object) : bool
+    public function isInIdentityMap(object $object) : bool
     {
         return $this->objectIdentityMap->contains($object);
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return object
+     * @param array<string, mixed> $data
      */
-    public function getOrCreateObject(string $className, array $data)
+    public function getOrCreateObject(string $className, array $data) : object
     {
         $object = $this->objectIdentityMap->tryGetById($className, $data);
 
@@ -316,30 +287,22 @@ class UnitOfWork implements PropertyChangedListener
         return $this->createObject($className, $data);
     }
 
-    /**
-     * @param object $object
-     */
-    public function getObjectPersister($object) : ObjectPersisterInterface
+    public function getObjectPersister(object $object) : ObjectPersisterInterface
     {
         return $this->objectPersisterFactory
             ->getPersister(get_class($object));
     }
 
-    /**
-     * @param object $object
-     */
-    public function getObjectRepository($object) : ObjectRepositoryInterface
+    public function getObjectRepository(object $object) : ObjectRepositoryInterface
     {
         return $this->objectManager
             ->getRepository(get_class($object));
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return object
+     * @param array<string, mixed> $data
      */
-    private function createObject(string $className, array $data)
+    private function createObject(string $className, array $data) : object
     {
         $repository = $this->objectManager->getRepository($className);
 

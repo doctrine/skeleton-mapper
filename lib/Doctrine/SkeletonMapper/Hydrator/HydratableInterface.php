@@ -12,7 +12,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 interface HydratableInterface
 {
     /**
-     * @param mixed[] $data
+     * @param  array<string, mixed> $data
      */
     public function hydrate(array $data, ObjectManagerInterface $objectManager) : void;
 }

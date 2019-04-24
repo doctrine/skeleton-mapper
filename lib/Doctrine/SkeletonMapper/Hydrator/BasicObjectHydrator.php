@@ -25,10 +25,9 @@ class BasicObjectHydrator extends ObjectHydrator
     }
 
     /**
-     * @param object  $object
-     * @param mixed[] $data
+     * @param array<string, mixed> $data
      */
-    public function hydrate($object, array $data) : void
+    public function hydrate(object $object, array $data) : void
     {
         if (! $object instanceof HydratableInterface) {
             throw new InvalidArgumentException(sprintf(

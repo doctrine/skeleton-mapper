@@ -9,7 +9,7 @@ interface IdentifiableInterface
     /**
      * Assign identifier to object.
      *
-     * @param mixed[] $identifier
+     * @param array<string, mixed> $identifier
      */
     public function assignIdentifier(array $identifier) : void;
 }

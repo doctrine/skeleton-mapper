@@ -16,14 +16,14 @@ interface ObjectDataRepositoryInterface
      *
      * @param mixed $id The identifier.
      *
-     * @return mixed[] The objects array of data.
+     * @return array<string, mixed>|null The objects array of data.
      */
     public function find($id) : ?array;
 
     /**
      * Finds all object data in the repository.
      *
-     * @return mixed[][] The objects data.
+     * @return array<int, array<string, mixed>>  The objects data.
      */
     public function findAll() : array;
 
@@ -34,10 +34,10 @@ interface ObjectDataRepositoryInterface
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
-     * @param mixed[]      $criteria
-     * @param mixed[]|null $orderBy
+     * @param array<string, mixed>      $criteria
+     * @param array<string, mixed>|null $orderBy
      *
-     * @return mixed[][] The objects data.
+     * @return array<int, array<string, mixed>> The objects data.
      *
      * @throws UnexpectedValueException
      */
@@ -51,9 +51,9 @@ interface ObjectDataRepositoryInterface
     /**
      * Finds a single objects data by a set of criteria.
      *
-     * @param mixed[] $criteria The criteria.
+     * @param array<string, mixed> $criteria The criteria.
      *
-     * @return mixed[] The objects array of data
+     * @return array<string, mixed>|null The objects array of data
      */
     public function findOneBy(array $criteria) : ?array;
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\Tests\Mapping;
 
 use BadMethodCallException;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -71,10 +71,15 @@ class ClassMetadataTest extends TestCase
         self::assertEquals([], $this->class->getAssociationNames());
     }
 
+    public function testGetTypeOfFieldThrowsInvalidArgumentException() : void
+    {
+        self::expectException(InvalidArgumentException::class);
+
+        self::assertEquals('', $this->class->getTypeOfField('username'));
+    }
+
     public function testGetTypeOfField() : void
     {
-        self::assertEquals('', $this->class->getTypeOfField('username'));
-
         $this->class->mapField(['fieldName' => 'username', 'type' => 'string']);
 
         self::assertEquals('string', $this->class->getTypeOfField('username'));

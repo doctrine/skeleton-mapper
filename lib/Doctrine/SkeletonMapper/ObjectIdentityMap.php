@@ -14,7 +14,7 @@ use function serialize;
  */
 class ObjectIdentityMap
 {
-    /** @var object[][] */
+    /** @var array<string, array<string, object>> */
     private $identityMap = [];
 
     /** @var ObjectRepositoryFactoryInterface */
@@ -25,10 +25,7 @@ class ObjectIdentityMap
         $this->objectRepositoryFactory = $objectRepositoryFactory;
     }
 
-    /**
-     * @param object $object
-     */
-    public function contains($object) : bool
+    public function contains(object $object) : bool
     {
         $className = get_class($object);
 
@@ -40,11 +37,9 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return object|null
+     * @param array<string, mixed> $data
      */
-    public function tryGetById(string $className, array $data)
+    public function tryGetById(string $className, array $data) : ?object
     {
         $serialized = serialize($this->extractIdentifierFromData($className, $data));
 
@@ -56,10 +51,9 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param object  $object
-     * @param mixed[] $data
+     * @param array<string, mixed> $data
      */
-    public function addToIdentityMap($object, array $data) : void
+    public function addToIdentityMap(object $object, array $data) : void
     {
         $className = get_class($object);
 
@@ -81,10 +75,7 @@ class ObjectIdentityMap
         }
     }
 
-    /**
-     * @param object $object
-     */
-    public function detach($object) : void
+    public function detach(object $object) : void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -98,11 +89,9 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param object $object
-     *
-     * @return mixed[] $identifier
+     * @return array<string, mixed>
      */
-    private function getObjectIdentifier($object) : array
+    private function getObjectIdentifier(object $object) : array
     {
         return $this->objectRepositoryFactory
             ->getRepository(get_class($object))
@@ -110,9 +99,9 @@ class ObjectIdentityMap
     }
 
     /**
-     * @param mixed[] $data
+     * @param array<string, mixed> $data
      *
-     * @return mixed[] $identifier
+     * @return array<string, mixed>
      */
     private function extractIdentifierFromData(string $className, array $data) : array
     {

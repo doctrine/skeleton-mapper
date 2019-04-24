@@ -15,11 +15,16 @@ class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
     /** @var ObjectRepositoryInterface[] */
     private $repositories = [];
 
-    public function addObjectRepository(string $className, ObjectRepositoryInterface $objectRepository) : void
-    {
+    public function addObjectRepository(
+        string $className,
+        ObjectRepositoryInterface $objectRepository
+    ) : void {
         $this->repositories[$className] = $objectRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getRepository(string $className) : ObjectRepositoryInterface
     {
         if (! isset($this->repositories[$className])) {

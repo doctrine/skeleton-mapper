@@ -9,23 +9,19 @@ class ChangeSet
     /** @var object */
     private $object;
 
-    /** @var Change[] */
+    /** @var array<string, Change> */
     private $changes = [];
 
     /**
-     * @param object   $object
      * @param Change[] $changes
      */
-    public function __construct($object, array $changes = [])
+    public function __construct(object $object, array $changes = [])
     {
         $this->object  = $object;
         $this->changes = $changes;
     }
 
-    /**
-     * @return object
-     */
-    public function getObject()
+    public function getObject() : object
     {
         return $this->object;
     }

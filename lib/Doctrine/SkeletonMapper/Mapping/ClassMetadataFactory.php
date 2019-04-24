@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata as BaseClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
+use function array_values;
 
 /**
  * Class responsible for retrieving ClassMetadata instances.
@@ -14,7 +16,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /** @var ClassMetadataInstantiatorInterface */
     private $classMetadataInstantiator;
 
-    /** @var ClassMetadataInterface[] */
+    /** @var array<string, BaseClassMetadata> */
     private $classes = [];
 
     public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
@@ -23,19 +25,17 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     }
 
     /**
-     * Returns all mapped classes.
-     *
-     * @return ClassMetadataInterface[] The ClassMetadataInterface instances of all mapped classes.
+     * {@inheritDoc}
      */
     public function getAllMetadata() : array
     {
-        return $this->classes;
+        return array_values($this->classes);
     }
 
     /**
-     * @param string $className
+     * {@inheritDoc}
      */
-    public function getMetadataFor($className) : ClassMetadataInterface
+    public function getMetadataFor(string $className) : BaseClassMetadata
     {
         if (! isset($this->classes[$className])) {
             $metadata = $this->classMetadataInstantiator->instantiate($className);
@@ -53,16 +53,15 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * {@inheritDoc}
      */
-    public function hasMetadataFor($className) : bool
+    public function hasMetadataFor(string $className) : bool
     {
         return isset($this->classes[$className]);
     }
 
     /**
-     * @param string                 $className
-     * @param ClassMetadataInterface $class
+     * {@inheritDoc}
      */
-    public function setMetadataFor($className, $class)
+    public function setMetadataFor(string $className, BaseClassMetadata $class) : void
     {
         $this->classes[$className] = $class;
     }
@@ -70,7 +69,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * {@inheritDoc}
      */
-    public function isTransient($className) : bool
+    public function isTransient(string $className) : bool
     {
         return isset($this->classes[$className]);
     }

@@ -12,7 +12,7 @@ use function sprintf;
  */
 class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
 {
-    /** @var ObjectPersisterInterface[] */
+    /** @var array<string, ObjectPersisterInterface> */
     private $persisters = [];
 
     public function addObjectPersister(string $className, ObjectPersisterInterface $objectPersister) : void
@@ -30,7 +30,7 @@ class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
     }
 
     /**
-     * @return ObjectPersisterInterface[]
+     * @return array<string, ObjectPersisterInterface>
      */
     public function getPersisters() : array
     {

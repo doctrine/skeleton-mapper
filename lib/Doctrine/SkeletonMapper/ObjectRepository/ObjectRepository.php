@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use Doctrine\Common\EventManager;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectFactory;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use InvalidArgumentException;
@@ -35,7 +35,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /** @var string */
     protected $className;
 
-    /** @var ClassMetadataInterface */
+    /** @var ClassMetadata */
     protected $class;
 
     public function __construct(
@@ -55,7 +55,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * Returns the class name of the object managed by the repository.
+     * {@inheritDoc}
      */
     public function getClassName() : string
     {
@@ -69,24 +69,18 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * Finds an object by its primary key / identifier.
-     *
-     * @param mixed $id The identifier.
-     *
-     * @return object|null The object.
+     * @param mixed $id
      */
-    public function find($id)
+    public function find($id) : ?object
     {
         return $this->getOrCreateObject(
             $this->objectDataRepository->find($id)
         );
     }
 
-   /**
-    * Finds all objects in the repository.
-    *
-    * @return object[] The objects.
-    */
+    /**
+     * {@inheritDoc}
+     */
     public function findAll() : array
     {
         $objectsData = $this->objectDataRepository->findAll();
@@ -106,10 +100,17 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param array<string, mixed>  $criteria
+     * @param array<string, string> $orderBy
+     *
+     * @return array<int, object> The objects.
      */
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null) : array
-    {
+    public function findBy(
+        array $criteria,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ) : array {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,
             $orderBy,
@@ -134,7 +135,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findOneBy(array $criteria)
+    public function findOneBy(array $criteria) : ?object
     {
         return $this->getOrCreateObject(
             $this->objectDataRepository->findOneBy($criteria)
@@ -142,9 +143,9 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * @param object $object
+     * {@inheritDoc}
      */
-    public function refresh($object) : void
+    public function refresh(object $object) : void
     {
         $data = $this->objectDataRepository
             ->find($this->getObjectIdentifier($object));
@@ -157,28 +158,25 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * @param object  $object
-     * @param mixed[] $data
+     * {@inheritDoc}
      */
-    public function hydrate($object, array $data) : void
+    public function hydrate(object $object, array $data) : void
     {
         $this->objectHydrator->hydrate($object, $data);
     }
 
     /**
-     * @return object
+     * {@inheritDoc}
      */
-    public function create(string $className)
+    public function create(string $className) : object
     {
         return $this->objectFactory->create($className);
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return object|null
+     * @param array<string, mixed>|null $data
      */
-    protected function getOrCreateObject(?array $data = null)
+    protected function getOrCreateObject(?array $data = null) : ?object
     {
         if ($data === null) {
             return null;
