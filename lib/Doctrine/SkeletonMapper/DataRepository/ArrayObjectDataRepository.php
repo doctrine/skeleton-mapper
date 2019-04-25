@@ -22,7 +22,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @return mixed[][]
+     * @return array<int, mixed[]>
      */
     public function findAll() : array
     {
@@ -30,10 +30,10 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[] $criteria
-     * @param mixed[] $orderBy
+     * @param array<string, mixed>  $criteria
+     * @param array<string, string> $orderBy
      *
-     * @return mixed[][]
+     * @return array<int, array<string, mixed>>
      */
     public function findBy(
         array $criteria,
@@ -65,9 +65,9 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[] $criteria
+     * @param array<string, mixed> $criteria
      *
-     * @return mixed[]|null
+     * @return array<string, mixed>|null
      */
     public function findOneBy(array $criteria) : ?array
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\Persister;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use function max;
@@ -26,11 +26,9 @@ class ArrayObjectPersister extends BasicObjectPersister
     }
 
     /**
-     * @param object $object
-     *
-     * @return mixed[]
+     * @return array<string, mixed> $objectData
      */
-    public function persistObject($object) : array
+    public function persistObject(object $object) : array
     {
         $data = $this->preparePersistChangeSet($object);
 
@@ -46,11 +44,9 @@ class ArrayObjectPersister extends BasicObjectPersister
     }
 
     /**
-     * @param object $object
-     *
-     * @return mixed[]
+     * @return array<string, mixed> $objectData
      */
-    public function updateObject($object, ChangeSet $changeSet) : array
+    public function updateObject(object $object, ChangeSet $changeSet) : array
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
@@ -68,10 +64,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         return $objectData;
     }
 
-    /**
-     * @param object $object
-     */
-    public function removeObject($object) : void
+    public function removeObject(object $object) : void
     {
         $class      = $this->getClassMetadata();
         $identifier = $this->getObjectIdentifier($object);
@@ -79,7 +72,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         unset($this->objects[$identifier[$class->getIdentifier()[0]]]);
     }
 
-    private function generateNextId(ClassMetadataInterface $class) : int
+    private function generateNextId(ClassMetadata $class) : int
     {
         $ids = [];
         foreach ($this->objects as $objectData) {

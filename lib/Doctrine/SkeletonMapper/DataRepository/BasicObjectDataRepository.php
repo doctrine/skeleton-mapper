@@ -36,7 +36,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     /**
      * @param mixed $id
      *
-     * @return mixed[]
+     * @return array<string, mixed>|null
      */
     public function find($id) : ?array
     {
@@ -54,7 +54,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     }
 
     /**
-     * @return mixed[]
+     * @return array<int, string>
      */
     protected function getIdentifier() : array
     {
@@ -64,11 +64,9 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     }
 
     /**
-     * @param object $object
-     *
-     * @return mixed[]
+     * @return array<string, mixed>
      */
-    protected function getObjectIdentifier($object) : array
+    protected function getObjectIdentifier(object $object) : array
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

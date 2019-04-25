@@ -15,10 +15,9 @@ class PreLoadEventArgs extends LifecycleEventArgs
     private $data;
 
     /**
-     * @param object  $object
-     * @param mixed[] $data   Array of data to be loaded and hydrated
+     * @param mixed[] $data Array of data to be loaded and hydrated
      */
-    public function __construct($object, ObjectManagerInterface $objectManager, array &$data)
+    public function __construct(object $object, ObjectManagerInterface $objectManager, array &$data)
     {
         parent::__construct($object, $objectManager);
         $this->data = &$data;

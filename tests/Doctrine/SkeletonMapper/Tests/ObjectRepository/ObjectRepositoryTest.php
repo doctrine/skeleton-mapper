@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
 
 use Doctrine\Common\EventManager;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
@@ -203,17 +204,15 @@ class ObjectRepositoryTest extends TestCase
 
 class TestObjectRepository extends ObjectRepository
 {
-    public function getClassMetadata() : ClassMetadataInterface
+    public function getClassMetadata() : ClassMetadata
     {
         return $this->class;
     }
 
     /**
-     * @param object $object
-     *
      * @return int[]
      */
-    public function getObjectIdentifier($object) : array
+    public function getObjectIdentifier(object $object) : array
     {
         return ['id' => 1];
     }
@@ -228,10 +227,7 @@ class TestObjectRepository extends ObjectRepository
         return ['id' => 1];
     }
 
-    /**
-     * @param object $object
-     */
-    public function merge($object) : void
+    public function merge(object $object) : object
     {
     }
 }

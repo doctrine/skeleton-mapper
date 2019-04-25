@@ -20,10 +20,7 @@ class ObjectFactory
         $this->instantiator = new Instantiator();
     }
 
-    /**
-     * @return object
-     */
-    public function create(string $className)
+    public function create(string $className) : object
     {
         return $this->instantiator->instantiate($className);
     }

@@ -6,10 +6,10 @@ namespace Doctrine\SkeletonMapper;
 
 use BadMethodCallException;
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\ObjectRepository;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
@@ -62,9 +62,9 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param mixed $id
      */
-    public function find($className, $id)
+    public function find(string $className, $id) : ?object
     {
         return $this->getRepository($className)->find($id);
     }
@@ -72,7 +72,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function persist($object) : void
+    public function persist(object $object) : void
     {
         $this->unitOfWork->persist($object);
     }
@@ -84,7 +84,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object The instance to update
      */
-    public function update($object) : void
+    public function update(object $object) : void
     {
         $this->unitOfWork->update($object);
     }
@@ -92,7 +92,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function remove($object) : void
+    public function remove(object $object) : void
     {
         $this->unitOfWork->remove($object);
     }
@@ -100,15 +100,15 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function merge($object) : void
+    public function merge(object $object) : object
     {
-        $this->unitOfWork->merge($object);
+        return $this->unitOfWork->merge($object);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear($objectName = null) : void
+    public function clear(?string $objectName = null) : void
     {
         $this->unitOfWork->clear($objectName);
     }
@@ -116,7 +116,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function detach($object) : void
+    public function detach(object $object) : void
     {
         $this->unitOfWork->detach($object);
     }
@@ -124,7 +124,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function refresh($object) : void
+    public function refresh(object $object) : void
     {
         $this->unitOfWork->refresh($object);
     }
@@ -137,20 +137,12 @@ class ObjectManager implements ObjectManagerInterface
         $this->unitOfWork->commit();
     }
 
-    /**
-     * @param string $className
-     *
-     * @return ObjectRepositoryInterface
-     */
-    public function getRepository($className)
+    public function getRepository(string $className) : ObjectRepository
     {
         return $this->objectRepositoryFactory->getRepository($className);
     }
 
-    /**
-     * @param string $className
-     */
-    public function getClassMetadata($className) : ClassMetadataInterface
+    public function getClassMetadata(string $className) : ClassMetadata
     {
         return $this->metadataFactory->getMetadataFor($className);
     }
@@ -167,30 +159,24 @@ class ObjectManager implements ObjectManagerInterface
      * Helper method to initialize a lazy loading proxy or persistent collection.
      *
      * This method is a no-op for other objects.
-     *
-     * @param object $obj
      */
-    public function initializeObject($obj) : void
+    public function initializeObject(object $object) : void
     {
         throw new BadMethodCallException('Not supported.');
     }
 
     /**
      * Checks if the object is part of the current UnitOfWork and therefore managed.
-     *
-     * @param object $object
      */
-    public function contains($object) : bool
+    public function contains(object $object) : bool
     {
         return $this->unitOfWork->contains($object);
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return object
+     * @param array<string, mixed> $data
      */
-    public function getOrCreateObject(string $className, array $data)
+    public function getOrCreateObject(string $className, array $data) : object
     {
         return $this->unitOfWork->getOrCreateObject($className, $data);
     }

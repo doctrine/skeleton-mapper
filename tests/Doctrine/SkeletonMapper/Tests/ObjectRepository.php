@@ -12,11 +12,9 @@ use function assert;
 class ObjectRepository extends BasicObjectRepository
 {
     /**
-     * @param object $object
-     *
      * @return mixed[]
      */
-    public function getObjectIdentifier($object) : array
+    public function getObjectIdentifier(object $object) : array
     {
         assert($object instanceof Identifiable);
 
@@ -33,10 +31,7 @@ class ObjectRepository extends BasicObjectRepository
         return ['_id' => $data['_id']];
     }
 
-    /**
-     * @param object $object
-     */
-    public function merge($object) : void
+    public function merge(object $object) : object
     {
         assert($object instanceof User);
 
@@ -45,5 +40,7 @@ class ObjectRepository extends BasicObjectRepository
 
         $user->setUsername($object->getUsername());
         $user->setPassword($object->getPassword());
+
+        return $user;
     }
 }

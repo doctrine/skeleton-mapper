@@ -23,7 +23,7 @@ class BasicObjectHydratorTest extends TestCase
     public function testHydrate() : void
     {
         $object = new HydratableObject();
-        $data   = ['test'];
+        $data   = ['key' => 'value'];
 
         $this->hydrator->hydrate($object, $data);
 
@@ -40,7 +40,7 @@ class BasicObjectHydratorTest extends TestCase
 
 class HydratableObject implements HydratableInterface
 {
-    /** @var mixed[] */
+    /** @var array<string, string> */
     public $data;
 
     /**

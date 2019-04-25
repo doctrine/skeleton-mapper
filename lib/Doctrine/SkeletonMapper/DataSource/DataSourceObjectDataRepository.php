@@ -15,7 +15,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     /** @var DataSource */
     private $dataSource;
 
-    /** @var mixed[][]|null */
+    /** @var array<int, array<string, mixed>>|null */
     private $sourceRows;
 
     public function __construct(
@@ -28,7 +28,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @return mixed[][]
+     * @return array<int, array<string, mixed>>
      */
     public function findAll() : array
     {
@@ -36,10 +36,10 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[] $criteria
-     * @param mixed[] $orderBy
+     * @param array<string, mixed>  $criteria
+     * @param array<string, string> $orderBy
      *
-     * @return mixed[][]
+     * @return array<int, array<string, mixed>>
      */
     public function findBy(
         array $criteria,
@@ -69,9 +69,9 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[] $criteria
+     * @param array<string, mixed> $criteria
      *
-     * @return mixed[]|null
+     * @return array<string, mixed>|null
      */
     public function findOneBy(array $criteria) : ?array
     {
@@ -85,8 +85,8 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[] $criteria
-     * @param mixed[] $row
+     * @param array<string, mixed> $criteria
+     * @param array<string, mixed> $row
      */
     private function matches(array $criteria, array $row) : bool
     {
@@ -94,10 +94,10 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[][] $rows
-     * @param string[]  $orderBy
+     * @param array<int, array<string, mixed>> $rows
+     * @param array<string, mixed>             $orderBy
      *
-     * @return mixed[][] $rows
+     * @return array<int, array<string, mixed>> $rows
      */
     private function sort(array $rows, array $orderBy) : array
     {
@@ -107,9 +107,9 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[][] $rows
+     * @param array<int, array<string, mixed>> $rows
      *
-     * @return mixed[][] $rows
+     * @return array<int, array<string, mixed>> $rows
      */
     private function slice(array $rows, ?int $limit, ?int $offset) : array
     {
@@ -125,7 +125,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @return mixed[][]
+     * {@inheritDoc}
      */
     private function getSourceRows() : array
     {

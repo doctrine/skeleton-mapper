@@ -8,15 +8,15 @@ use function in_array;
 
 class CriteriaMatcher
 {
-    /** @var mixed[] */
+    /** @var array<string, mixed> $criteria */
     private $criteria;
 
-    /** @var mixed[] */
+    /** @var array<string, mixed> */
     private $row;
 
     /**
-     * @param mixed[] $criteria
-     * @param mixed[] $row
+     * @param array<string, mixed> $criteria
+     * @param array<string, mixed> $row
      */
     public function __construct(array $criteria, array $row)
     {
@@ -56,7 +56,7 @@ class CriteriaMatcher
     }
 
     /**
-     * @param mixed[] $value
+     * @param array<string, mixed> $value
      */
     private function contains(string $key, array $value) : bool
     {

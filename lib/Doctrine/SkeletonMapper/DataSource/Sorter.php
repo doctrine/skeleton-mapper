@@ -18,14 +18,14 @@ class Sorter
     /** @var int */
     private $level = 0;
 
-    /** @var string[] */
+    /** @var array<int, string> */
     private $fields;
 
-    /** @var int[] */
+    /** @var array<int, int> */
     private $orders;
 
     /**
-     * @param string[] $orderBy
+     * @param array<string, string> $orderBy
      */
     public function __construct(array $orderBy)
     {

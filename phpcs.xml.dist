@@ -30,30 +30,4 @@
     <rule ref="Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase">
         <exclude-pattern>lib/Doctrine/SkeletonMapper/Events.php</exclude-pattern>
     </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint">
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/ObjectManager.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/ObjectManagerInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/Mapping/ClassMetadataFactory.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/UnitOfWork.php</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/ObjectManagerInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/Mapping/ClassMetadataFactory.php</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/ObjectManager.php</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
-        <exclude-pattern>lib/Doctrine/SkeletonMapper/ObjectManager.php</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration">
-        <properties>
-            <property name="enableObjectTypeHint" value="false"/>
-        </properties>
-    </rule>
 </ruleset>

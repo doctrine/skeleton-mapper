@@ -41,10 +41,9 @@ class EventDispatcher
     }
 
     /**
-     * @param object  $object
-     * @param mixed[] $args
+     * @param array<mixed, mixed> $args
      */
-    public function dispatchObjectLifecycleCallback(string $eventName, $object, array &$args = []) : void
+    public function dispatchObjectLifecycleCallback(string $eventName, object $object, array &$args = []) : void
     {
         $className = get_class($object);
 
@@ -59,7 +58,7 @@ class EventDispatcher
     }
 
     /**
-     * @param object[] $objects
+     * @param array<int, object> $objects
      */
     public function dispatchObjectsLifecycleCallbacks(string $eventName, array $objects) : void
     {
@@ -77,7 +76,7 @@ class EventDispatcher
     }
 
     /**
-     * @param object[] $objects
+     * @param array<int, object> $objects
      */
     public function dispatchPreFlushLifecycleCallbacks(array $objects) : void
     {
@@ -108,10 +107,7 @@ class EventDispatcher
         );
     }
 
-    /**
-     * @param object $object
-     */
-    public function dispatchPreRemove($object) : void
+    public function dispatchPreRemove(object $object) : void
     {
         $this->dispatchObjectLifecycleCallback(Events::preRemove, $object);
 
@@ -121,10 +117,7 @@ class EventDispatcher
         );
     }
 
-    /**
-     * @param object $object
-     */
-    public function dispatchPreUpdate($object, ChangeSet $changeSet) : void
+    public function dispatchPreUpdate(object $object, ChangeSet $changeSet) : void
     {
         $args = [$changeSet];
         $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object, $args);
@@ -139,10 +132,7 @@ class EventDispatcher
         );
     }
 
-    /**
-     * @param object $object
-     */
-    public function dispatchPrePersist($object) : void
+    public function dispatchPrePersist(object $object) : void
     {
         $this->dispatchObjectLifecycleCallback(Events::prePersist, $object);
 
@@ -153,10 +143,9 @@ class EventDispatcher
     }
 
     /**
-     * @param object  $object
-     * @param mixed[] $data
+     * @param array<mixed, mixed> $data
      */
-    public function dispatchPreLoad($object, array &$data) : void
+    public function dispatchPreLoad(object $object, array &$data) : void
     {
         $args = [&$data];
         $this->dispatchObjectLifecycleCallback(Events::preLoad, $object, $args);
@@ -167,18 +156,12 @@ class EventDispatcher
         );
     }
 
-    /**
-     * @param object $object
-     */
-    public function dispatchPostLoad($object) : void
+    public function dispatchPostLoad(object $object) : void
     {
         $this->dispatchLifecycleEvent(Events::postLoad, $object);
     }
 
-    /**
-     * @param object $object
-     */
-    public function dispatchLifecycleEvent(string $eventName, $object) : void
+    public function dispatchLifecycleEvent(string $eventName, object $object) : void
     {
         $this->dispatchObjectLifecycleCallback($eventName, $object);
 

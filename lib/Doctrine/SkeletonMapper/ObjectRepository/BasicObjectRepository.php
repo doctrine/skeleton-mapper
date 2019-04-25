@@ -10,11 +10,9 @@ use function get_class;
 class BasicObjectRepository extends ObjectRepository
 {
     /**
-     * @param object $object
-     *
-     * @return mixed[]
+     * {@inheritDoc}
      */
-    public function getObjectIdentifier($object) : array
+    public function getObjectIdentifier(object $object) : array
     {
         return $this->objectManager
             ->getClassMetadata(get_class($object))
@@ -22,9 +20,7 @@ class BasicObjectRepository extends ObjectRepository
     }
 
     /**
-     * @param mixed[] $data
-     *
-     * @return mixed[]
+     * {@inheritDoc}
      */
     public function getObjectIdentifierFromData(array $data) : array
     {
@@ -38,9 +34,9 @@ class BasicObjectRepository extends ObjectRepository
     }
 
     /**
-     * @param object $object
+     * {@inheritDoc}
      */
-    public function merge($object) : void
+    public function merge(object $object) : object
     {
         throw new BadMethodCallException('Not implemented.');
     }
