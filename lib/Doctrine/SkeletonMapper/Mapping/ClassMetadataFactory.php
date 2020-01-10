@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
 
 /**
  * Class responsible for retrieving ClassMetadata instances.

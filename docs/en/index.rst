@@ -48,7 +48,7 @@ The ``ObjectRepository`` interface is responsible for reading objects:
 
     namespace Doctrine\SkeletonMapper\ObjectRepository;
 
-    use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+    use Doctrine\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
 
     interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
     {
@@ -58,7 +58,7 @@ The ``ObjectRepository`` interface is responsible for reading objects:
         public function hydrate($object, array $data);
         public function create($className);
 
-        // inherited from Doctrine\Common\Persistence\ObjectRepository
+        // inherited from Doctrine\Persistence\ObjectRepository
 
         public function find($id);
         public function findAll();
