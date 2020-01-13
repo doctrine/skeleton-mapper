@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Event;
 
-use Doctrine\Common\Persistence\Event\ManagerEventArgs;
+use Doctrine\Persistence\Event\ManagerEventArgs;
 
 /**
  * Provides event arguments for the preFlush event.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper;
 
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+use Doctrine\Persistence\ObjectManager as BaseObjectManagerInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 

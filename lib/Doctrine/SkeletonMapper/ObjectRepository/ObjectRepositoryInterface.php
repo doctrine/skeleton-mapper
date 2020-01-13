@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use Doctrine\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
 
 /**
  * Interface that object repositories must implement.
