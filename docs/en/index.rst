@@ -17,7 +17,7 @@ Installation
 Interfaces
 ==========
 
-The ``ObjectDataRepository`` interface is responsible for reading the the raw data.
+The ``ObjectDataRepository`` interface is responsible for reading the raw data.
 
 .. code-block:: php
 
