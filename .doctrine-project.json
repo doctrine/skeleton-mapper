@@ -5,10 +5,20 @@
     "docsSlug": "doctrine-skeleton-mapper",
     "versions": [
         {
-            "name": "1.0",
+            "name": "1.1",
             "branchName": "master",
             "slug": "latest",
             "current": true
+        },
+        {
+            "name": "1.0",
+            "branchName": "1.0",
+            "slug": "1.0",
+            "current": true,
+            "aliases": [
+                "current",
+                "stable"
+            ]
         }
     ]
 }
