@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class LazyCollectionTest extends TestCase
 {
-    public function testLoad() : void
+    public function testLoad(): void
     {
         $wrappedCollection = new ArrayCollection();
 

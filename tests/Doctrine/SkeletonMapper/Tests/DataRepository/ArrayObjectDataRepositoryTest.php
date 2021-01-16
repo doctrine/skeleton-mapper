@@ -24,12 +24,12 @@ class ArrayObjectDataRepositoryTest extends TestCase
     /** @var ArrayObjectDataRepository */
     private $objectDataRepository;
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         self::assertSame([['username' => 'jwage']], $this->objectDataRepository->findAll());
     }
 
-    public function testFindBy() : void
+    public function testFindBy(): void
     {
         $criteria = ['username' => 'jwage'];
         $orderBy  = ['username' => 'desc'];
@@ -42,7 +42,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
         );
     }
 
-    public function testFindOneBy() : void
+    public function testFindOneBy(): void
     {
         $criteria = ['username' => 'jwage'];
         $orderBy  = ['username' => 'desc'];
@@ -55,7 +55,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
         );
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 

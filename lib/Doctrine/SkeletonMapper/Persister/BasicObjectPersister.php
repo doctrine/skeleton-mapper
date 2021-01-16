@@ -8,6 +8,7 @@ use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use InvalidArgumentException;
+
 use function get_class;
 use function sprintf;
 
@@ -28,12 +29,12 @@ abstract class BasicObjectPersister extends ObjectPersister
         $this->className     = $className;
     }
 
-    public function getClassName() : string
+    public function getClassName(): string
     {
         return $this->className;
     }
 
-    public function getClassMetadata() : ClassMetadataInterface
+    public function getClassMetadata(): ClassMetadataInterface
     {
         if ($this->class === null) {
             $this->class = $this->objectManager->getClassMetadata($this->className);
@@ -49,7 +50,7 @@ abstract class BasicObjectPersister extends ObjectPersister
      *
      * @return mixed[]
      */
-    public function preparePersistChangeSet($object) : array
+    public function preparePersistChangeSet($object): array
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(
@@ -67,7 +68,7 @@ abstract class BasicObjectPersister extends ObjectPersister
      *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet($object, ChangeSet $changeSet) : array
+    public function prepareUpdateChangeSet($object, ChangeSet $changeSet): array
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
@@ -82,7 +83,7 @@ abstract class BasicObjectPersister extends ObjectPersister
      * @param object  $object
      * @param mixed[] $identifier
      */
-    public function assignIdentifier($object, array $identifier) : void
+    public function assignIdentifier($object, array $identifier): void
     {
         if (! $object instanceof IdentifiableInterface) {
             throw new InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', get_class($object)));
@@ -96,7 +97,7 @@ abstract class BasicObjectPersister extends ObjectPersister
      *
      * @return mixed[] $identifier
      */
-    protected function getObjectIdentifier($object) : array
+    protected function getObjectIdentifier($object): array
     {
         return $this->objectManager
             ->getRepository(get_class($object))

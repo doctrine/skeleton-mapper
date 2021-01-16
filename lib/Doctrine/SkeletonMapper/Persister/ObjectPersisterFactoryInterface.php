@@ -9,10 +9,10 @@ namespace Doctrine\SkeletonMapper\Persister;
  */
 interface ObjectPersisterFactoryInterface
 {
-    public function getPersister(string $className) : ObjectPersisterInterface;
+    public function getPersister(string $className): ObjectPersisterInterface;
 
     /**
      * @return ObjectPersisterInterface[]
      */
-    public function getPersisters() : array;
+    public function getPersisters(): array;
 }

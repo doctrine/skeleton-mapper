@@ -20,7 +20,7 @@ class BasicObjectHydratorTest extends TestCase
     /** @var BasicObjectHydrator */
     private $hydrator;
 
-    public function testHydrate() : void
+    public function testHydrate(): void
     {
         $object = new HydratableObject();
         $data   = ['test'];
@@ -30,7 +30,7 @@ class BasicObjectHydratorTest extends TestCase
         self::assertEquals($data, $object->data);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -46,7 +46,7 @@ class HydratableObject implements HydratableInterface
     /**
      * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+    public function hydrate(array $data, ObjectManagerInterface $objectManager): void
     {
         $this->data = $data;
     }

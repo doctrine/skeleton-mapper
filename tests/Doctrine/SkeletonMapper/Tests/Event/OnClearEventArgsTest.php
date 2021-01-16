@@ -16,12 +16,12 @@ class OnClearEventArgsTest extends TestCase
     /** @var OnClearEventArgs */
     private $event;
 
-    public function testGetObjectClass() : void
+    public function testGetObjectClass(): void
     {
         self::assertEquals('TestClassName', $this->event->getObjectClass());
     }
 
-    public function testClearsAllObjects() : void
+    public function testClearsAllObjects(): void
     {
         self::assertFalse($this->event->clearsAllObjects());
 
@@ -30,7 +30,7 @@ class OnClearEventArgsTest extends TestCase
         self::assertTrue($event->clearsAllObjects());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 

@@ -29,7 +29,7 @@ class PreLoadEventArgs extends LifecycleEventArgs
      *
      * @return mixed[]
      */
-    public function &getData() : array
+    public function &getData(): array
     {
         return $this->data;
     }

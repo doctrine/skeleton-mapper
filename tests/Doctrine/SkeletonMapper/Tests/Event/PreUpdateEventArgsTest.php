@@ -26,12 +26,12 @@ class PreUpdateEventArgsTest extends TestCase
     /** @var PreUpdateEventArgs */
     private $event;
 
-    public function testGetObjectChangeSet() : void
+    public function testGetObjectChangeSet(): void
     {
         self::assertSame($this->changeSet, $this->event->getObjectChangeSet());
     }
 
-    public function testHasChangedField() : void
+    public function testHasChangedField(): void
     {
         $this->changeSet->expects(self::once())
             ->method('hasChangedField')
@@ -41,7 +41,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertTrue($this->event->hasChangedField('username'));
     }
 
-    public function testGetOldValue() : void
+    public function testGetOldValue(): void
     {
         $change = new Change('username', 'jwage', 'jonwage');
 
@@ -53,7 +53,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertEquals('jwage', $this->event->getOldValue('username'));
     }
 
-    public function testGetOldValueReturnsNull() : void
+    public function testGetOldValueReturnsNull(): void
     {
         $this->changeSet->expects(self::once())
             ->method('getFieldChange')
@@ -63,7 +63,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertNull($this->event->getOldValue('username'));
     }
 
-    public function testGetNewValue() : void
+    public function testGetNewValue(): void
     {
         $change = new Change('username', 'jwage', 'jonwage');
 
@@ -75,7 +75,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertEquals('jonwage', $this->event->getNewValue('username'));
     }
 
-    public function testGetNewValueReturnsNull() : void
+    public function testGetNewValueReturnsNull(): void
     {
         $this->changeSet->expects(self::once())
             ->method('getFieldChange')
@@ -85,7 +85,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertNull($this->event->getNewValue('username'));
     }
 
-    public function testSetNewValue() : void
+    public function testSetNewValue(): void
     {
         $change = new Change('username', 'jwage', 'jonwage');
 
@@ -99,7 +99,7 @@ class PreUpdateEventArgsTest extends TestCase
         self::assertEquals('jonathan', $this->event->getNewValue('username'));
     }
 
-    public function testSetNewValueForUnchangedField() : void
+    public function testSetNewValueForUnchangedField(): void
     {
         $change = new Change('username', null, 'jonwage');
 
@@ -115,7 +115,7 @@ class PreUpdateEventArgsTest extends TestCase
         $this->event->setNewValue('username', 'jonwage');
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 

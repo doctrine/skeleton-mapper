@@ -110,21 +110,21 @@ abstract class BaseImplementationTest extends TestCase
     /** @var ObjectPersister */
     protected $groupPersister;
 
-    abstract protected function setUpImplementation() : void;
+    abstract protected function setUpImplementation(): void;
 
-    abstract protected function createUserDataRepository() : ObjectDataRepository;
+    abstract protected function createUserDataRepository(): ObjectDataRepository;
 
-    abstract protected function createUserPersister() : ObjectPersister;
+    abstract protected function createUserPersister(): ObjectPersister;
 
-    abstract protected function createProfileDataRepository() : ObjectDataRepository;
+    abstract protected function createProfileDataRepository(): ObjectDataRepository;
 
-    abstract protected function createProfilePersister() : ObjectPersister;
+    abstract protected function createProfilePersister(): ObjectPersister;
 
-    abstract protected function createGroupDataRepository() : ObjectDataRepository;
+    abstract protected function createGroupDataRepository(): ObjectDataRepository;
 
-    abstract protected function createGroupPersister() : ObjectPersister;
+    abstract protected function createGroupPersister(): ObjectPersister;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->setUpImplementation();
         $this->setUpCommon();
@@ -144,7 +144,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->registerServices();
     }
 
-    protected function setUpCommon() : void
+    protected function setUpCommon(): void
     {
         $this->eventTester = new EventTester();
 
@@ -203,7 +203,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->unitOfWork          = $this->objectManager->getUnitOfWork();
     }
 
-    protected function registerServices() : void
+    protected function registerServices(): void
     {
         $this->objectRepositoryFactory->addObjectRepository(
             User::class,
@@ -232,7 +232,7 @@ abstract class BaseImplementationTest extends TestCase
         );
     }
 
-    public function testGetClassMetadata() : void
+    public function testGetClassMetadata(): void
     {
         $class = $this->objectManager->getClassMetadata(User::class);
 
@@ -274,7 +274,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals($fieldMappings, $class->getFieldMappings());
     }
 
-    public function testFind() : void
+    public function testFind(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
 
@@ -295,7 +295,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('password', $user2->getPassword());
     }
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
         $user2 = $this->objectManager->find(User::class, 2);
@@ -307,7 +307,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertSame([$user1, $user2], $users);
     }
 
-    public function testFindBy() : void
+    public function testFindBy(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
 
@@ -318,7 +318,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertSame([$user1], $users);
     }
 
-    public function testIdentityMap() : void
+    public function testIdentityMap(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
         $user2 = $this->objectManager->find(User::class, 1);
@@ -326,7 +326,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertSame($user1, $user2);
     }
 
-    public function testPersist() : void
+    public function testPersist(): void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -342,7 +342,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertSame($user, $this->objectManager->find(User::class, 3));
     }
 
-    public function testUpdates() : void
+    public function testUpdates(): void
     {
         $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('jonwage');
@@ -355,7 +355,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('jonwage', $user2->getUsername());
     }
 
-    public function testRemove() : void
+    public function testRemove(): void
     {
         $user = $this->objectManager->find(User::class, 2);
 
@@ -367,7 +367,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertNull($this->objectManager->find(User::class, 2));
     }
 
-    public function testRefresh() : void
+    public function testRefresh(): void
     {
         $user = $this->objectManager->find(User::class, 1);
 
@@ -378,7 +378,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('password', $user->getPassword());
     }
 
-    public function testClear() : void
+    public function testClear(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
 
@@ -413,7 +413,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertNull($this->objectManager->find(User::class, 10));
     }
 
-    public function testDetach() : void
+    public function testDetach(): void
     {
         $user1 = $this->objectManager->find(User::class, 1);
 
@@ -424,7 +424,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertNotSame($user1, $user2);
     }
 
-    public function testMerge() : void
+    public function testMerge(): void
     {
         $user1 = $this->createTestObject();
         $user1->setId(1);
@@ -438,7 +438,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('jonwage', $user2->getUsername());
     }
 
-    public function testContains() : void
+    public function testContains(): void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -458,7 +458,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertFalse($this->objectManager->contains($user));
     }
 
-    public function testEvents() : void
+    public function testEvents(): void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -527,7 +527,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals($expected, $this->eventTester->called);
     }
 
-    public function testLifecycleCallbacks() : void
+    public function testLifecycleCallbacks(): void
     {
         $user = $this->createTestObject();
         $user->setId(3);
@@ -581,7 +581,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals($expected, $user->called);
     }
 
-    public function testPropertyChangedListeners() : void
+    public function testPropertyChangedListeners(): void
     {
         $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('changed');
@@ -656,7 +656,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('changed', $user3->getUsername());
     }
 
-    public function testIdentifierGeneration() : void
+    public function testIdentifierGeneration(): void
     {
         $user = $this->createTestObject();
         $user->setUsername('jwage');
@@ -667,7 +667,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals(3, $user->getId());
     }
 
-    public function testClassMetadata() : void
+    public function testClassMetadata(): void
     {
         $object = $this->createTestObject();
         $object->setId(1);
@@ -713,7 +713,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals(['_id' => 1], $class->getIdentifierValues($object));
     }
 
-    public function testOnlyUpdatesWhatChanged() : void
+    public function testOnlyUpdatesWhatChanged(): void
     {
         $user = $this->objectManager->find(User::class, 1);
         $user->setUsername('changed');
@@ -731,7 +731,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('changed password', $data['password']);
     }
 
-    public function testReferences() : void
+    public function testReferences(): void
     {
         $user = $this->objectManager->find(User::class, 1);
 
@@ -764,7 +764,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('John Caplan', $user->getProfile()->getName());
     }
 
-    public function testEmbeddedAddress() : void
+    public function testEmbeddedAddress(): void
     {
         $user = $this->objectManager->find(User::class, 1);
 
@@ -798,7 +798,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
     }
 
-    public function testReferenceMany() : void
+    public function testReferenceMany(): void
     {
         $adminGroup = new Group('Admin');
         $techGroup  = new Group('Tech');
@@ -837,7 +837,7 @@ abstract class BaseImplementationTest extends TestCase
         self::assertEquals('Moderator', $groups[2]->getName());
     }
 
-    protected function createUserRepository() : UserRepository
+    protected function createUserRepository(): UserRepository
     {
         return new UserRepository(
             $this->objectManager,
@@ -849,7 +849,7 @@ abstract class BaseImplementationTest extends TestCase
         );
     }
 
-    protected function createProfileRepository() : ProfileRepository
+    protected function createProfileRepository(): ProfileRepository
     {
         return new ProfileRepository(
             $this->objectManager,
@@ -861,7 +861,7 @@ abstract class BaseImplementationTest extends TestCase
         );
     }
 
-    protected function createGroupRepository() : GroupRepository
+    protected function createGroupRepository(): GroupRepository
     {
         return new GroupRepository(
             $this->objectManager,
@@ -873,7 +873,7 @@ abstract class BaseImplementationTest extends TestCase
         );
     }
 
-    private function createTestObject() : User
+    private function createTestObject(): User
     {
         return new User();
     }
@@ -887,7 +887,7 @@ class EventTester
     /**
      * @param mixed[] $arguments
      */
-    public function __call(string $method, array $arguments) : void
+    public function __call(string $method, array $arguments): void
     {
         $this->called[] = $method;
     }

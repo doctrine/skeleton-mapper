@@ -6,5 +6,5 @@ namespace Doctrine\SkeletonMapper\Mapping;
 
 interface ClassMetadataInstantiatorInterface
 {
-    public function instantiate(string $className) : ClassMetadata;
+    public function instantiate(string $className): ClassMetadata;
 }

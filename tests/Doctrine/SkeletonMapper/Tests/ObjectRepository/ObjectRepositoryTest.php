@@ -42,12 +42,12 @@ class ObjectRepositoryTest extends TestCase
     /** @var TestObjectRepository */
     private $repository;
 
-    public function testGetClassName() : void
+    public function testGetClassName(): void
     {
         self::assertEquals('TestClassName', $this->repository->getClassName());
     }
 
-    public function testFind() : void
+    public function testFind(): void
     {
         $data = ['username' => 'jwage'];
 
@@ -65,7 +65,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertEquals(new stdClass(), $object);
     }
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         $data = [
             ['username' => 'jwage'],
@@ -93,7 +93,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertSame([$object1, $object2], $objects);
     }
 
-    public function testFindBy() : void
+    public function testFindBy(): void
     {
         $data = [
             ['username' => 'jwage'],
@@ -122,7 +122,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertSame([$object1, $object2], $objects);
     }
 
-    public function testFindOneBy() : void
+    public function testFindOneBy(): void
     {
         $data     = ['username' => 'jwage'];
         $criteria = ['username' => 'jwage'];
@@ -141,7 +141,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertEquals(new stdClass(), $object);
     }
 
-    public function testRefresh() : void
+    public function testRefresh(): void
     {
         $data = ['username' => 'jwage'];
 
@@ -159,7 +159,7 @@ class ObjectRepositoryTest extends TestCase
         $this->repository->refresh($object);
     }
 
-    public function testCreate() : void
+    public function testCreate(): void
     {
         $object = new stdClass();
 
@@ -171,7 +171,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertSame($object, $this->repository->create('stdClass'));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -203,7 +203,7 @@ class ObjectRepositoryTest extends TestCase
 
 class TestObjectRepository extends ObjectRepository
 {
-    public function getClassMetadata() : ClassMetadataInterface
+    public function getClassMetadata(): ClassMetadataInterface
     {
         return $this->class;
     }
@@ -213,7 +213,7 @@ class TestObjectRepository extends ObjectRepository
      *
      * @return int[]
      */
-    public function getObjectIdentifier($object) : array
+    public function getObjectIdentifier($object): array
     {
         return ['id' => 1];
     }
@@ -223,7 +223,7 @@ class TestObjectRepository extends ObjectRepository
      *
      * @return int[]
      */
-    public function getObjectIdentifierFromData(array $data) : array
+    public function getObjectIdentifierFromData(array $data): array
     {
         return ['id' => 1];
     }
@@ -231,7 +231,7 @@ class TestObjectRepository extends ObjectRepository
     /**
      * @param object $object
      */
-    public function merge($object) : void
+    public function merge($object): void
     {
     }
 }

@@ -14,10 +14,10 @@ interface PersistableInterface
     /**
      * @return mixed[]
      */
-    public function preparePersistChangeSet() : array;
+    public function preparePersistChangeSet(): array;
 
     /**
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array;
+    public function prepareUpdateChangeSet(ChangeSet $changeSet): array;
 }

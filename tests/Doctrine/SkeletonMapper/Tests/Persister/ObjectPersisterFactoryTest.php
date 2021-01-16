@@ -13,7 +13,7 @@ class ObjectPersisterFactoryTest extends TestCase
     /** @var ObjectPersisterFactory */
     private $factory;
 
-    public function testPersisterFactory() : void
+    public function testPersisterFactory(): void
     {
         $persister = $this->createMock(ObjectPersisterInterface::class);
 
@@ -23,7 +23,7 @@ class ObjectPersisterFactoryTest extends TestCase
         self::assertSame(['TestClassName' => $persister], $this->factory->getPersisters());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->factory = new ObjectPersisterFactory();
     }

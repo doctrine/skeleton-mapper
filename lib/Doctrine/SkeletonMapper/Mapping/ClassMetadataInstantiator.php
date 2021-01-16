@@ -6,7 +6,7 @@ namespace Doctrine\SkeletonMapper\Mapping;
 
 class ClassMetadataInstantiator implements ClassMetadataInstantiatorInterface
 {
-    public function instantiate(string $className) : ClassMetadata
+    public function instantiate(string $className): ClassMetadata
     {
         return new ClassMetadata($className);
     }

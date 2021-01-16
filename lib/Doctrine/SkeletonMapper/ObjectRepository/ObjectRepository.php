@@ -57,12 +57,12 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * Returns the class name of the object managed by the repository.
      */
-    public function getClassName() : string
+    public function getClassName(): string
     {
         return $this->className;
     }
 
-    public function setClassName(string $className) : void
+    public function setClassName(string $className): void
     {
         $this->className = $className;
         $this->class     = $this->objectManager->getClassMetadata($this->className);
@@ -87,7 +87,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     *
     * @return object[] The objects.
     */
-    public function findAll() : array
+    public function findAll(): array
     {
         $objectsData = $this->objectDataRepository->findAll();
 
@@ -108,7 +108,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null) : array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
     {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,
@@ -144,7 +144,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * @param object $object
      */
-    public function refresh($object) : void
+    public function refresh($object): void
     {
         $data = $this->objectDataRepository
             ->find($this->getObjectIdentifier($object));
@@ -160,7 +160,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      * @param object  $object
      * @param mixed[] $data
      */
-    public function hydrate($object, array $data) : void
+    public function hydrate($object, array $data): void
     {
         $this->objectHydrator->hydrate($object, $data);
     }

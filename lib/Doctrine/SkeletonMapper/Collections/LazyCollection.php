@@ -6,6 +6,7 @@ namespace Doctrine\SkeletonMapper\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\Collection;
+
 use function call_user_func;
 
 class LazyCollection extends AbstractLazyCollection
@@ -21,14 +22,14 @@ class LazyCollection extends AbstractLazyCollection
     /**
      * @return object[]|Collection
      */
-    public function getCollection() : Collection
+    public function getCollection(): Collection
     {
         $this->initialize();
 
         return $this->collection;
     }
 
-    protected function doInitialize() : void
+    protected function doInitialize(): void
     {
         if ($this->callback === null) {
             return;

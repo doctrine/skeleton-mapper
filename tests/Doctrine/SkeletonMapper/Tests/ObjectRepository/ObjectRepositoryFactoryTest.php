@@ -17,7 +17,7 @@ class ObjectRepositoryFactoryTest extends TestCase
     /** @var ObjectRepositoryFactory */
     private $factory;
 
-    public function testAddObjectRepository() : void
+    public function testAddObjectRepository(): void
     {
         $repository = $this->createMock(ObjectRepositoryInterface::class);
 
@@ -26,7 +26,7 @@ class ObjectRepositoryFactoryTest extends TestCase
         self::assertSame($repository, $this->factory->getRepository('TestClassName'));
     }
 
-    public function testGetRepositoryThrowsInvalidArgumentException() : void
+    public function testGetRepositoryThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('ObjectRepository with class name DoesNotExist was not found');
@@ -34,7 +34,7 @@ class ObjectRepositoryFactoryTest extends TestCase
         $this->factory->getRepository('DoesNotExist');
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->factory = new ObjectRepositoryFactory();
     }

@@ -23,7 +23,7 @@ class PreLoadEventArgsTest extends TestCase
     /** @var PreLoadEventArgs */
     private $event;
 
-    public function testGetData() : void
+    public function testGetData(): void
     {
         $data = &$this->event->getData();
 
@@ -32,7 +32,7 @@ class PreLoadEventArgsTest extends TestCase
         self::assertEquals($data, $this->event->getData());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 

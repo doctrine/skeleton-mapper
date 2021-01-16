@@ -18,14 +18,14 @@ interface ObjectDataRepositoryInterface
      *
      * @return mixed[] The objects array of data.
      */
-    public function find($id) : ?array;
+    public function find($id): ?array;
 
     /**
      * Finds all object data in the repository.
      *
      * @return mixed[][] The objects data.
      */
-    public function findAll() : array;
+    public function findAll(): array;
 
     /**
      * Finds objects data by a set of criteria.
@@ -46,7 +46,7 @@ interface ObjectDataRepositoryInterface
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ) : array;
+    ): array;
 
     /**
      * Finds a single objects data by a set of criteria.
@@ -55,5 +55,5 @@ interface ObjectDataRepositoryInterface
      *
      * @return mixed[] The objects array of data
      */
-    public function findOneBy(array $criteria) : ?array;
+    public function findOneBy(array $criteria): ?array;
 }

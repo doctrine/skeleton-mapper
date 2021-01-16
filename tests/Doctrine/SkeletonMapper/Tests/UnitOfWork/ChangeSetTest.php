@@ -14,7 +14,7 @@ use stdClass;
  */
 class ChangeSetTest extends TestCase
 {
-    public function testChangeSet() : void
+    public function testChangeSet(): void
     {
         $object    = new stdClass();
         $changeSet = new ChangeSet($object);

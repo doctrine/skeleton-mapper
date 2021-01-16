@@ -32,7 +32,7 @@ class Address
     /**
      * Gets the value of address1.
      */
-    public function getAddress1() : string
+    public function getAddress1(): string
     {
         return $this->address1;
     }
@@ -42,7 +42,7 @@ class Address
      *
      * @param string $address1 the address1
      */
-    public function setAddress1(string $address1) : void
+    public function setAddress1(string $address1): void
     {
         if ($this->address1 === $address1) {
             return;
@@ -55,7 +55,7 @@ class Address
     /**
      * Gets the value of address2.
      */
-    public function getAddress2() : ?string
+    public function getAddress2(): ?string
     {
         return $this->address2;
     }
@@ -65,7 +65,7 @@ class Address
      *
      * @param string $address2 the address2
      */
-    public function setAddress2(string $address2) : void
+    public function setAddress2(string $address2): void
     {
         if ($this->address2 === $address2) {
             return;
@@ -78,7 +78,7 @@ class Address
     /**
      * Gets the value of city.
      */
-    public function getCity() : string
+    public function getCity(): string
     {
         return $this->city;
     }
@@ -88,7 +88,7 @@ class Address
      *
      * @param string $city the city
      */
-    public function setCity(string $city) : void
+    public function setCity(string $city): void
     {
         if ($this->city === $city) {
             return;
@@ -101,7 +101,7 @@ class Address
     /**
      * Gets the value of state.
      */
-    public function getState() : string
+    public function getState(): string
     {
         return $this->state;
     }
@@ -111,7 +111,7 @@ class Address
      *
      * @param string $state the state
      */
-    public function setState(string $state) : void
+    public function setState(string $state): void
     {
         if ($this->state === $state) {
             return;
@@ -124,7 +124,7 @@ class Address
     /**
      * Gets the value of zip.
      */
-    public function getZip() : string
+    public function getZip(): string
     {
         return $this->zip;
     }
@@ -134,7 +134,7 @@ class Address
      *
      * @param string $zip the zip
      */
-    public function setZip(string $zip) : void
+    public function setZip(string $zip): void
     {
         if ($this->zip === $zip) {
             return;
@@ -144,7 +144,7 @@ class Address
         $this->zip = $zip;
     }
 
-    public function setProfile(Profile $profile) : void
+    public function setProfile(Profile $profile): void
     {
         $this->profile = $profile;
     }

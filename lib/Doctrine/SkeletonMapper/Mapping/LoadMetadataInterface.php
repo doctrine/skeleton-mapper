@@ -6,5 +6,5 @@ namespace Doctrine\SkeletonMapper\Mapping;
 
 interface LoadMetadataInterface
 {
-    public static function loadMetadata(ClassMetadataInterface $metadata) : void;
+    public static function loadMetadata(ClassMetadataInterface $metadata): void;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use InvalidArgumentException;
+
 use function sprintf;
 
 /**
@@ -15,12 +16,12 @@ class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
     /** @var ObjectRepositoryInterface[] */
     private $repositories = [];
 
-    public function addObjectRepository(string $className, ObjectRepositoryInterface $objectRepository) : void
+    public function addObjectRepository(string $className, ObjectRepositoryInterface $objectRepository): void
     {
         $this->repositories[$className] = $objectRepository;
     }
 
-    public function getRepository(string $className) : ObjectRepositoryInterface
+    public function getRepository(string $className): ObjectRepositoryInterface
     {
         if (! isset($this->repositories[$className])) {
             throw new InvalidArgumentException(

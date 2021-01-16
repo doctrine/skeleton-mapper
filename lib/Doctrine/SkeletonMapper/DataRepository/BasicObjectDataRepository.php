@@ -6,6 +6,7 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use RuntimeException;
+
 use function array_combine;
 use function is_array;
 
@@ -23,12 +24,12 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         $this->className     = $className;
     }
 
-    public function getClassName() : string
+    public function getClassName(): string
     {
         return $this->className;
     }
 
-    public function setClassName(string $className) : void
+    public function setClassName(string $className): void
     {
         $this->className = $className;
     }
@@ -38,7 +39,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
      *
      * @return mixed[]
      */
-    public function find($id) : ?array
+    public function find($id): ?array
     {
         $identifier = $this->getIdentifier();
 
@@ -56,7 +57,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     /**
      * @return mixed[]
      */
-    protected function getIdentifier() : array
+    protected function getIdentifier(): array
     {
         return $this->objectManager
             ->getClassMetadata($this->getClassName())
@@ -68,7 +69,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
      *
      * @return mixed[]
      */
-    protected function getObjectIdentifier($object) : array
+    protected function getObjectIdentifier($object): array
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

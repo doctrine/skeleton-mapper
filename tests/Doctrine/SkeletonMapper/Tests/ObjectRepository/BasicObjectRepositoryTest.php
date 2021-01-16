@@ -45,7 +45,7 @@ class BasicObjectRepositoryTest extends TestCase
     /** @var string */
     private $testClassName = BasicObjectRepositoryTestModel::class;
 
-    public function testGetObjectIdentifier() : void
+    public function testGetObjectIdentifier(): void
     {
         $object     = new BasicObjectRepositoryTestModel();
         $object->id = 1;
@@ -54,13 +54,13 @@ class BasicObjectRepositoryTest extends TestCase
         self::assertEquals($data, $this->repository->getObjectIdentifier($object));
     }
 
-    public function testGetObjectIdentifierFromData() : void
+    public function testGetObjectIdentifierFromData(): void
     {
         $data = ['id' => 1];
         self::assertEquals($data, $this->repository->getObjectIdentifierFromData($data));
     }
 
-    public function testMerge() : void
+    public function testMerge(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Not implemented.');
@@ -68,7 +68,7 @@ class BasicObjectRepositoryTest extends TestCase
         $this->repository->merge(new stdClass());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 

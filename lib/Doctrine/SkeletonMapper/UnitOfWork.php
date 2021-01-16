@@ -16,6 +16,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
 use Doctrine\SkeletonMapper\UnitOfWork\EventDispatcher;
 use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 use InvalidArgumentException;
+
 use function array_merge;
 use function get_class;
 use function spl_object_hash;
@@ -78,7 +79,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function merge($object) : void
+    public function merge($object): void
     {
         $this->getObjectRepository($object)->merge($object);
     }
@@ -86,7 +87,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function persist($object) : void
+    public function persist($object): void
     {
         if ($this->isScheduledForPersist($object)) {
             throw new InvalidArgumentException('Object is already scheduled for persist.');
@@ -106,7 +107,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object The instance to update
      */
-    public function update($object) : void
+    public function update($object): void
     {
         if ($this->isScheduledForUpdate($object)) {
             throw new InvalidArgumentException('Object is already scheduled for update.');
@@ -123,7 +124,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object The object instance to remove.
      */
-    public function remove($object) : void
+    public function remove($object): void
     {
         if ($this->isScheduledForRemove($object)) {
             throw new InvalidArgumentException('Object is already scheduled for remove.');
@@ -134,7 +135,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToRemove[spl_object_hash($object)] = $object;
     }
 
-    public function clear(?string $objectName = null) : void
+    public function clear(?string $objectName = null): void
     {
         $this->objectIdentityMap->clear($objectName);
 
@@ -149,7 +150,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function detach($object) : void
+    public function detach($object): void
     {
         $this->objectIdentityMap->detach($object);
     }
@@ -157,7 +158,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function refresh($object) : void
+    public function refresh($object): void
     {
         $this->getObjectRepository($object)->refresh($object);
     }
@@ -165,7 +166,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function contains($object) : bool
+    public function contains($object): bool
     {
         return $this->objectIdentityMap->contains($object)
             || $this->isScheduledForPersist($object);
@@ -174,11 +175,12 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * Commit the contents of the unit of work.
      */
-    public function commit() : void
+    public function commit(): void
     {
         $this->eventDispatcher->dispatchPreFlush();
 
-        if ($this->objectsToPersist === [] &&
+        if (
+            $this->objectsToPersist === [] &&
             $this->objectsToUpdate === [] &&
             $this->objectsToRemove === []
         ) {
@@ -209,7 +211,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function isScheduledForPersist($object) : bool
+    public function isScheduledForPersist($object): bool
     {
         return isset($this->objectsToPersist[spl_object_hash($object)]);
     }
@@ -217,7 +219,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @return object[]
      */
-    public function getObjectsToPersist() : array
+    public function getObjectsToPersist(): array
     {
         return $this->objectsToPersist;
     }
@@ -225,7 +227,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function isScheduledForUpdate($object) : bool
+    public function isScheduledForUpdate($object): bool
     {
         return isset($this->objectsToUpdate[spl_object_hash($object)]);
     }
@@ -233,7 +235,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @return object[]
      */
-    public function getObjectsToUpdate() : array
+    public function getObjectsToUpdate(): array
     {
         return $this->objectsToUpdate;
     }
@@ -241,7 +243,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function isScheduledForRemove($object) : bool
+    public function isScheduledForRemove($object): bool
     {
         return isset($this->objectsToRemove[spl_object_hash($object)]);
     }
@@ -249,7 +251,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @return object[]
      */
-    public function getObjectsToRemove() : array
+    public function getObjectsToRemove(): array
     {
         return $this->objectsToRemove;
     }
@@ -264,7 +266,7 @@ class UnitOfWork implements PropertyChangedListener
      * @param mixed  $oldValue     The old value of the property.
      * @param mixed  $newValue     The new value of the property.
      */
-    public function propertyChanged($object, $propertyName, $oldValue, $newValue) : void
+    public function propertyChanged($object, $propertyName, $oldValue, $newValue): void
     {
         if (! $this->isInIdentityMap($object)) {
             return;
@@ -285,7 +287,7 @@ class UnitOfWork implements PropertyChangedListener
      *
      * @param object $object
      */
-    public function getObjectChangeSet($object) : ChangeSet
+    public function getObjectChangeSet($object): ChangeSet
     {
         return $this->objectChangeSets->getObjectChangeSet($object);
     }
@@ -295,7 +297,7 @@ class UnitOfWork implements PropertyChangedListener
      *
      * @param object $object
      */
-    public function isInIdentityMap($object) : bool
+    public function isInIdentityMap($object): bool
     {
         return $this->objectIdentityMap->contains($object);
     }
@@ -319,7 +321,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function getObjectPersister($object) : ObjectPersisterInterface
+    public function getObjectPersister($object): ObjectPersisterInterface
     {
         return $this->objectPersisterFactory
             ->getPersister(get_class($object));
@@ -328,7 +330,7 @@ class UnitOfWork implements PropertyChangedListener
     /**
      * @param object $object
      */
-    public function getObjectRepository($object) : ObjectRepositoryInterface
+    public function getObjectRepository($object): ObjectRepositoryInterface
     {
         return $this->objectManager
             ->getRepository(get_class($object));

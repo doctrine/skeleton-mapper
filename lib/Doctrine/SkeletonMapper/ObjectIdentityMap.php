@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
+
 use function count;
 use function get_class;
 use function serialize;
@@ -28,7 +29,7 @@ class ObjectIdentityMap
     /**
      * @param object $object
      */
-    public function contains($object) : bool
+    public function contains($object): bool
     {
         $className = get_class($object);
 
@@ -59,7 +60,7 @@ class ObjectIdentityMap
      * @param object  $object
      * @param mixed[] $data
      */
-    public function addToIdentityMap($object, array $data) : void
+    public function addToIdentityMap($object, array $data): void
     {
         $className = get_class($object);
 
@@ -72,7 +73,7 @@ class ObjectIdentityMap
         $this->identityMap[get_class($object)][$serialized] = $object;
     }
 
-    public function clear(?string $objectName = null) : void
+    public function clear(?string $objectName = null): void
     {
         if ($objectName !== null) {
             unset($this->identityMap[$objectName]);
@@ -84,7 +85,7 @@ class ObjectIdentityMap
     /**
      * @param object $object
      */
-    public function detach($object) : void
+    public function detach($object): void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -92,7 +93,7 @@ class ObjectIdentityMap
         unset($this->identityMap[get_class($object)][$serialized]);
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->identityMap);
     }
@@ -102,7 +103,7 @@ class ObjectIdentityMap
      *
      * @return mixed[] $identifier
      */
-    private function getObjectIdentifier($object) : array
+    private function getObjectIdentifier($object): array
     {
         return $this->objectRepositoryFactory
             ->getRepository(get_class($object))
@@ -114,7 +115,7 @@ class ObjectIdentityMap
      *
      * @return mixed[] $identifier
      */
-    private function extractIdentifierFromData(string $className, array $data) : array
+    private function extractIdentifierFromData(string $className, array $data): array
     {
         return $this->objectRepositoryFactory
             ->getRepository($className)

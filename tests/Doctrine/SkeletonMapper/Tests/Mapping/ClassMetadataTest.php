@@ -19,30 +19,30 @@ class ClassMetadataTest extends TestCase
     /** @var ClassMetadata */
     private $class;
 
-    public function testMapField() : void
+    public function testMapField(): void
     {
         $this->class->mapField(['fieldName' => 'name']);
 
         self::assertEquals(['name' => ['fieldName' => 'name', 'name' => 'name']], $this->class->fieldMappings);
     }
 
-    public function testGetName() : void
+    public function testGetName(): void
     {
         self::assertEquals(ClassMetadataTestModel::class, $this->class->getName());
     }
 
-    public function testGetIdentifier() : void
+    public function testGetIdentifier(): void
     {
         $this->class->identifier = ['id'];
         self::assertEquals(['id'], $this->class->getIdentifier());
     }
 
-    public function testGetReflectionClass() : void
+    public function testGetReflectionClass(): void
     {
         self::assertSame(ClassMetadataTestModel::class, $this->class->getReflectionClass()->getName());
     }
 
-    public function testIsIdentifier() : void
+    public function testIsIdentifier(): void
     {
         self::assertFalse($this->class->isIdentifier('id'));
 
@@ -51,7 +51,7 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->isIdentifier('id'));
     }
 
-    public function testHasField() : void
+    public function testHasField(): void
     {
         self::assertFalse($this->class->hasField('username'));
 
@@ -60,18 +60,18 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->hasField('username'));
     }
 
-    public function testGetFieldNames() : void
+    public function testGetFieldNames(): void
     {
         $this->class->mapField(['fieldName' => 'username']);
         self::assertEquals(['username'], $this->class->getFieldNames());
     }
 
-    public function testGetAssociationNames() : void
+    public function testGetAssociationNames(): void
     {
         self::assertEquals([], $this->class->getAssociationNames());
     }
 
-    public function testGetTypeOfField() : void
+    public function testGetTypeOfField(): void
     {
         self::assertEquals('', $this->class->getTypeOfField('username'));
 
@@ -80,7 +80,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals('string', $this->class->getTypeOfField('username'));
     }
 
-    public function testGetAssociationTargetClass() : void
+    public function testGetAssociationTargetClass(): void
     {
         $this->class->mapField([
             'fieldName' => 'groups',
@@ -90,7 +90,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals('Test', $this->class->getAssociationTargetClass('groups'));
     }
 
-    public function testGetAssociationTargetClassThrowsInvalidArgumentException() : void
+    public function testGetAssociationTargetClassThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Association name expected, 'groups' is not an association.");
@@ -98,7 +98,7 @@ class ClassMetadataTest extends TestCase
         $this->class->getAssociationTargetClass('groups');
     }
 
-    public function testGetIdentifierValues() : void
+    public function testGetIdentifierValues(): void
     {
         $this->class->identifier           = ['id'];
         $this->class->identifierFieldNames = ['id'];
@@ -111,7 +111,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals(['id' => 1], $this->class->getIdentifierValues($object));
     }
 
-    public function testHasAssociation() : void
+    public function testHasAssociation(): void
     {
         self::assertFalse($this->class->hasAssociation('groups'));
 
@@ -124,7 +124,7 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->hasAssociation('groups'));
     }
 
-    public function testAddingAssociationMappingDoesNotAddFieldMapping() : void
+    public function testAddingAssociationMappingDoesNotAddFieldMapping(): void
     {
         self::assertFalse($this->class->hasAssociation('groups'));
 
@@ -139,7 +139,7 @@ class ClassMetadataTest extends TestCase
         self::assertFalse($this->class->hasField('groups'));
     }
 
-    public function testIsSingleValuedAssociation() : void
+    public function testIsSingleValuedAssociation(): void
     {
         self::assertFalse($this->class->isSingleValuedAssociation('groups'));
 
@@ -160,7 +160,7 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->isSingleValuedAssociation('profile'));
     }
 
-    public function testIsCollectionValuedAssociation() : void
+    public function testIsCollectionValuedAssociation(): void
     {
         self::assertFalse($this->class->isCollectionValuedAssociation('profile'));
 
@@ -181,7 +181,7 @@ class ClassMetadataTest extends TestCase
         self::assertFalse($this->class->isCollectionValuedAssociation('profile'));
     }
 
-    public function testInvokeLifecycleCallbacksWithArguments() : void
+    public function testInvokeLifecycleCallbacksWithArguments(): void
     {
         $object = new ClassMetadataTestModel();
         $data   = ['test'];
@@ -193,7 +193,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals($data, $object->testEventCalled);
     }
 
-    public function testInvokeLifecycleCallbacksThrowsInvalidArgumentException() : void
+    public function testInvokeLifecycleCallbacksThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected class "Doctrine\SkeletonMapper\Tests\Mapping\ClassMetadataTestModel"; found: "stdClass"');
@@ -201,7 +201,7 @@ class ClassMetadataTest extends TestCase
         $this->class->invokeLifecycleCallbacks('test', new stdClass());
     }
 
-    public function testInvokeLifecycleCallbacksWithoutArguments() : void
+    public function testInvokeLifecycleCallbacksWithoutArguments(): void
     {
         $object = new ClassMetadataTestModel();
         $data   = ['test'];
@@ -213,7 +213,7 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($object->testEventCalled);
     }
 
-    public function testHasLifecycleCallbacks() : void
+    public function testHasLifecycleCallbacks(): void
     {
         self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
@@ -222,7 +222,7 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->hasLifecycleCallbacks('test'));
     }
 
-    public function testGetLifecycleCallbacks() : void
+    public function testGetLifecycleCallbacks(): void
     {
         self::assertEquals([], $this->class->getLifecycleCallbacks('test'));
 
@@ -231,7 +231,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals(['testEvent'], $this->class->getLifecycleCallbacks('test'));
     }
 
-    public function testAddLifecycleCallback() : void
+    public function testAddLifecycleCallback(): void
     {
         self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
@@ -242,7 +242,7 @@ class ClassMetadataTest extends TestCase
         self::assertCount(1, $this->class->lifecycleCallbacks['test']);
     }
 
-    public function testSetLifecycleCallbacks() : void
+    public function testSetLifecycleCallbacks(): void
     {
         self::assertFalse($this->class->hasLifecycleCallbacks('test'));
 
@@ -251,13 +251,13 @@ class ClassMetadataTest extends TestCase
         self::assertTrue($this->class->hasLifecycleCallbacks('test'));
     }
 
-    public function testGetIdentifierFieldNames() : void
+    public function testGetIdentifierFieldNames(): void
     {
         $this->class->identifierFieldNames = ['id'];
         self::assertEquals(['id'], $this->class->getIdentifierFieldNames());
     }
 
-    public function testGetAssociationMappedByTargetField() : void
+    public function testGetAssociationMappedByTargetField(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Doctrine\SkeletonMapper\Mapping\ClassMetadata::getAssociationMappedByTargetField() is not implemented yet.');
@@ -265,7 +265,7 @@ class ClassMetadataTest extends TestCase
         $this->class->getAssociationMappedByTargetField('test');
     }
 
-    public function testIsAssociationInverseSide() : void
+    public function testIsAssociationInverseSide(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Doctrine\SkeletonMapper\Mapping\ClassMetadata::isAssociationInverseSide() is not implemented yet.');
@@ -273,7 +273,7 @@ class ClassMetadataTest extends TestCase
         $this->class->isAssociationInverseSide('test');
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->class = new ClassMetadata(ClassMetadataTestModel::class);
     }
@@ -293,7 +293,7 @@ class ClassMetadataTestModel
     /**
      * @param LifecycleEventArgs|true $args
      */
-    public function testEvent($args = null) : void
+    public function testEvent($args = null): void
     {
         if ($args !== null) {
             $this->testEventCalled = $args;
