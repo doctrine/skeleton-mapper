@@ -42,6 +42,8 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 
     /**
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function create(string $className);
 

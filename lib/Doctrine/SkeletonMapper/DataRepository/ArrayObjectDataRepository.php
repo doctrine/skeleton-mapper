@@ -9,9 +9,13 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class ArrayObjectDataRepository extends BasicObjectDataRepository
 {
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<mixed, mixed> */
     private $objects;
 
+    /**
+     * @param ArrayCollection<mixed, mixed> $objects
+     * @param class-string                  $className
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,

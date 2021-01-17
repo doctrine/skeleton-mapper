@@ -9,6 +9,9 @@ use Doctrine\Common\Collections\Collection;
 
 use function call_user_func;
 
+/**
+ * @template-extends AbstractLazyCollection<mixed, mixed>
+ */
 class LazyCollection extends AbstractLazyCollection
 {
     /** @var callable|null */
@@ -20,7 +23,7 @@ class LazyCollection extends AbstractLazyCollection
     }
 
     /**
-     * @return object[]|Collection
+     * @return Collection<int, object>
      */
     public function getCollection(): Collection
     {

@@ -64,8 +64,8 @@ class TestBasicObjectDataRepository extends BasicObjectDataRepository
     }
 
     /**
-     * @param mixed[]  $criteria
-     * @param string[] $orderBy
+     * @param mixed[]      $criteria
+     * @param mixed[]|null $orderBy
      *
      * @return string[][]
      */

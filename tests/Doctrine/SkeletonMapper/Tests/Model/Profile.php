@@ -132,7 +132,7 @@ class Profile extends BaseObject
         }
 
         $profile       = $this;
-        $this->address = static function () use ($data, $profile) {
+        $this->address = static function () use ($data, $profile): Address {
             $address = new Address($profile);
 
             if (isset($data['address1'])) {

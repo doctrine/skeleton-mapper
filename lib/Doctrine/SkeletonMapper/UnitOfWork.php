@@ -306,6 +306,8 @@ class UnitOfWork implements PropertyChangedListener
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data)
     {
@@ -340,6 +342,8 @@ class UnitOfWork implements PropertyChangedListener
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     private function createObject(string $className, array $data)
     {

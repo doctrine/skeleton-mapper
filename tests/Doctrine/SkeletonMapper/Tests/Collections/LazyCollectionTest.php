@@ -14,7 +14,8 @@ class LazyCollectionTest extends TestCase
     {
         $wrappedCollection = new ArrayCollection();
 
-        $collection = new LazyCollection(static function () use ($wrappedCollection) {
+        /** @return ArrayCollection<mixed, mixed> $collection */
+        $collection = new LazyCollection(static function () use ($wrappedCollection): ArrayCollection {
             return $wrappedCollection;
         });
 

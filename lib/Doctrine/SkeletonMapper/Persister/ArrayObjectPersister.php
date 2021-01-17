@@ -13,9 +13,13 @@ use function max;
 
 class ArrayObjectPersister extends BasicObjectPersister
 {
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<mixed, mixed> */
     protected $objects;
 
+    /**
+     * @param ArrayCollection<mixed, mixed> $objects
+     * @param class-string                  $className
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,

@@ -11,10 +11,8 @@ use Doctrine\SkeletonMapper\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Event\PreLoadEventArgs;
 use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Events;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
-use function assert;
 use function get_class;
 
 class EventDispatcher
@@ -51,7 +49,6 @@ class EventDispatcher
         $className = get_class($object);
 
         $class = $this->objectManager->getClassMetadata($className);
-        assert($class instanceof ClassMetadataInterface);
 
         if (! $class->hasLifecycleCallbacks($eventName)) {
             return;

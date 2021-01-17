@@ -24,6 +24,8 @@ use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use PHPUnit\Framework\TestCase;
 
+use function assert;
+
 abstract class BaseImplementationTest extends TestCase
 {
     /** @var SkeletonMapper\Hydrator\BasicObjectHydrator */
@@ -59,13 +61,13 @@ abstract class BaseImplementationTest extends TestCase
     /** @var UnitOfWork */
     protected $unitOfWork;
 
-    /** @var User[]|ArrayCollection */
+    /** @var ArrayCollection<int, User> */
     protected $users;
 
-    /** @var Profile[]|ArrayCollection */
+    /** @var ArrayCollection<int, Profile> */
     protected $profiles;
 
-    /** @var Group[]|ArrayCollection */
+    /** @var ArrayCollection<int, Group> */
     protected $groups;
 
     /** @var DataTesterInterface */
@@ -345,12 +347,14 @@ abstract class BaseImplementationTest extends TestCase
     public function testUpdates(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
         $user->setUsername('jonwage');
 
         $this->objectManager->flush();
         $this->objectManager->clear();
 
         $user2 = $this->objectManager->find(User::class, 1);
+        assert($user2 instanceof User);
 
         self::assertEquals('jonwage', $user2->getUsername());
     }
@@ -370,6 +374,7 @@ abstract class BaseImplementationTest extends TestCase
     public function testRefresh(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
         $user->setPassword('yeehaw');
 
@@ -432,6 +437,7 @@ abstract class BaseImplementationTest extends TestCase
         $user1->setPassword('password');
 
         $user2 = $this->objectManager->find(User::class, 1);
+        assert($user2 instanceof User);
 
         $this->objectManager->merge($user1);
 
@@ -517,7 +523,7 @@ abstract class BaseImplementationTest extends TestCase
 
         $this->eventTester->called = [];
 
-        $user = $this->objectManager->find(User::class, 1);
+        $this->objectManager->find(User::class, 1);
 
         $expected = [
             Events::preLoad,
@@ -572,6 +578,7 @@ abstract class BaseImplementationTest extends TestCase
         $user->called = [];
 
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
         $expected = [
             Events::preLoad,
@@ -584,6 +591,7 @@ abstract class BaseImplementationTest extends TestCase
     public function testPropertyChangedListeners(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
         $user->setUsername('changed');
 
         self::assertEquals(
@@ -600,6 +608,7 @@ abstract class BaseImplementationTest extends TestCase
         );
 
         $user2 = $this->objectManager->find(User::class, 1);
+        assert($user2 instanceof User);
 
         self::assertEquals('changed', $user2->getUsername());
 
@@ -633,6 +642,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user3 = $this->objectManager->find(User::class, 3);
+        assert($user3 instanceof User);
 
         self::assertEquals('changed', $user3->getUsername());
 
@@ -652,6 +662,7 @@ abstract class BaseImplementationTest extends TestCase
         );
 
         $user3 = $this->objectManager->find(User::class, 3);
+        assert($user3 instanceof User);
 
         self::assertEquals('changed', $user3->getUsername());
     }
@@ -716,6 +727,7 @@ abstract class BaseImplementationTest extends TestCase
     public function testOnlyUpdatesWhatChanged(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
         $user->setUsername('changed');
 
         $this->usersTester->set(1, 'password', 'changed password');
@@ -724,6 +736,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
         self::assertEquals('changed', $user->getUsername());
 
         $data = $this->usersTester->find(1);
@@ -734,6 +747,7 @@ abstract class BaseImplementationTest extends TestCase
     public function testReferences(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
         $profile = new Profile();
         $profile->setName('Jonathan H. Wage');
@@ -744,9 +758,11 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $profile = $this->objectManager->find(Profile::class, 1);
+        assert($profile instanceof Profile);
         self::assertEquals('Jonathan H. Wage', $profile->getName());
 
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
         self::assertSame($profile, $user->getProfile());
 
         $profile = new Profile();
@@ -761,12 +777,14 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, $user->getId());
+        assert($user instanceof User);
         self::assertEquals('John Caplan', $user->getProfile()->getName());
     }
 
     public function testEmbeddedAddress(): void
     {
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
         $profile = new Profile();
         $address = new Address($profile);
@@ -784,8 +802,8 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
-        self::assertNotNull($user->getProfile()->getAddress());
         self::assertEquals($address, $user->getProfile()->getAddress());
 
         $user->getProfile()->getAddress()->setState('Tennessee');
@@ -794,6 +812,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, 1);
+        assert($user instanceof User);
 
         self::assertEquals('Tennessee', $user->getProfile()->getAddress()->getState());
     }
@@ -816,6 +835,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, $user->getId());
+        assert($user instanceof User);
 
         self::assertCount(2, $user->getGroups());
 
@@ -832,6 +852,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectManager->clear();
 
         $user = $this->objectManager->find(User::class, $user->getId());
+        assert($user instanceof User);
 
         self::assertCount(3, $user->getGroups());
         self::assertEquals('Moderator', $groups[2]->getName());

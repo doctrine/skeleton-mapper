@@ -46,7 +46,7 @@ class ObjectManager implements ObjectManagerInterface
         $this->objectPersisterFactory  = $objectPersisterFactory;
         $this->objectIdentityMap       = $objectIdentityMap;
         $this->metadataFactory         = $metadataFactory;
-        $this->eventManager            = $eventManager ?: new EventManager();
+        $this->eventManager            = $eventManager ?? new EventManager();
 
         $this->unitOfWork = new UnitOfWork(
             $this,
@@ -186,6 +186,8 @@ class ObjectManager implements ObjectManagerInterface
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data)
     {

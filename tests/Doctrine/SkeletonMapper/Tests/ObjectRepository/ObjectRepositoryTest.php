@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
 
+use ArrayObject;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
@@ -44,7 +45,7 @@ class ObjectRepositoryTest extends TestCase
 
     public function testGetClassName(): void
     {
-        self::assertEquals('TestClassName', $this->repository->getClassName());
+        self::assertEquals(ArrayObject::class, $this->repository->getClassName());
     }
 
     public function testFind(): void
@@ -58,7 +59,7 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
+            ->with(ArrayObject::class, $data)
             ->will(self::returnValue(new stdClass()));
 
         $object = $this->repository->find(1);
@@ -79,15 +80,12 @@ class ObjectRepositoryTest extends TestCase
             ->method('findAll')
             ->will(self::returnValue($data));
 
-        $this->objectManager->expects(self::at(0))
+        $this->objectManager->expects(self::exactly(2))
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will(self::returnValue($object1));
-
-        $this->objectManager->expects(self::at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will(self::returnValue($object2));
+            ->willReturnMap([
+                [ArrayObject::class, $data[0], $object1],
+                [ArrayObject::class, $data[1], $object2],
+            ]);
 
         $objects = $this->repository->findAll();
         self::assertSame([$object1, $object2], $objects);
@@ -108,15 +106,12 @@ class ObjectRepositoryTest extends TestCase
             ->with([])
             ->will(self::returnValue($data));
 
-        $this->objectManager->expects(self::at(0))
+        $this->objectManager->expects(self::exactly(2))
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will(self::returnValue($object1));
-
-        $this->objectManager->expects(self::at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will(self::returnValue($object2));
+            ->willReturnMap([
+                [ArrayObject::class, $data[0], $object1],
+                [ArrayObject::class, $data[1], $object2],
+            ]);
 
         $objects = $this->repository->findBy([]);
         self::assertSame([$object1, $object2], $objects);
@@ -134,7 +129,7 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
+            ->with(ArrayObject::class, $data)
             ->will(self::returnValue(new stdClass()));
 
         $object = $this->repository->findOneBy($criteria);
@@ -187,7 +182,7 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getClassMetadata')
-            ->with('TestClassName')
+            ->with(ArrayObject::class)
             ->will(self::returnValue($this->classMetadata));
 
         $this->repository = new TestObjectRepository(
@@ -196,7 +191,7 @@ class ObjectRepositoryTest extends TestCase
             $this->objectFactory,
             $this->hydrator,
             $this->eventManager,
-            'TestClassName'
+            ArrayObject::class
         );
     }
 }

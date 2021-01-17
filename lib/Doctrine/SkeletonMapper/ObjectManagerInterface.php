@@ -22,6 +22,8 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data);
 

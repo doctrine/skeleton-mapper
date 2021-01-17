@@ -42,7 +42,7 @@ class BasicObjectRepositoryTest extends TestCase
     /** @var BasicObjectRepository */
     private $repository;
 
-    /** @var string */
+    /** @phpstan-var class-string */
     private $testClassName = BasicObjectRepositoryTestModel::class;
 
     public function testGetObjectIdentifier(): void

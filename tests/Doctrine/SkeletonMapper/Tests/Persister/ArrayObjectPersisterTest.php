@@ -22,13 +22,13 @@ class ArrayObjectPersisterTest extends TestCase
     /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
 
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<int, array<string, mixed>> */
     private $objects;
 
     /** @var ArrayObjectPersister */
     private $persister;
 
-    /** @var string */
+    /** @phpstan-var class-string */
     private $testClassName = ArrayObjectPersisterTestModel::class;
 
     public function testPersistObject(): void

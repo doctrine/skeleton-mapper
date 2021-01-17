@@ -32,12 +32,15 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /** @var EventManager */
     protected $eventManager;
 
-    /** @var string */
+    /** @phpstan-var class-string */
     protected $className;
 
     /** @var ClassMetadataInterface */
     protected $class;
 
+    /**
+     * @phpstan-param class-string $className
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ObjectDataRepositoryInterface $objectDataRepository,
@@ -56,12 +59,17 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
 
     /**
      * Returns the class name of the object managed by the repository.
+     *
+     * @phpstan-return class-string
      */
     public function getClassName(): string
     {
         return $this->className;
     }
 
+    /**
+     * @phpstan-param class-string $className
+     */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -167,6 +175,8 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
 
     /**
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function create(string $className)
     {

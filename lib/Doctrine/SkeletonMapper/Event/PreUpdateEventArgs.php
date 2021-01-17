@@ -56,6 +56,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
         if ($change !== null) {
             return $change->getOldValue();
         }
+
+        return null;
     }
 
     /**
@@ -70,6 +72,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
         if ($change !== null) {
             return $change->getNewValue();
         }
+
+        return null;
     }
 
     /**

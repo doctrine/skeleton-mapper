@@ -11,6 +11,7 @@ use ReflectionProperty;
 
 use function array_keys;
 use function assert;
+use function call_user_func;
 use function call_user_func_array;
 use function get_class;
 use function in_array;
@@ -40,12 +41,15 @@ class ClassMetadata implements ClassMetadataInterface
     /** @var string[][] */
     public $lifecycleCallbacks = [];
 
-    /** @var ReflectionClass */
+    /** @var ReflectionClass<object> */
     public $reflClass;
 
     /** @var ReflectionProperty[] */
     public $reflFields = [];
 
+    /**
+     * @phpstan-param class-string $className
+     */
     public function __construct(string $className)
     {
         $this->name      = $className;
@@ -108,6 +112,8 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
+     *
+     * @phpstan-return ReflectionClass<object>
      */
     public function getReflectionClass(): ReflectionClass
     {
@@ -163,9 +169,9 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getTypeOfField($fieldName): ?string
+    public function getTypeOfField($fieldName): string
     {
-        return $this->fieldMappings[$fieldName]['type'] ?? null;
+        return $this->fieldMappings[$fieldName]['type'] ?? '';
     }
 
     /**
@@ -247,7 +253,10 @@ class ClassMetadata implements ClassMetadataInterface
 
                 call_user_func_array($callable, $arguments);
             } else {
-                $object->$callback();
+                $callable = [$object, $callback];
+                assert(is_callable($callable));
+
+                call_user_func($callable);
             }
         }
     }

@@ -34,7 +34,7 @@ class User extends BaseObject
     /** @var callable|Profile */
     private $profile;
 
-    /** @var Group[]|Collection */
+    /** @var Collection<int, Group> */
     private $groups;
 
     /** @var string[] */
@@ -146,7 +146,7 @@ class User extends BaseObject
     }
 
     /**
-     * @return Group[]|Collection
+     * @return Collection<int, Group>
      */
     public function getGroups(): Collection
     {
@@ -231,7 +231,7 @@ class User extends BaseObject
             $changeSet['profileId'] = $this->getProfile()->getId();
         }
 
-        $groupIds = $this->groups->map(static function (Group $group) {
+        $groupIds = $this->groups->map(static function (Group $group): int {
             return $group->getId();
         })->toArray();
 
@@ -263,7 +263,7 @@ class User extends BaseObject
         }
 
         if (isset($changeSet['groups'])) {
-            $groupIds = $changeSet['groups']->map(static function (Group $group) {
+            $groupIds = $changeSet['groups']->map(static function (Group $group): int {
                 return $group->getId();
             })->toArray();
 
