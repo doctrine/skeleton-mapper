@@ -205,8 +205,8 @@ class User extends BaseObject
             return;
         }
 
-        $this->groups = new LazyCollection(static function () use ($objectManager, $data) {
-            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager) {
+        $this->groups = new LazyCollection(static function () use ($objectManager, $data): ArrayCollection {
+            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager): ?object {
                 return $objectManager->find(
                     Group::class,
                     $groupId
