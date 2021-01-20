@@ -31,7 +31,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Retrieves the object changeset.
      */
-    public function getObjectChangeSet() : ChangeSet
+    public function getObjectChangeSet(): ChangeSet
     {
         return $this->objectChangeSet;
     }
@@ -39,7 +39,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Checks if field has a changeset.
      */
-    public function hasChangedField(string $field) : bool
+    public function hasChangedField(string $field): bool
     {
         return $this->objectChangeSet->hasChangedField($field);
     }
@@ -56,6 +56,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
         if ($change !== null) {
             return $change->getOldValue();
         }
+
+        return null;
     }
 
     /**
@@ -70,6 +72,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
         if ($change !== null) {
             return $change->getNewValue();
         }
+
+        return null;
     }
 
     /**
@@ -77,7 +81,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @param mixed $value
      */
-    public function setNewValue(string $field, $value) : void
+    public function setNewValue(string $field, $value): void
     {
         $change = $this->objectChangeSet->getFieldChange($field);
 

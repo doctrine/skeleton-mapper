@@ -22,16 +22,16 @@ class ArrayObjectPersisterTest extends TestCase
     /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
 
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<int, array<string, mixed>> */
     private $objects;
 
     /** @var ArrayObjectPersister */
     private $persister;
 
-    /** @var string */
+    /** @phpstan-var class-string */
     private $testClassName = ArrayObjectPersisterTestModel::class;
 
-    public function testPersistObject() : void
+    public function testPersistObject(): void
     {
         $object = new ArrayObjectPersisterTestModel();
 
@@ -39,7 +39,7 @@ class ArrayObjectPersisterTest extends TestCase
         self::assertEquals([1 => ['username' => 'jwage', 'id' => 1]], $this->objects->toArray());
     }
 
-    public function testUpdateObject() : void
+    public function testUpdateObject(): void
     {
         $this->objects[1] = [
             'id' => 1,
@@ -68,7 +68,7 @@ class ArrayObjectPersisterTest extends TestCase
         self::assertEquals([1 => ['username' => 'jonwage', 'id' => 1]], $this->objects->toArray());
     }
 
-    public function testRemoveObject() : void
+    public function testRemoveObject(): void
     {
         $this->objects[1] = [
             'id' => 1,
@@ -96,7 +96,7 @@ class ArrayObjectPersisterTest extends TestCase
         self::assertCount(0, $this->objects);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -122,7 +122,7 @@ class ArrayObjectPersisterTestModel implements PersistableInterface
     /**
      * @return string[]
      */
-    public function preparePersistChangeSet() : array
+    public function preparePersistChangeSet(): array
     {
         return ['username' => 'jwage'];
     }
@@ -130,7 +130,7 @@ class ArrayObjectPersisterTestModel implements PersistableInterface
     /**
      * @return string[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+    public function prepareUpdateChangeSet(ChangeSet $changeSet): array
     {
         $changes = [];
 

@@ -6,6 +6,7 @@ namespace Doctrine\SkeletonMapper\DataSource;
 
 use Doctrine\SkeletonMapper\DataRepository\BasicObjectDataRepository;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
+
 use function array_slice;
 use function count;
 use function usort;
@@ -30,7 +31,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     /**
      * @return mixed[][]
      */
-    public function findAll() : array
+    public function findAll(): array
     {
         return $this->getSourceRows();
     }
@@ -46,7 +47,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ) : array {
+    ): array {
         $rows = [];
 
         foreach ($this->getSourceRows() as $row) {
@@ -73,7 +74,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[]|null
      */
-    public function findOneBy(array $criteria) : ?array
+    public function findOneBy(array $criteria): ?array
     {
         foreach ($this->getSourceRows() as $row) {
             if ($this->matches($criteria, $row)) {
@@ -88,7 +89,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      * @param mixed[] $criteria
      * @param mixed[] $row
      */
-    private function matches(array $criteria, array $row) : bool
+    private function matches(array $criteria, array $row): bool
     {
         return (new CriteriaMatcher($criteria, $row))->matches();
     }
@@ -99,7 +100,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[][] $rows
      */
-    private function sort(array $rows, array $orderBy) : array
+    private function sort(array $rows, array $orderBy): array
     {
         usort($rows, new Sorter($orderBy));
 
@@ -111,7 +112,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[][] $rows
      */
-    private function slice(array $rows, ?int $limit, ?int $offset) : array
+    private function slice(array $rows, ?int $limit, ?int $offset): array
     {
         if ($limit === null) {
             $limit = count($rows);
@@ -127,7 +128,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     /**
      * @return mixed[][]
      */
-    private function getSourceRows() : array
+    private function getSourceRows(): array
     {
         if ($this->sourceRows === null) {
             $this->sourceRows = $this->dataSource->getSourceRows();

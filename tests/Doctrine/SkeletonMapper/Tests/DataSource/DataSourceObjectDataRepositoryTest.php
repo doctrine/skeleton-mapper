@@ -22,7 +22,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
     /** @var DataSourceObjectDataRepository */
     private $dataSourceObjectDataRepository;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
         $this->dataSource    = $this->createMock(DataSource::class);
@@ -34,7 +34,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         );
     }
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         $rows = [
             ['row' => 1],
@@ -48,7 +48,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         self::assertEquals($rows, $this->dataSourceObjectDataRepository->findAll());
     }
 
-    public function testFindByCriteria() : void
+    public function testFindByCriteria(): void
     {
         $rows = [
             ['username' => 'jwage'],
@@ -64,7 +64,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         ], $this->dataSourceObjectDataRepository->findBy(['username' => 'ocramius']));
     }
 
-    public function testFindByOrderBy() : void
+    public function testFindByOrderBy(): void
     {
         $rows = [
             ['username' => 'jwage'],
@@ -81,7 +81,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         ], $this->dataSourceObjectDataRepository->findBy([], ['username' => 'desc']));
     }
 
-    public function testFindByLimitAndOffset() : void
+    public function testFindByLimitAndOffset(): void
     {
         $rows = [
             ['username' => 'jwage'],
@@ -99,7 +99,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         ], $this->dataSourceObjectDataRepository->findBy([], [], 2, 1));
     }
 
-    public function testFindByLimit() : void
+    public function testFindByLimit(): void
     {
         $rows = [
             ['username' => 'jwage'],
@@ -116,7 +116,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         ], $this->dataSourceObjectDataRepository->findBy([], [], 1));
     }
 
-    public function testFindByOffset() : void
+    public function testFindByOffset(): void
     {
         $rows = [
             ['username' => 'jwage'],

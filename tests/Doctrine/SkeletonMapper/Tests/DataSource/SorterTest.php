@@ -7,11 +7,12 @@ namespace Doctrine\SkeletonMapper\Tests\DataSource;
 use Doctrine\SkeletonMapper\DataSource\Sorter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+
 use function usort;
 
 class SorterTest extends TestCase
 {
-    public function testSingleAsc() : void
+    public function testSingleAsc(): void
     {
         $sorter = new Sorter(['numComments' => 'asc']);
 
@@ -28,7 +29,7 @@ class SorterTest extends TestCase
         ], $rows);
     }
 
-    public function testSingleDesc() : void
+    public function testSingleDesc(): void
     {
         $sorter = new Sorter(['numComments' => 'desc']);
 
@@ -45,7 +46,7 @@ class SorterTest extends TestCase
         ], $rows);
     }
 
-    public function testMultipleAsc() : void
+    public function testMultipleAsc(): void
     {
         $sorter = new Sorter(['numComments' => 'asc', 'name' => 'asc']);
 
@@ -82,7 +83,7 @@ class SorterTest extends TestCase
         ], $rows);
     }
 
-    public function testMultipleDesc() : void
+    public function testMultipleDesc(): void
     {
         $sorter = new Sorter(['numComments' => 'desc', 'name' => 'desc']);
 
@@ -119,7 +120,7 @@ class SorterTest extends TestCase
         ], $rows);
     }
 
-    public function testMultipleMixed() : void
+    public function testMultipleMixed(): void
     {
         $sorter = new Sorter(['numComments' => 'desc', 'name' => 'asc']);
 
@@ -156,7 +157,7 @@ class SorterTest extends TestCase
         ], $rows);
     }
 
-    public function testInvalidComparisonFieldThrowsInvalidArgumentException() : void
+    public function testInvalidComparisonFieldThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to find comparison field username');
@@ -171,7 +172,7 @@ class SorterTest extends TestCase
         usort($rows, $sorter);
     }
 
-    public function testInvalidOrderThrowsInvalidArgumentException() : void
+    public function testInvalidOrderThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$order value of invalid is not accepted. Only a value of asc or desc is allowed.');
@@ -179,7 +180,7 @@ class SorterTest extends TestCase
         $sorter = new Sorter(['username' => 'invalid']);
     }
 
-    public function testEmptyOrderByThrowsInvalidArgumentException() : void
+    public function testEmptyOrderByThrowsInvalidArgumentException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The Sorter class does not accept an empty $orderBy');

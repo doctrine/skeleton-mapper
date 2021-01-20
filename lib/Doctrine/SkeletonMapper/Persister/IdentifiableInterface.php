@@ -11,5 +11,5 @@ interface IdentifiableInterface
      *
      * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier) : void;
+    public function assignIdentifier(array $identifier): void;
 }

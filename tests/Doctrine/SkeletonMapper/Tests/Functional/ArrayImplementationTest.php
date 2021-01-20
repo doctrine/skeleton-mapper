@@ -16,7 +16,7 @@ use Doctrine\SkeletonMapper\Tests\Model\User;
 
 class ArrayImplementationTest extends BaseImplementationTest
 {
-    protected function setUpImplementation() : void
+    protected function setUpImplementation(): void
     {
         $this->users    = new ArrayCollection([
             1 => [
@@ -40,7 +40,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         $this->setUpCommon();
     }
 
-    protected function createUserDataRepository() : ObjectDataRepository
+    protected function createUserDataRepository(): ObjectDataRepository
     {
         return new ArrayObjectDataRepository(
             $this->objectManager,
@@ -49,7 +49,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         );
     }
 
-    protected function createUserPersister() : ObjectPersister
+    protected function createUserPersister(): ObjectPersister
     {
         return new ArrayObjectPersister(
             $this->objectManager,
@@ -58,7 +58,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         );
     }
 
-    protected function createProfileDataRepository() : ObjectDataRepository
+    protected function createProfileDataRepository(): ObjectDataRepository
     {
         return new ArrayObjectDataRepository(
             $this->objectManager,
@@ -67,7 +67,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         );
     }
 
-    protected function createProfilePersister() : ObjectPersister
+    protected function createProfilePersister(): ObjectPersister
     {
         return new ArrayObjectPersister(
             $this->objectManager,
@@ -76,7 +76,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         );
     }
 
-    protected function createGroupDataRepository() : ObjectDataRepository
+    protected function createGroupDataRepository(): ObjectDataRepository
     {
         return new ArrayObjectDataRepository(
             $this->objectManager,
@@ -85,7 +85,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         );
     }
 
-    protected function createGroupPersister() : ObjectPersister
+    protected function createGroupPersister(): ObjectPersister
     {
         return new ArrayObjectPersister(
             $this->objectManager,
@@ -97,9 +97,12 @@ class ArrayImplementationTest extends BaseImplementationTest
 
 class ArrayTester implements DataTesterInterface
 {
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<mixed, mixed> */
     private $objects;
 
+    /**
+     * @param ArrayCollection<mixed, mixed> $objects
+     */
     public function __construct(ArrayCollection $objects)
     {
         $this->objects = $objects;
@@ -108,7 +111,7 @@ class ArrayTester implements DataTesterInterface
     /**
      * @return mixed[]
      */
-    public function find(int $id) : ?array
+    public function find(int $id): ?array
     {
         foreach ($this->objects as $object) {
             if ($object['_id'] === $id) {
@@ -122,14 +125,14 @@ class ArrayTester implements DataTesterInterface
     /**
      * @param mixed $value
      */
-    public function set(int $id, string $key, $value) : void
+    public function set(int $id, string $key, $value): void
     {
         $object             = $this->objects[$id];
         $object[$key]       = $value;
         $this->objects[$id] = $object;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return $this->objects->count();
     }

@@ -9,9 +9,13 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class ArrayObjectDataRepository extends BasicObjectDataRepository
 {
-    /** @var ArrayCollection */
+    /** @var ArrayCollection<mixed, mixed> */
     private $objects;
 
+    /**
+     * @param ArrayCollection<mixed, mixed> $objects
+     * @param class-string                  $className
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,
@@ -24,7 +28,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     /**
      * @return mixed[][]
      */
-    public function findAll() : array
+    public function findAll(): array
     {
         return $this->objects->toArray();
     }
@@ -40,7 +44,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ) : array {
+    ): array {
         $objects = [];
 
         foreach ($this->objects as $object) {
@@ -69,7 +73,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[]|null
      */
-    public function findOneBy(array $criteria) : ?array
+    public function findOneBy(array $criteria): ?array
     {
         foreach ($this->objects as $object) {
             $matches = true;

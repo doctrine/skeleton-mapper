@@ -6,5 +6,5 @@ namespace Doctrine\SkeletonMapper\Tests\Model;
 
 interface Identifiable
 {
-    public function getId() : ?int;
+    public function getId(): ?int;
 }

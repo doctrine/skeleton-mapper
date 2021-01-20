@@ -22,6 +22,8 @@ class ObjectFactory
 
     /**
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function create(string $className)
     {

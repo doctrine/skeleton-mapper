@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class CriteriaMatcherTest extends TestCase
 {
-    public function testEqualsTrue() : void
+    public function testEqualsTrue(): void
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['username' => 'jwage'],
@@ -19,7 +19,7 @@ class CriteriaMatcherTest extends TestCase
         self::assertTrue($criteriaMatcher->matches());
     }
 
-    public function testEqualsFalse() : void
+    public function testEqualsFalse(): void
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['username' => 'jwage'],
@@ -29,7 +29,7 @@ class CriteriaMatcherTest extends TestCase
         self::assertFalse($criteriaMatcher->matches());
     }
 
-    public function testContainsTrue() : void
+    public function testContainsTrue(): void
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['projects' => ['$contains' => 'dbal']],
@@ -39,7 +39,7 @@ class CriteriaMatcherTest extends TestCase
         self::assertTrue($criteriaMatcher->matches());
     }
 
-    public function testContainsFalse() : void
+    public function testContainsFalse(): void
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['projects' => ['$contains' => 'mongodb-odm']],

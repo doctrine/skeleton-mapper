@@ -16,16 +16,18 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
     /**
      * @param object $object
      */
-    public function update($object) : void;
+    public function update($object): void;
 
     /**
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data);
 
-    public function getUnitOfWork() : UnitOfWork;
+    public function getUnitOfWork(): UnitOfWork;
 
     /**
      * @param string $className
@@ -37,5 +39,5 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
     /**
      * @param string $className
      */
-    public function getClassMetadata($className) : ClassMetadataInterface;
+    public function getClassMetadata($className): ClassMetadataInterface;
 }

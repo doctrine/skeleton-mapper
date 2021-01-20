@@ -24,7 +24,7 @@ class CriteriaMatcher
         $this->row      = $row;
     }
 
-    public function matches() : bool
+    public function matches(): bool
     {
         $matches = true;
 
@@ -42,7 +42,7 @@ class CriteriaMatcher
     /**
      * @param mixed $value
      */
-    private function criteriaElementMatches(string $key, $value) : bool
+    private function criteriaElementMatches(string $key, $value): bool
     {
         if (isset($value['$contains'])) {
             if ($this->contains($key, $value)) {
@@ -58,7 +58,7 @@ class CriteriaMatcher
     /**
      * @param mixed[] $value
      */
-    private function contains(string $key, array $value) : bool
+    private function contains(string $key, array $value): bool
     {
         return isset($this->row[$key]) && in_array($value['$contains'], $this->row[$key], true);
     }
@@ -66,7 +66,7 @@ class CriteriaMatcher
     /**
      * @param mixed $value
      */
-    private function equals(string $key, $value) : bool
+    private function equals(string $key, $value): bool
     {
         return isset($this->row[$key]) && $this->row[$key] === $value;
     }

@@ -18,7 +18,7 @@ interface ObjectPersisterInterface
      *
      * @return mixed[]
      */
-    public function preparePersistChangeSet($object) : array;
+    public function preparePersistChangeSet($object): array;
 
     /**
      * Prepares an object update changeset for update.
@@ -27,7 +27,7 @@ interface ObjectPersisterInterface
      *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet($object, ChangeSet $changeSet) : array;
+    public function prepareUpdateChangeSet($object, ChangeSet $changeSet): array;
 
     /**
      * Performs operation to write object to the database.
@@ -36,7 +36,7 @@ interface ObjectPersisterInterface
      *
      * @return mixed[] $objectData
      */
-    public function persistObject($object) : array;
+    public function persistObject($object): array;
 
     /**
      * Assign identifier to object.
@@ -44,7 +44,7 @@ interface ObjectPersisterInterface
      * @param object  $object
      * @param mixed[] $identifier
      */
-    public function assignIdentifier($object, array $identifier) : void;
+    public function assignIdentifier($object, array $identifier): void;
 
     /**
      * Performs operation to update object in the database.
@@ -53,12 +53,12 @@ interface ObjectPersisterInterface
      *
      * @return mixed[] $objectData
      */
-    public function updateObject($object, ChangeSet $changeSet) : array;
+    public function updateObject($object, ChangeSet $changeSet): array;
 
     /**
      * Performs operation to remove object in the database.
      *
      * @param object $object
      */
-    public function removeObject($object) : void;
+    public function removeObject($object): void;
 }

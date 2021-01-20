@@ -14,5 +14,5 @@ interface HydratableInterface
     /**
      * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void;
+    public function hydrate(array $data, ObjectManagerInterface $objectManager): void;
 }

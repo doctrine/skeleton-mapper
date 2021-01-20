@@ -46,7 +46,7 @@ class ObjectManager implements ObjectManagerInterface
         $this->objectPersisterFactory  = $objectPersisterFactory;
         $this->objectIdentityMap       = $objectIdentityMap;
         $this->metadataFactory         = $metadataFactory;
-        $this->eventManager            = $eventManager ?: new EventManager();
+        $this->eventManager            = $eventManager ?? new EventManager();
 
         $this->unitOfWork = new UnitOfWork(
             $this,
@@ -56,7 +56,7 @@ class ObjectManager implements ObjectManagerInterface
         );
     }
 
-    public function getUnitOfWork() : UnitOfWork
+    public function getUnitOfWork(): UnitOfWork
     {
         return $this->unitOfWork;
     }
@@ -72,7 +72,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function persist($object) : void
+    public function persist($object): void
     {
         $this->unitOfWork->persist($object);
     }
@@ -84,7 +84,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object The instance to update
      */
-    public function update($object) : void
+    public function update($object): void
     {
         $this->unitOfWork->update($object);
     }
@@ -92,7 +92,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function remove($object) : void
+    public function remove($object): void
     {
         $this->unitOfWork->remove($object);
     }
@@ -100,7 +100,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function merge($object) : void
+    public function merge($object): void
     {
         $this->unitOfWork->merge($object);
     }
@@ -108,7 +108,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function clear($objectName = null) : void
+    public function clear($objectName = null): void
     {
         $this->unitOfWork->clear($objectName);
     }
@@ -116,7 +116,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function detach($object) : void
+    public function detach($object): void
     {
         $this->unitOfWork->detach($object);
     }
@@ -124,15 +124,12 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function refresh($object) : void
+    public function refresh($object): void
     {
         $this->unitOfWork->refresh($object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function flush() : void
+    public function flush(): void
     {
         $this->unitOfWork->commit();
     }
@@ -150,7 +147,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * @param string $className
      */
-    public function getClassMetadata($className) : ClassMetadataInterface
+    public function getClassMetadata($className): ClassMetadataInterface
     {
         return $this->metadataFactory->getMetadataFor($className);
     }
@@ -158,7 +155,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Gets the metadata factory used to gather the metadata of classes.
      */
-    public function getMetadataFactory() : ClassMetadataFactory
+    public function getMetadataFactory(): ClassMetadataFactory
     {
         return $this->metadataFactory;
     }
@@ -170,7 +167,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $obj
      */
-    public function initializeObject($obj) : void
+    public function initializeObject($obj): void
     {
         throw new BadMethodCallException('Not supported.');
     }
@@ -180,7 +177,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object
      */
-    public function contains($object) : bool
+    public function contains($object): bool
     {
         return $this->unitOfWork->contains($object);
     }
@@ -189,6 +186,8 @@ class ObjectManager implements ObjectManagerInterface
      * @param mixed[] $data
      *
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data)
     {

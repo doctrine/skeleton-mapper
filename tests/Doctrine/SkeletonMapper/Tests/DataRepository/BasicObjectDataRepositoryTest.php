@@ -21,12 +21,12 @@ class BasicObjectDataRepositoryTest extends TestCase
     /** @var BasicObjectDataRepository */
     private $objectDataRepository;
 
-    public function testGetClassName() : void
+    public function testGetClassName(): void
     {
         self::assertEquals('TestClassName', $this->objectDataRepository->getClassName());
     }
 
-    public function testFind() : void
+    public function testFind(): void
     {
         $class = $this->createMock(ClassMetadata::class);
 
@@ -42,7 +42,7 @@ class BasicObjectDataRepositoryTest extends TestCase
         self::assertEquals(['username' => 'jwage'], $this->objectDataRepository->find(1));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -58,14 +58,14 @@ class TestBasicObjectDataRepository extends BasicObjectDataRepository
     /**
      * @return string[][]
      */
-    public function findAll() : array
+    public function findAll(): array
     {
         return [['username' => 'jwage']];
     }
 
     /**
-     * @param mixed[]  $criteria
-     * @param string[] $orderBy
+     * @param mixed[]      $criteria
+     * @param mixed[]|null $orderBy
      *
      * @return string[][]
      */
@@ -74,7 +74,7 @@ class TestBasicObjectDataRepository extends BasicObjectDataRepository
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ) : array {
+    ): array {
         return [['username' => 'jwage']];
     }
 
@@ -83,7 +83,7 @@ class TestBasicObjectDataRepository extends BasicObjectDataRepository
      *
      * @return string[]
      */
-    public function findOneBy(array $criteria) : array
+    public function findOneBy(array $criteria): array
     {
         return ['username' => 'jwage'];
     }

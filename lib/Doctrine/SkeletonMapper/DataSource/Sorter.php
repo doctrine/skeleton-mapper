@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\DataSource;
 
 use InvalidArgumentException;
+
 use function count;
 use function is_string;
 use function sprintf;
@@ -43,7 +44,7 @@ class Sorter
      * @param mixed[] $a
      * @param mixed[] $b
      */
-    public function __invoke(array $a, array $b) : int
+    public function __invoke(array $a, array $b): int
     {
         $returnVal        = 0;
         $comparisonField  = $this->fields[$this->level];
@@ -70,7 +71,7 @@ class Sorter
         return $returnVal;
     }
 
-    private function getOrder(string $order) : int
+    private function getOrder(string $order): int
     {
         $lowercaseOrder = strtolower($order);
 

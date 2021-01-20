@@ -13,6 +13,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+
 use function array_map;
 use function call_user_func;
 use function explode;
@@ -33,7 +34,7 @@ class User extends BaseObject
     /** @var callable|Profile */
     private $profile;
 
-    /** @var Group[]|Collection */
+    /** @var Collection<int, Group> */
     private $groups;
 
     /** @var string[] */
@@ -49,12 +50,12 @@ class User extends BaseObject
      *
      * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier) : void
+    public function assignIdentifier(array $identifier): void
     {
         $this->id = $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata) : void
+    public static function loadMetadata(ClassMetadataInterface $metadata): void
     {
         $metadata->setIdentifier(['_id']);
         $metadata->setIdentifierFieldNames(['id']);
@@ -74,12 +75,12 @@ class User extends BaseObject
         ]);
     }
 
-    public function getId() : ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id) : void
+    public function setId(int $id): void
     {
         if ($this->id === $id) {
             return;
@@ -89,12 +90,12 @@ class User extends BaseObject
         $this->id = $id;
     }
 
-    public function getUsername() : string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username) : void
+    public function setUsername(string $username): void
     {
         if ($this->username === $username) {
             return;
@@ -104,12 +105,12 @@ class User extends BaseObject
         $this->username = $username;
     }
 
-    public function getPassword() : string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password) : void
+    public function setPassword(string $password): void
     {
         if ($this->password === $password) {
             return;
@@ -119,7 +120,7 @@ class User extends BaseObject
         $this->password = $password;
     }
 
-    public function getProfile() : Profile
+    public function getProfile(): Profile
     {
         if (is_callable($this->profile)) {
             $this->profile = call_user_func($this->profile);
@@ -128,7 +129,7 @@ class User extends BaseObject
         return $this->profile;
     }
 
-    public function setProfile(Profile $profile) : void
+    public function setProfile(Profile $profile): void
     {
         if ($this->profile === $profile) {
             return;
@@ -138,16 +139,16 @@ class User extends BaseObject
         $this->profile = $profile;
     }
 
-    public function addGroup(Group $group) : void
+    public function addGroup(Group $group): void
     {
         $this->groups->add($group);
         $this->onPropertyChanged('groups', $this->groups, $this->groups);
     }
 
     /**
-     * @return Group[]|Collection
+     * @return Collection<int, Group>
      */
-    public function getGroups() : Collection
+    public function getGroups(): Collection
     {
         return $this->groups;
     }
@@ -155,7 +156,7 @@ class User extends BaseObject
     /**
      * @param mixed[] $arguments
      */
-    public function __call(string $method, array $arguments) : void
+    public function __call(string $method, array $arguments): void
     {
         $this->called[] = $method;
     }
@@ -165,7 +166,7 @@ class User extends BaseObject
      *
      * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+    public function hydrate(array $data, ObjectManagerInterface $objectManager): void
     {
         if (isset($data['_id'])) {
             $this->id = $data['_id'];
@@ -204,8 +205,8 @@ class User extends BaseObject
             return;
         }
 
-        $this->groups = new LazyCollection(static function () use ($objectManager, $data) {
-            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager) {
+        $this->groups = new LazyCollection(static function () use ($objectManager, $data): ArrayCollection {
+            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager): ?object {
                 return $objectManager->find(
                     Group::class,
                     $groupId
@@ -219,7 +220,7 @@ class User extends BaseObject
      *
      * @return mixed[]
      */
-    public function preparePersistChangeSet() : array
+    public function preparePersistChangeSet(): array
     {
         $changeSet = [
             'username' => $this->username,
@@ -230,7 +231,7 @@ class User extends BaseObject
             $changeSet['profileId'] = $this->getProfile()->getId();
         }
 
-        $groupIds = $this->groups->map(static function (Group $group) {
+        $groupIds = $this->groups->map(static function (Group $group): int {
             return $group->getId();
         })->toArray();
 
@@ -248,7 +249,7 @@ class User extends BaseObject
      *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+    public function prepareUpdateChangeSet(ChangeSet $changeSet): array
     {
         $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();
@@ -262,7 +263,7 @@ class User extends BaseObject
         }
 
         if (isset($changeSet['groups'])) {
-            $groupIds = $changeSet['groups']->map(static function (Group $group) {
+            $groupIds = $changeSet['groups']->map(static function (Group $group): int {
                 return $group->getId();
             })->toArray();
 

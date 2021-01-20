@@ -26,7 +26,7 @@ class Change
         $this->newValue     = $newValue;
     }
 
-    public function getPropertyName() : string
+    public function getPropertyName(): string
     {
         return $this->propertyName;
     }
@@ -50,7 +50,7 @@ class Change
     /**
      * @param mixed $newValue
      */
-    public function setNewValue($newValue) : void
+    public function setNewValue($newValue): void
     {
         $this->newValue = $newValue;
     }

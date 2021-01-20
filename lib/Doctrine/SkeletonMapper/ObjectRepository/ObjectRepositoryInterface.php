@@ -18,7 +18,7 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
      *
      * @return mixed[]
      */
-    public function getObjectIdentifier($object) : array;
+    public function getObjectIdentifier($object): array;
 
     /**
      * Returns the identifier.
@@ -27,26 +27,28 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
      *
      * @return mixed[]
      */
-    public function getObjectIdentifierFromData(array $data) : array;
+    public function getObjectIdentifierFromData(array $data): array;
 
     /**
      * @param object $object
      */
-    public function merge($object) : void;
+    public function merge($object): void;
 
     /**
      * @param object  $object
      * @param mixed[] $data
      */
-    public function hydrate($object, array $data) : void;
+    public function hydrate($object, array $data): void;
 
     /**
      * @return object
+     *
+     * @phpstan-param class-string $className
      */
     public function create(string $className);
 
     /**
      * @param object $object
      */
-    public function refresh($object) : void;
+    public function refresh($object): void;
 }

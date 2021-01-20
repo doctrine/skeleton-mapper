@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
 
+use ArrayObject;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
@@ -42,12 +43,12 @@ class ObjectRepositoryTest extends TestCase
     /** @var TestObjectRepository */
     private $repository;
 
-    public function testGetClassName() : void
+    public function testGetClassName(): void
     {
-        self::assertEquals('TestClassName', $this->repository->getClassName());
+        self::assertEquals(ArrayObject::class, $this->repository->getClassName());
     }
 
-    public function testFind() : void
+    public function testFind(): void
     {
         $data = ['username' => 'jwage'];
 
@@ -58,14 +59,14 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
+            ->with(ArrayObject::class, $data)
             ->will(self::returnValue(new stdClass()));
 
         $object = $this->repository->find(1);
         self::assertEquals(new stdClass(), $object);
     }
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         $data = [
             ['username' => 'jwage'],
@@ -79,21 +80,18 @@ class ObjectRepositoryTest extends TestCase
             ->method('findAll')
             ->will(self::returnValue($data));
 
-        $this->objectManager->expects(self::at(0))
+        $this->objectManager->expects(self::exactly(2))
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will(self::returnValue($object1));
-
-        $this->objectManager->expects(self::at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will(self::returnValue($object2));
+            ->willReturnMap([
+                [ArrayObject::class, $data[0], $object1],
+                [ArrayObject::class, $data[1], $object2],
+            ]);
 
         $objects = $this->repository->findAll();
         self::assertSame([$object1, $object2], $objects);
     }
 
-    public function testFindBy() : void
+    public function testFindBy(): void
     {
         $data = [
             ['username' => 'jwage'],
@@ -108,21 +106,18 @@ class ObjectRepositoryTest extends TestCase
             ->with([])
             ->will(self::returnValue($data));
 
-        $this->objectManager->expects(self::at(0))
+        $this->objectManager->expects(self::exactly(2))
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data[0])
-            ->will(self::returnValue($object1));
-
-        $this->objectManager->expects(self::at(1))
-            ->method('getOrCreateObject')
-            ->with('TestClassName', $data[1])
-            ->will(self::returnValue($object2));
+            ->willReturnMap([
+                [ArrayObject::class, $data[0], $object1],
+                [ArrayObject::class, $data[1], $object2],
+            ]);
 
         $objects = $this->repository->findBy([]);
         self::assertSame([$object1, $object2], $objects);
     }
 
-    public function testFindOneBy() : void
+    public function testFindOneBy(): void
     {
         $data     = ['username' => 'jwage'];
         $criteria = ['username' => 'jwage'];
@@ -134,14 +129,14 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getOrCreateObject')
-            ->with('TestClassName', $data)
+            ->with(ArrayObject::class, $data)
             ->will(self::returnValue(new stdClass()));
 
         $object = $this->repository->findOneBy($criteria);
         self::assertEquals(new stdClass(), $object);
     }
 
-    public function testRefresh() : void
+    public function testRefresh(): void
     {
         $data = ['username' => 'jwage'];
 
@@ -159,7 +154,7 @@ class ObjectRepositoryTest extends TestCase
         $this->repository->refresh($object);
     }
 
-    public function testCreate() : void
+    public function testCreate(): void
     {
         $object = new stdClass();
 
@@ -171,7 +166,7 @@ class ObjectRepositoryTest extends TestCase
         self::assertSame($object, $this->repository->create('stdClass'));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -187,7 +182,7 @@ class ObjectRepositoryTest extends TestCase
 
         $this->objectManager->expects(self::once())
             ->method('getClassMetadata')
-            ->with('TestClassName')
+            ->with(ArrayObject::class)
             ->will(self::returnValue($this->classMetadata));
 
         $this->repository = new TestObjectRepository(
@@ -196,14 +191,14 @@ class ObjectRepositoryTest extends TestCase
             $this->objectFactory,
             $this->hydrator,
             $this->eventManager,
-            'TestClassName'
+            ArrayObject::class
         );
     }
 }
 
 class TestObjectRepository extends ObjectRepository
 {
-    public function getClassMetadata() : ClassMetadataInterface
+    public function getClassMetadata(): ClassMetadataInterface
     {
         return $this->class;
     }
@@ -213,7 +208,7 @@ class TestObjectRepository extends ObjectRepository
      *
      * @return int[]
      */
-    public function getObjectIdentifier($object) : array
+    public function getObjectIdentifier($object): array
     {
         return ['id' => 1];
     }
@@ -223,7 +218,7 @@ class TestObjectRepository extends ObjectRepository
      *
      * @return int[]
      */
-    public function getObjectIdentifierFromData(array $data) : array
+    public function getObjectIdentifierFromData(array $data): array
     {
         return ['id' => 1];
     }
@@ -231,7 +226,7 @@ class TestObjectRepository extends ObjectRepository
     /**
      * @param object $object
      */
-    public function merge($object) : void
+    public function merge($object): void
     {
     }
 }

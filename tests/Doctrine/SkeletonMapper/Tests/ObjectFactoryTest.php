@@ -13,14 +13,14 @@ use stdClass;
  */
 class ObjectFactoryTest extends TestCase
 {
-    public function testCreate() : void
+    public function testCreate(): void
     {
         $factory = new ObjectFactoryStub();
         $object  = $factory->create(stdClass::class);
         self::assertInstanceOf(stdClass::class, $object);
     }
 
-    public function testCreateWithReflectionMethod() : void
+    public function testCreateWithReflectionMethod(): void
     {
         $factory = new ObjectFactoryReflectionMethodStub();
         $object  = $factory->create(stdClass::class);
@@ -34,7 +34,7 @@ class ObjectFactoryStub extends ObjectFactory
 
 class ObjectFactoryReflectionMethodStub extends ObjectFactory
 {
-    protected function isReflectionMethodAvailable() : bool
+    protected function isReflectionMethodAvailable(): bool
     {
         return true;
     }

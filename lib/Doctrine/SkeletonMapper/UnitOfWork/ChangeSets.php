@@ -14,7 +14,7 @@ class ChangeSets
     /**
      * @param object $object
      */
-    public function addObjectChange($object, Change $change) : void
+    public function addObjectChange($object, Change $change): void
     {
         $this->getObjectChangeSet($object)->addChange($change);
     }
@@ -22,7 +22,7 @@ class ChangeSets
     /**
      * @param object $object
      */
-    public function getObjectChangeSet($object) : ChangeSet
+    public function getObjectChangeSet($object): ChangeSet
     {
         $oid = spl_object_hash($object);
 

@@ -10,6 +10,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+
 use function array_map;
 
 class Group extends BaseObject
@@ -30,12 +31,12 @@ class Group extends BaseObject
      *
      * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier) : void
+    public function assignIdentifier(array $identifier): void
     {
         $this->id = (int) $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata) : void
+    public static function loadMetadata(ClassMetadataInterface $metadata): void
     {
         $metadata->setIdentifier(['_id']);
         $metadata->setIdentifierFieldNames(['id']);
@@ -46,12 +47,12 @@ class Group extends BaseObject
         $metadata->mapField(['fieldName' => 'name']);
     }
 
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id) : void
+    public function setId(int $id): void
     {
         if ($this->id === $id) {
             return;
@@ -61,12 +62,12 @@ class Group extends BaseObject
         $this->id = $id;
     }
 
-    public function getName() : ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name) : void
+    public function setName(string $name): void
     {
         if ($this->name === $name) {
             return;
@@ -81,7 +82,7 @@ class Group extends BaseObject
      *
      * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+    public function hydrate(array $data, ObjectManagerInterface $objectManager): void
     {
         if (isset($data['_id'])) {
             $this->id = $data['_id'];
@@ -99,7 +100,7 @@ class Group extends BaseObject
      *
      * @return mixed[]
      */
-    public function preparePersistChangeSet() : array
+    public function preparePersistChangeSet(): array
     {
         $changeSet = [
             'name' => $this->name,
@@ -117,7 +118,7 @@ class Group extends BaseObject
      *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+    public function prepareUpdateChangeSet(ChangeSet $changeSet): array
     {
         $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();

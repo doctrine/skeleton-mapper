@@ -10,6 +10,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\Change;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
+
 use function array_map;
 use function call_user_func;
 use function is_callable;
@@ -30,12 +31,12 @@ class Profile extends BaseObject
      *
      * @param mixed[] $identifier
      */
-    public function assignIdentifier(array $identifier) : void
+    public function assignIdentifier(array $identifier): void
     {
         $this->id = $identifier['_id'];
     }
 
-    public static function loadMetadata(ClassMetadataInterface $metadata) : void
+    public static function loadMetadata(ClassMetadataInterface $metadata): void
     {
         $metadata->setIdentifier(['_id']);
         $metadata->setIdentifierFieldNames(['id']);
@@ -47,12 +48,12 @@ class Profile extends BaseObject
         $metadata->mapField(['fieldName' => 'address']);
     }
 
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(int $id) : void
+    public function setId(int $id): void
     {
         if ($this->id === $id) {
             return;
@@ -62,12 +63,12 @@ class Profile extends BaseObject
         $this->id = $id;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name) : void
+    public function setName(string $name): void
     {
         if ($this->name === $name) {
             return;
@@ -77,7 +78,7 @@ class Profile extends BaseObject
         $this->name = $name;
     }
 
-    public function getAddress() : Address
+    public function getAddress(): Address
     {
         if (is_callable($this->address)) {
             $this->address = call_user_func($this->address);
@@ -86,7 +87,7 @@ class Profile extends BaseObject
         return $this->address;
     }
 
-    public function setAddress(Address $address) : void
+    public function setAddress(Address $address): void
     {
         if ($this->address === $address) {
             return;
@@ -100,7 +101,7 @@ class Profile extends BaseObject
      * @param mixed $oldValue
      * @param mixed $newValue
      */
-    public function addressChanged(string $propName, $oldValue, $newValue) : void
+    public function addressChanged(string $propName, $oldValue, $newValue): void
     {
         $this->onPropertyChanged('address', $this->address, $this->address);
     }
@@ -110,7 +111,7 @@ class Profile extends BaseObject
      *
      * @param mixed[] $data
      */
-    public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+    public function hydrate(array $data, ObjectManagerInterface $objectManager): void
     {
         if (isset($data['_id'])) {
             $this->id = $data['_id'];
@@ -120,16 +121,18 @@ class Profile extends BaseObject
             $this->name = $data['name'];
         }
 
-        if (! isset($data['address1'])
+        if (
+            ! isset($data['address1'])
             && ! isset($data['address2'])
             && ! isset($data['city'])
             && ! isset($data['state'])
-            && ! isset($data['zip'])) {
+            && ! isset($data['zip'])
+        ) {
             return;
         }
 
         $profile       = $this;
-        $this->address = static function () use ($data, $profile) {
+        $this->address = static function () use ($data, $profile): Address {
             $address = new Address($profile);
 
             if (isset($data['address1'])) {
@@ -161,7 +164,7 @@ class Profile extends BaseObject
      *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+    public function prepareUpdateChangeSet(ChangeSet $changeSet): array
     {
         $changeSet = array_map(static function (Change $change) {
             return $change->getNewValue();
@@ -189,7 +192,7 @@ class Profile extends BaseObject
      *
      * @return mixed[]
      */
-    public function preparePersistChangeSet() : array
+    public function preparePersistChangeSet(): array
     {
         $changeSet = [
             'name' => $this->name,

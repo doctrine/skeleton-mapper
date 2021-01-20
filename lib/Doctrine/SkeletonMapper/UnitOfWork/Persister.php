@@ -29,7 +29,7 @@ class Persister
         $this->objectIdentityMap = $objectIdentityMap;
     }
 
-    public function executePersists() : void
+    public function executePersists(): void
     {
         foreach ($this->unitOfWork->getObjectsToPersist() as $object) {
             $persister  = $this->unitOfWork->getObjectPersister($object);
@@ -45,7 +45,7 @@ class Persister
         }
     }
 
-    public function executeUpdates() : void
+    public function executeUpdates(): void
     {
         foreach ($this->unitOfWork->getObjectsToUpdate() as $object) {
             $changeSet = $this->unitOfWork->getObjectChangeSet($object);
@@ -57,7 +57,7 @@ class Persister
         }
     }
 
-    public function executeRemoves() : void
+    public function executeRemoves(): void
     {
         foreach ($this->unitOfWork->getObjectsToRemove() as $object) {
             $this->unitOfWork->getObjectPersister($object)

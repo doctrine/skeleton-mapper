@@ -30,7 +30,7 @@ class ChangeSet
         return $this->object;
     }
 
-    public function addChange(Change $change) : void
+    public function addChange(Change $change): void
     {
         $this->changes[$change->getPropertyName()] = $change;
     }
@@ -38,17 +38,17 @@ class ChangeSet
     /**
      * @return Change[]
      */
-    public function getChanges() : array
+    public function getChanges(): array
     {
         return $this->changes;
     }
 
-    public function hasChangedField(string $fieldName) : bool
+    public function hasChangedField(string $fieldName): bool
     {
         return isset($this->changes[$fieldName]);
     }
 
-    public function getFieldChange(string $fieldName) : ?Change
+    public function getFieldChange(string $fieldName): ?Change
     {
         return $this->changes[$fieldName] ?? null;
     }

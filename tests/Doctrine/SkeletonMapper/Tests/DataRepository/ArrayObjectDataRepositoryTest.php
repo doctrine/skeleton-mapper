@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Tests\DataRepository;
 
+use ArrayObject;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
@@ -18,18 +19,18 @@ class ArrayObjectDataRepositoryTest extends TestCase
     /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
 
-    /** @var object[]|ArrayCollection */
+    /** @var ArrayCollection<int, array<string, string>> */
     private $objects;
 
     /** @var ArrayObjectDataRepository */
     private $objectDataRepository;
 
-    public function testFindAll() : void
+    public function testFindAll(): void
     {
         self::assertSame([['username' => 'jwage']], $this->objectDataRepository->findAll());
     }
 
-    public function testFindBy() : void
+    public function testFindBy(): void
     {
         $criteria = ['username' => 'jwage'];
         $orderBy  = ['username' => 'desc'];
@@ -42,12 +43,9 @@ class ArrayObjectDataRepositoryTest extends TestCase
         );
     }
 
-    public function testFindOneBy() : void
+    public function testFindOneBy(): void
     {
         $criteria = ['username' => 'jwage'];
-        $orderBy  = ['username' => 'desc'];
-        $limit    = 20;
-        $offset   = 20;
 
         self::assertSame(
             ['username' => 'jwage'],
@@ -55,7 +53,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
         );
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
@@ -66,7 +64,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
         $this->objectDataRepository = new ArrayObjectDataRepository(
             $this->objectManager,
             $this->objects,
-            'TestClassName'
+            ArrayObject::class
         );
     }
 }

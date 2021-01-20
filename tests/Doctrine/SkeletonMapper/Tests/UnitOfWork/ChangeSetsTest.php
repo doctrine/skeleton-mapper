@@ -15,7 +15,7 @@ use stdClass;
  */
 class ChangeSetsTest extends TestCase
 {
-    public function testChangeSet() : void
+    public function testChangeSet(): void
     {
         $object     = new stdClass();
         $changeSets = new ChangeSets();
@@ -28,7 +28,7 @@ class ChangeSetsTest extends TestCase
         self::assertEquals($changeSet, $changeSets->getObjectChangeSet($object));
     }
 
-    public function testGetObjectChangeSet() : void
+    public function testGetObjectChangeSet(): void
     {
         $object     = new stdClass();
         $change     = new Change('username', 'jonwage', 'jwage');

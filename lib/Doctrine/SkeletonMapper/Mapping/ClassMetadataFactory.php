@@ -27,7 +27,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
      *
      * @return ClassMetadataInterface[] The ClassMetadataInterface instances of all mapped classes.
      */
-    public function getAllMetadata() : array
+    public function getAllMetadata(): array
     {
         return $this->classes;
     }
@@ -35,7 +35,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * @param string $className
      */
-    public function getMetadataFor($className) : ClassMetadataInterface
+    public function getMetadataFor($className): ClassMetadataInterface
     {
         if (! isset($this->classes[$className])) {
             $metadata = $this->classMetadataInstantiator->instantiate($className);
@@ -53,7 +53,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * {@inheritDoc}
      */
-    public function hasMetadataFor($className) : bool
+    public function hasMetadataFor($className): bool
     {
         return isset($this->classes[$className]);
     }
@@ -70,7 +70,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     /**
      * {@inheritDoc}
      */
-    public function isTransient($className) : bool
+    public function isTransient($className): bool
     {
         return isset($this->classes[$className]);
     }

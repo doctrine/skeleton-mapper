@@ -16,7 +16,7 @@ abstract class BaseObject implements HydratableInterface, PersistableInterface, 
     /** @var PropertyChangedListener[] */
     private $listeners = [];
 
-    public function addPropertyChangedListener(PropertyChangedListener $listener) : void
+    public function addPropertyChangedListener(PropertyChangedListener $listener): void
     {
         $this->listeners[] = $listener;
     }
@@ -25,7 +25,7 @@ abstract class BaseObject implements HydratableInterface, PersistableInterface, 
      * @param mixed $oldValue
      * @param mixed $newValue
      */
-    protected function onPropertyChanged(string $propName, $oldValue, $newValue) : void
+    protected function onPropertyChanged(string $propName, $oldValue, $newValue): void
     {
         if ($this->listeners === []) {
             return;
