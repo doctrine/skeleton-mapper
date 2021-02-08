@@ -87,7 +87,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     *
     * @return object[] The objects.
     */
-    public function findAll() : array
+    public function findAll() : iterable
     {
         $objectsData = $this->objectDataRepository->findAll();
 
@@ -108,7 +108,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null) : array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null) : iterable
     {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,

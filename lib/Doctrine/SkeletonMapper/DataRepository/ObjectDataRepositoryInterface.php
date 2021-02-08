@@ -25,7 +25,7 @@ interface ObjectDataRepositoryInterface
      *
      * @return mixed[][] The objects data.
      */
-    public function findAll() : array;
+    public function findAll() : iterable;
 
     /**
      * Finds objects data by a set of criteria.
@@ -46,7 +46,7 @@ interface ObjectDataRepositoryInterface
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
-    ) : array;
+    ) : iterable;
 
     /**
      * Finds a single objects data by a set of criteria.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Tests\ObjectRepository;
 
+use ArrayIterator;
 use Doctrine\Common\EventManager;
 use Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface;
 use Doctrine\SkeletonMapper\Hydrator\ObjectHydratorInterface;
@@ -65,7 +66,21 @@ class ObjectRepositoryTest extends TestCase
         self::assertEquals(new stdClass(), $object);
     }
 
-    public function testFindAll() : void
+    /**
+     * @return bool[][]
+     */
+    public function providerTestFind() : array
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    /**
+     * @dataProvider providerTestFind
+     */
+    public function testFindAll(bool $arrayIteratorReturns) : void
     {
         $data = [
             ['username' => 'jwage'],
@@ -89,11 +104,16 @@ class ObjectRepositoryTest extends TestCase
             ->with('TestClassName', $data[1])
             ->will(self::returnValue($object2));
 
+        $this->repository->setArrayIteratorReturn($arrayIteratorReturns);
         $objects = $this->repository->findAll();
-        self::assertSame([$object1, $object2], $objects);
+
+        self::assertSame([$object1, $object2], $objects instanceof ArrayIterator ? $objects->getArrayCopy() : $objects);
     }
 
-    public function testFindBy() : void
+    /**
+     * @dataProvider providerTestFind
+     */
+    public function testFindBy(bool $arrayIteratorReturns) : void
     {
         $data = [
             ['username' => 'jwage'],
@@ -118,8 +138,10 @@ class ObjectRepositoryTest extends TestCase
             ->with('TestClassName', $data[1])
             ->will(self::returnValue($object2));
 
+        $this->repository->setArrayIteratorReturn($arrayIteratorReturns);
         $objects = $this->repository->findBy([]);
-        self::assertSame([$object1, $object2], $objects);
+
+        self::assertSame([$object1, $object2], $objects instanceof ArrayIterator ? $objects->getArrayCopy() : $objects);
     }
 
     public function testFindOneBy() : void
@@ -203,6 +225,14 @@ class ObjectRepositoryTest extends TestCase
 
 class TestObjectRepository extends ObjectRepository
 {
+    /** @var bool */
+    private $arrayIteratorReturn = false;
+
+    public function setArrayIteratorReturn(bool $returnArrayIterator) : void
+    {
+        $this->arrayIteratorReturn = $returnArrayIterator;
+    }
+
     public function getClassMetadata() : ClassMetadataInterface
     {
         return $this->class;
@@ -233,5 +263,28 @@ class TestObjectRepository extends ObjectRepository
      */
     public function merge($object) : void
     {
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function findAll() : iterable
+    {
+        $result = parent::findAll();
+        return $this->arrayIteratorReturn ? new ArrayIterator($result) : $result;
+    }
+
+    /**
+     * @param mixed[]       $criteria
+     * @param string[]|null $orderBy
+     * @param mixed|null    $limit
+     * @param mixed|null    $offset
+     *
+     * @return mixed[]
+     */
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null) : iterable
+    {
+        $result = parent::findBy($criteria, $orderBy, $limit, $offset);
+        return $this->arrayIteratorReturn ? new ArrayIterator($result) : $result;
     }
 }
