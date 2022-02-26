@@ -6,8 +6,10 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use BadMethodCallException;
 
-use function get_class;
-
+/**
+ * @template T of object
+ * @template-extends ObjectRepository<T>
+ */
 class BasicObjectRepository extends ObjectRepository
 {
     /**
@@ -18,7 +20,7 @@ class BasicObjectRepository extends ObjectRepository
     public function getObjectIdentifier($object): array
     {
         return $this->objectManager
-            ->getClassMetadata(get_class($object))
+            ->getClassMetadata($object::class)
             ->getIdentifierValues($object);
     }
 

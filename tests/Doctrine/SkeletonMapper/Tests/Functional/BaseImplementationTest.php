@@ -31,7 +31,7 @@ abstract class BaseImplementationTest extends TestCase
     /** @var SkeletonMapper\Hydrator\BasicObjectHydrator */
     protected $basicObjectHydrator;
 
-    /** @var SkeletonMapper\Mapping\ClassMetadataFactory */
+    /** @var SkeletonMapper\Mapping\ClassMetadataFactory<ClassMetadataInterface<User>> */
     protected $classMetadataFactory;
 
     /** @var SkeletonMapper\Mapping\ClassMetadataInstantiator */
@@ -52,7 +52,7 @@ abstract class BaseImplementationTest extends TestCase
     /** @var EventManager */
     protected $eventManager;
 
-    /** @var ClassMetadataInterface */
+    /** @var ClassMetadataInterface<User> */
     protected $userClassMetadata;
 
     /** @var SkeletonMapper\ObjectManager */
@@ -61,7 +61,7 @@ abstract class BaseImplementationTest extends TestCase
     /** @var UnitOfWork */
     protected $unitOfWork;
 
-    /** @var ArrayCollection<int, User> */
+    /** @var ArrayCollection<int, array{_id: int, username: string, password: string}> */
     protected $users;
 
     /** @var ArrayCollection<int, Profile> */

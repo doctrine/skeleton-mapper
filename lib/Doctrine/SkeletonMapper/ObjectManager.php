@@ -6,10 +6,10 @@ namespace Doctrine\SkeletonMapper;
 
 use BadMethodCallException;
 use Doctrine\Common\EventManager;
+use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
-use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
@@ -20,7 +20,7 @@ class ObjectManager implements ObjectManagerInterface
     /** @var ObjectRepositoryFactoryInterface */
     private $objectRepositoryFactory;
 
-    /** @var ObjectPersisterFactoryInterface */
+    /** @var ObjectPersisterFactoryInterface<object> */
     private $objectPersisterFactory;
 
     /** @var ObjectIdentityMap */
@@ -29,12 +29,16 @@ class ObjectManager implements ObjectManagerInterface
     /** @var UnitOfWork */
     private $unitOfWork;
 
-    /** @var ClassMetadataFactory*/
+    /** @var ClassMetadataFactory<ClassMetadata<object>> */
     private $metadataFactory;
 
     /** @var EventManager */
     private $eventManager;
 
+    /**
+     * @param ClassMetadataFactory<ClassMetadata<object>> $metadataFactory
+     * @param ObjectPersisterFactoryInterface<object>     $objectPersisterFactory
+     */
     public function __construct(
         ObjectRepositoryFactoryInterface $objectRepositoryFactory,
         ObjectPersisterFactoryInterface $objectPersisterFactory,
@@ -63,6 +67,12 @@ class ObjectManager implements ObjectManagerInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @psalm-param class-string<T> $className
+     *
+     * @psalm-return T|null
+     *
+     * @template T of object
      */
     public function find($className, $id)
     {
@@ -82,7 +92,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * The object will be updated in the database as a result of the flush operation.
      *
-     * @param object $object The instance to update
+     * {@inheritDoc}
      */
     public function update($object): void
     {
@@ -135,9 +145,7 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * @param string $className
-     *
-     * @return ObjectRepositoryInterface
+     * {@inheritDoc}
      */
     public function getRepository($className)
     {
@@ -145,7 +153,7 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * @param string $className
+     * {@inheritDoc}
      */
     public function getClassMetadata($className): ClassMetadataInterface
     {
@@ -154,8 +162,10 @@ class ObjectManager implements ObjectManagerInterface
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
+     *
+     * {@inheritdoc}
      */
-    public function getMetadataFactory(): ClassMetadataFactory
+    public function getMetadataFactory()
     {
         return $this->metadataFactory;
     }
@@ -165,7 +175,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * This method is a no-op for other objects.
      *
-     * @param object $obj
+     * {@inheritDoc}
      */
     public function initializeObject($obj): void
     {
@@ -175,7 +185,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Checks if the object is part of the current UnitOfWork and therefore managed.
      *
-     * @param object $object
+     * {@inheritDoc}
      */
     public function contains($object): bool
     {
@@ -184,10 +194,9 @@ class ObjectManager implements ObjectManagerInterface
 
     /**
      * @param mixed[] $data
+     * @phpstan-param class-string $className
      *
      * @return object
-     *
-     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data)
     {

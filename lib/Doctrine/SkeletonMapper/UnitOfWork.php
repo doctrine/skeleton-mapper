@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper;
 
 use Doctrine\Common\EventManager;
-use Doctrine\Common\NotifyPropertyChanged;
-use Doctrine\Common\PropertyChangedListener;
+use Doctrine\Persistence\NotifyPropertyChanged;
+use Doctrine\Persistence\PropertyChangedListener;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface;
@@ -18,7 +18,6 @@ use Doctrine\SkeletonMapper\UnitOfWork\Persister;
 use InvalidArgumentException;
 
 use function array_merge;
-use function get_class;
 use function spl_object_hash;
 
 /**
@@ -29,7 +28,7 @@ class UnitOfWork implements PropertyChangedListener
     /** @var ObjectManagerInterface */
     private $objectManager;
 
-    /** @var ObjectPersisterFactoryInterface */
+    /** @var ObjectPersisterFactoryInterface<object> */
     private $objectPersisterFactory;
 
     /** @var ObjectIdentityMap */
@@ -53,6 +52,9 @@ class UnitOfWork implements PropertyChangedListener
     /** @var ChangeSets */
     private $objectChangeSets;
 
+    /**
+     * @phpstan-param ObjectPersisterFactoryInterface<object> $objectPersisterFactory
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ObjectPersisterFactoryInterface $objectPersisterFactory,
@@ -304,10 +306,9 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * @param mixed[] $data
+     * @phpstan-param class-string $className
      *
      * @return object
-     *
-     * @phpstan-param class-string $className
      */
     public function getOrCreateObject(string $className, array $data)
     {
@@ -322,28 +323,31 @@ class UnitOfWork implements PropertyChangedListener
 
     /**
      * @param object $object
+     *
+     * @phpstan-return ObjectPersisterInterface<object>
      */
     public function getObjectPersister($object): ObjectPersisterInterface
     {
         return $this->objectPersisterFactory
-            ->getPersister(get_class($object));
+            ->getPersister($object::class);
     }
 
     /**
      * @param object $object
+     *
+     * @return ObjectRepositoryInterface<object>
      */
     public function getObjectRepository($object): ObjectRepositoryInterface
     {
         return $this->objectManager
-            ->getRepository(get_class($object));
+            ->getRepository($object::class);
     }
 
     /**
      * @param mixed[] $data
+     * @phpstan-param class-string $className
      *
      * @return object
-     *
-     * @phpstan-param class-string $className
      */
     private function createObject(string $className, array $data)
     {

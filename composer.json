@@ -12,7 +12,7 @@
         "php": "^8.0",
         "doctrine/collections": "~1.6",
         "doctrine/instantiator": "^1.4",
-        "doctrine/persistence": "^2.3"
+        "doctrine/persistence": "^2.5"
     },
     "require-dev": {
         "doctrine/coding-standard": "^9.0",
@@ -23,7 +23,10 @@
         "phpunit/phpunit": "~9.5"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "autoload": {
         "psr-0": {

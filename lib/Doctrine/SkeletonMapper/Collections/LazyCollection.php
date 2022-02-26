@@ -10,7 +10,9 @@ use Doctrine\Common\Collections\Collection;
 use function call_user_func;
 
 /**
- * @template-extends AbstractLazyCollection<mixed, mixed>
+ * @psalm-template TKey of array-key
+ * @psalm-template T
+ * @template-extends AbstractLazyCollection<TKey,T>
  */
 class LazyCollection extends AbstractLazyCollection
 {
@@ -23,7 +25,7 @@ class LazyCollection extends AbstractLazyCollection
     }
 
     /**
-     * @return Collection<int, object>
+     * @return Collection<TKey,T>
      */
     public function getCollection(): Collection
     {

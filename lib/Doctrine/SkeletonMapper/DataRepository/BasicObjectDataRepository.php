@@ -6,6 +6,7 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use RuntimeException;
+use ValueError;
 
 use function array_combine;
 use function is_array;
@@ -15,20 +16,27 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
     /** @var ObjectManagerInterface */
     protected $objectManager;
 
-    /** @var string */
+    /** @var class-string */
     protected $className;
 
+    /** @param class-string $className */
     public function __construct(ObjectManagerInterface $objectManager, string $className)
     {
         $this->objectManager = $objectManager;
         $this->className     = $className;
     }
 
+    /**
+     * @return class-string
+     */
     public function getClassName(): string
     {
         return $this->className;
     }
 
+    /**
+     * @param class-string $className
+     */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -45,9 +53,9 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
 
         $identifierValues = is_array($id) ? $id : [$id];
 
-        $criteria = array_combine($identifier, $identifierValues);
-
-        if ($criteria === false) {
+        try {
+            $criteria = array_combine($identifier, $identifierValues);
+        } catch (ValueError) {
             throw new RuntimeException('array_combine failed. Make sure you passed a value for each identifier.');
         }
 

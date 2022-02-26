@@ -13,17 +13,19 @@ use function array_keys;
 use function assert;
 use function call_user_func;
 use function call_user_func_array;
-use function get_class;
 use function in_array;
 use function is_callable;
 use function sprintf;
 
 /**
  * Class used to hold metadata about mapped classes.
+ *
+ * @template-covariant T of object
+ * @template-implements ClassMetadataInterface<T>
  */
 class ClassMetadata implements ClassMetadataInterface
 {
-    /** @var string */
+    /** @var class-string<T> */
     public $name;
 
     /** @var mixed[] */
@@ -35,6 +37,7 @@ class ClassMetadata implements ClassMetadataInterface
     /** @var mixed[][] */
     public $fieldMappings = [];
 
+    /** var array<string, array{targetObject: class-string|null, type: string, fieldName: string}> */
     /** @var mixed[][] */
     public $associationMappings = [];
 
@@ -48,7 +51,7 @@ class ClassMetadata implements ClassMetadataInterface
     public $reflFields = [];
 
     /**
-     * @phpstan-param class-string $className
+     * @phpstan-param class-string<T> $className
      */
     public function __construct(string $className)
     {
@@ -177,7 +180,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getAssociationTargetClass($assocName): string
+    public function getAssociationTargetClass($assocName): ?string
     {
         if (! isset($this->associationMappings[$assocName])) {
             throw new InvalidArgumentException(
@@ -242,7 +245,7 @@ class ClassMetadata implements ClassMetadataInterface
     {
         if (! $object instanceof $this->name) {
             throw new InvalidArgumentException(
-                sprintf('Expected class "%s"; found: "%s"', $this->name, get_class($object))
+                sprintf('Expected class "%s"; found: "%s"', $this->name, $object::class)
             );
         }
 

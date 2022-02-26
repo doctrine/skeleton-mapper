@@ -14,6 +14,9 @@ use InvalidArgumentException;
 
 /**
  * Base class for object repositories to extend from.
+ *
+ * @template T of object
+ * @template-implements ObjectRepositoryInterface<T>
  */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {
@@ -32,14 +35,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /** @var EventManager */
     protected $eventManager;
 
-    /** @phpstan-var class-string */
+    /** @phpstan-var class-string<T> */
     protected $className;
 
-    /** @var ClassMetadataInterface */
+    /** @var ClassMetadataInterface<T> */
     protected $class;
 
     /**
-     * @phpstan-param class-string $className
+     * @phpstan-param class-string<T> $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -60,7 +63,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * Returns the class name of the object managed by the repository.
      *
-     * @phpstan-return class-string
+     * @phpstan-return class-string<T>
      */
     public function getClassName(): string
     {
@@ -68,7 +71,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * @phpstan-param class-string $className
+     * @phpstan-param class-string<T> $className
      */
     public function setClassName(string $className): void
     {
@@ -79,9 +82,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param mixed $id The identifier.
-     *
-     * @return object|null The object.
+     * @psalm-return T|null
      */
     public function find($id)
     {
@@ -174,9 +175,9 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     }
 
     /**
-     * @return object
-     *
      * @phpstan-param class-string $className
+     *
+     * @return object
      */
     public function create(string $className)
     {
@@ -186,7 +187,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * @param mixed[] $data
      *
-     * @return object|null
+     * @psalm-return T|null
      */
     protected function getOrCreateObject(?array $data = null)
     {

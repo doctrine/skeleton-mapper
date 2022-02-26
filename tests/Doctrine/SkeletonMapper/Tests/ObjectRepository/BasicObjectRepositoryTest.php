@@ -36,7 +36,7 @@ class BasicObjectRepositoryTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
-    /** @var ClassMetadata */
+    /** @var ClassMetadata<object> */
     private $classMetadata;
 
     /** @var BasicObjectRepository */

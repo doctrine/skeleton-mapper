@@ -13,8 +13,6 @@ use Doctrine\SkeletonMapper\Event\PreUpdateEventArgs;
 use Doctrine\SkeletonMapper\Events;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
-use function get_class;
-
 class EventDispatcher
 {
     /** @var ObjectManagerInterface */
@@ -46,7 +44,7 @@ class EventDispatcher
      */
     public function dispatchObjectLifecycleCallback(string $eventName, $object, array &$args = []): void
     {
-        $className = get_class($object);
+        $className = $object::class;
 
         $class = $this->objectManager->getClassMetadata($className);
 

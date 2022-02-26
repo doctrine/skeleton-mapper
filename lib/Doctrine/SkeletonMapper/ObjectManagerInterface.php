@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper;
 
-use Doctrine\Common\Persistence\ObjectManager as BaseObjectManagerInterface;
+use Doctrine\Persistence\ObjectManager as BaseObjectManagerInterface;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 
@@ -20,24 +20,30 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
 
     /**
      * @param mixed[] $data
+     * @phpstan-param class-string<T> $className
      *
-     * @return object
+     * @return object|null
+     * @psalm-return T|null
      *
-     * @phpstan-param class-string $className
+     * @template T of object
      */
     public function getOrCreateObject(string $className, array $data);
 
     public function getUnitOfWork(): UnitOfWork;
 
     /**
-     * @param string $className
+     * @psalm-param class-string<object> $className
      *
-     * @return ObjectRepositoryInterface
+     * @return ObjectRepositoryInterface<object>
      */
     public function getRepository($className);
 
     /**
-     * @param string $className
+     * @param class-string<T> $className
+     *
+     * @phpstan-return ClassMetadataInterface<T>
+     *
+     * @template T of object
      */
     public function getClassMetadata($className): ClassMetadataInterface;
 }

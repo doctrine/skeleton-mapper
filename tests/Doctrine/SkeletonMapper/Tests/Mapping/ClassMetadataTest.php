@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\Tests\Mapping;
 
 use BadMethodCallException;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ use stdClass;
  */
 class ClassMetadataTest extends TestCase
 {
-    /** @var ClassMetadata */
+    /** @var ClassMetadata<object> */
     private $class;
 
     public function testMapField(): void

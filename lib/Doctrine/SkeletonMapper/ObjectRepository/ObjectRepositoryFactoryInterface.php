@@ -9,5 +9,12 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
  */
 interface ObjectRepositoryFactoryInterface
 {
+    /**
+     * @param class-string<T> $className
+     *
+     * @return ObjectRepositoryInterface<T>
+     *
+     * @template T of object
+     */
     public function getRepository(string $className): ObjectRepositoryInterface;
 }

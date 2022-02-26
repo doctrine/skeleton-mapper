@@ -37,10 +37,10 @@ class ObjectRepositoryTest extends TestCase
     /** @var EventManager|MockObject */
     private $eventManager;
 
-    /** @var ClassMetadataInterface|MockObject */
+    /** @phpstan-var ClassMetadataInterface<object>|MockObject */
     private $classMetadata;
 
-    /** @var TestObjectRepository */
+    /** @var TestObjectRepository<object> */
     private $repository;
 
     public function testGetClassName(): void
@@ -196,8 +196,15 @@ class ObjectRepositoryTest extends TestCase
     }
 }
 
+/**
+ * @template T of object
+ * @template-implements ObjectRepository<T>
+ */
 class TestObjectRepository extends ObjectRepository
 {
+    /**
+     * @return ClassMetadataInterface<object>
+     */
     public function getClassMetadata(): ClassMetadataInterface
     {
         return $this->class;

@@ -11,14 +11,18 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 use function max;
 
+/**
+ * @template T of object
+ * @template-extends BasicObjectPersister<T>
+ */
 class ArrayObjectPersister extends BasicObjectPersister
 {
-    /** @var ArrayCollection<mixed, mixed> */
+    /** @var ArrayCollection<int|string, mixed> */
     protected $objects;
 
     /**
-     * @param ArrayCollection<mixed, mixed> $objects
-     * @param class-string                  $className
+     * @param ArrayCollection<int|string, mixed> $objects
+     * @param class-string<T>                    $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -84,6 +88,9 @@ class ArrayObjectPersister extends BasicObjectPersister
         unset($this->objects[$identifier[$class->getIdentifier()[0]]]);
     }
 
+    /**
+     * @phpstan-param ClassMetadataInterface<T> $class
+     */
     private function generateNextId(ClassMetadataInterface $class): int
     {
         $ids = [];

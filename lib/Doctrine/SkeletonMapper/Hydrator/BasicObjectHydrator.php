@@ -7,7 +7,6 @@ namespace Doctrine\SkeletonMapper\Hydrator;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use InvalidArgumentException;
 
-use function get_class;
 use function sprintf;
 
 /**
@@ -34,7 +33,7 @@ class BasicObjectHydrator extends ObjectHydrator
         if (! $object instanceof HydratableInterface) {
             throw new InvalidArgumentException(sprintf(
                 'Class %s does not implement %s.',
-                get_class($object),
+                $object::class,
                 HydratableInterface::class
             ));
         }

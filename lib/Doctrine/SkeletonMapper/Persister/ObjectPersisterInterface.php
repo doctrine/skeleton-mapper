@@ -8,6 +8,8 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
 /**
  * Interface that object persisters must implement.
+ *
+ * @template T of object
  */
 interface ObjectPersisterInterface
 {

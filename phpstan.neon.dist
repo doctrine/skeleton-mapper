@@ -6,11 +6,7 @@ parameters:
     level: 7
     paths:
       - lib
-      - tests
+#      - tests
     ignoreErrors:
-      - "#ClassMetadataFactory::setMetadataFor\\(\\) has no return typehint specified#"
-      - "#ClassMetadataFactory::setMetadataFor\\(\\) should be contravariant with parameter \\$class#"
-      - "#ClassMetadataInstantiator::instantiate\\(\\) should be contravariant with parameter \\$className#"
       - "#ObjectManager::merge\\(\\) should be compatible with return type \\(object\\) of method Doctrine\\\\Persistence\\\\ObjectManager::merge\\(\\)#"
-      - "#Property Doctrine\\\\SkeletonMapper\\\\Tests\\\\Functional\\\\BaseImplementationTest::\\$users#"
-      - "#\\(Doctrine\\\\Common\\\\Collections\\\\ArrayCollection<int, array<string, string>>\\) does not accept Doctrine\\\\Common\\\\Collections\\\\ArrayCollection<int, array<string, string>>#"
+      - "#Type mixed in generic type Doctrine\\\\Common\\\\Collections\\\\ArrayCollection\\<mixed, mixed\\> in PHPDoc tag#"

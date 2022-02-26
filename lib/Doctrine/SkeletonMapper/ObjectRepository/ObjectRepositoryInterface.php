@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\ObjectRepository;
 
-use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
+use Doctrine\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
 
 /**
  * Interface that object repositories must implement.
+ *
+ * @template T of object
+ * @template-extends BaseObjectRepositoryInterface<T>
  */
 interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
 {
@@ -41,9 +44,9 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
     public function hydrate($object, array $data): void;
 
     /**
-     * @return object
-     *
      * @phpstan-param class-string $className
+     *
+     * @return object
      */
     public function create(string $className);
 

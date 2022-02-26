@@ -7,7 +7,6 @@ namespace Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 
 use function count;
-use function get_class;
 use function serialize;
 
 /**
@@ -31,7 +30,7 @@ class ObjectIdentityMap
      */
     public function contains($object): bool
     {
-        $className = get_class($object);
+        $className = $object::class;
 
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -42,6 +41,7 @@ class ObjectIdentityMap
 
     /**
      * @param mixed[] $data
+     * @psalm-param class-string<object> $className
      *
      * @return object|null
      */
@@ -62,15 +62,15 @@ class ObjectIdentityMap
      */
     public function addToIdentityMap($object, array $data): void
     {
-        $className = get_class($object);
+        $className = $object::class;
 
         if (! isset($this->identityMap[$className])) {
-            $this->identityMap[get_class($object)] = [];
+            $this->identityMap[$object::class] = [];
         }
 
         $serialized = serialize($this->getObjectIdentifier($object));
 
-        $this->identityMap[get_class($object)][$serialized] = $object;
+        $this->identityMap[$object::class][$serialized] = $object;
     }
 
     public function clear(?string $objectName = null): void
@@ -90,7 +90,7 @@ class ObjectIdentityMap
         $objectIdentifier = $this->getObjectIdentifier($object);
 
         $serialized = serialize($objectIdentifier);
-        unset($this->identityMap[get_class($object)][$serialized]);
+        unset($this->identityMap[$object::class][$serialized]);
     }
 
     public function count(): int
@@ -106,14 +106,15 @@ class ObjectIdentityMap
     private function getObjectIdentifier($object): array
     {
         return $this->objectRepositoryFactory
-            ->getRepository(get_class($object))
+            ->getRepository($object::class)
             ->getObjectIdentifier($object);
     }
 
     /**
      * @param mixed[] $data
+     * @psalm-param class-string<object> $className
      *
-     * @return mixed[] $identifier
+     * @return mixed[]
      */
     private function extractIdentifierFromData(string $className, array $data): array
     {

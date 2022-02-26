@@ -19,7 +19,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
     /** @var ObjectManagerInterface|MockObject */
     private $objectManager;
 
-    /** @var ArrayCollection<int, array<string, string>> */
+    /** @var ArrayCollection<int, array{username: string}> */
     private $objects;
 
     /** @var ArrayObjectDataRepository */

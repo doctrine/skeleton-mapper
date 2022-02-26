@@ -10,12 +10,19 @@ use function sprintf;
 
 /**
  * Class responsible for retrieving ObjectPersister instances.
+ *
+ * @template T of object
+ * @template-implements ObjectPersisterFactoryInterface<T>
  */
 class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
 {
-    /** @var ObjectPersisterInterface[] */
+    /** @phpstan-var array<ObjectPersisterInterface<T>> */
     private $persisters = [];
 
+    /**
+     * @phpstan-param class-string                $className
+     * @phpstan-param ObjectPersisterInterface<T> $objectPersister
+     */
     public function addObjectPersister(string $className, ObjectPersisterInterface $objectPersister): void
     {
         $this->persisters[$className] = $objectPersister;
@@ -31,7 +38,7 @@ class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
     }
 
     /**
-     * @return ObjectPersisterInterface[]
+     * @return array<ObjectPersisterInterface<T>>
      */
     public function getPersisters(): array
     {

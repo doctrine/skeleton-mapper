@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata as BaseClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 
 /**
  * Interface for class metadata instances.
+ *
+ * @template-covariant T of object
+ * @template-extends ClassMetadata<T>
  */
-interface ClassMetadataInterface extends BaseClassMetadata
+interface ClassMetadataInterface extends ClassMetadata
 {
     /**
      * @param mixed[] $identifier
