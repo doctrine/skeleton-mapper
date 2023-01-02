@@ -41,16 +41,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /** @var ClassMetadataInterface<T> */
     protected $class;
 
-    /**
-     * @phpstan-param class-string<T> $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ObjectDataRepositoryInterface $objectDataRepository,
         ObjectFactory $objectFactory,
         ObjectHydratorInterface $objectHydrator,
         EventManager $eventManager,
-        string $className
+        string $className,
     ) {
         $this->objectManager        = $objectManager;
         $this->objectDataRepository = $objectDataRepository;
@@ -70,9 +68,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
         return $this->className;
     }
 
-    /**
-     * @phpstan-param class-string<T> $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -82,12 +78,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * Finds an object by its primary key / identifier.
      *
+     * {@inheritdoc}
+     *
      * @psalm-return T|null
      */
     public function find($id)
     {
         return $this->getOrCreateObject(
-            $this->objectDataRepository->find($id)
+            $this->objectDataRepository->find($id),
         );
     }
 
@@ -117,13 +115,13 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
+    public function findBy(array $criteria, array|null $orderBy = null, $limit = null, $offset = null): array
     {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,
             $orderBy,
             $limit,
-            $offset
+            $offset,
         );
 
         $objects = [];
@@ -146,13 +144,11 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     public function findOneBy(array $criteria)
     {
         return $this->getOrCreateObject(
-            $this->objectDataRepository->findOneBy($criteria)
+            $this->objectDataRepository->findOneBy($criteria),
         );
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function refresh($object): void
     {
         $data = $this->objectDataRepository
@@ -189,7 +185,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
      *
      * @psalm-return T|null
      */
-    protected function getOrCreateObject(?array $data = null)
+    protected function getOrCreateObject(array|null $data = null)
     {
         if ($data === null) {
             return null;
@@ -197,7 +193,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
 
         return $this->objectManager->getOrCreateObject(
             $this->getClassName(),
-            $data
+            $data,
         );
     }
 }

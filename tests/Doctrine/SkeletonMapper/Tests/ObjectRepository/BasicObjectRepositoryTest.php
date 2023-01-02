@@ -16,9 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class BasicObjectRepositoryTest extends TestCase
 {
     /** @var ObjectManagerInterface|MockObject */
@@ -96,7 +94,7 @@ class BasicObjectRepositoryTest extends TestCase
             $this->objectFactory,
             $this->hydrator,
             $this->eventManager,
-            $this->testClassName
+            $this->testClassName,
         );
     }
 }

@@ -44,7 +44,7 @@ class ObjectManager implements ObjectManagerInterface
         ObjectPersisterFactoryInterface $objectPersisterFactory,
         ObjectIdentityMap $objectIdentityMap,
         ClassMetadataFactory $metadataFactory,
-        ?EventManager $eventManager = null
+        EventManager|null $eventManager = null,
     ) {
         $this->objectRepositoryFactory = $objectRepositoryFactory;
         $this->objectPersisterFactory  = $objectPersisterFactory;
@@ -56,7 +56,7 @@ class ObjectManager implements ObjectManagerInterface
             $this,
             $this->objectPersisterFactory,
             $this->objectIdentityMap,
-            $this->eventManager
+            $this->eventManager,
         );
     }
 

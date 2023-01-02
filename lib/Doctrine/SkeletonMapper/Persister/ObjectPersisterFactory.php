@@ -37,9 +37,7 @@ class ObjectPersisterFactory implements ObjectPersisterFactoryInterface
         return $this->persisters[$className];
     }
 
-    /**
-     * @return array<ObjectPersisterInterface<T>>
-     */
+    /** @return array<ObjectPersisterInterface<T>> */
     public function getPersisters(): array
     {
         return $this->persisters;

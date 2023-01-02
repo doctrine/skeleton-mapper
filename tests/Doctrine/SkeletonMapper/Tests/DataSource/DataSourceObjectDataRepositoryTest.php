@@ -30,7 +30,7 @@ class DataSourceObjectDataRepositoryTest extends TestCase
         $this->dataSourceObjectDataRepository = new DataSourceObjectDataRepository(
             $this->objectManager,
             $this->dataSource,
-            stdClass::class
+            stdClass::class,
         );
     }
 

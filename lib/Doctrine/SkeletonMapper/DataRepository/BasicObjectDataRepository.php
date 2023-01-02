@@ -26,17 +26,13 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         $this->className     = $className;
     }
 
-    /**
-     * @return class-string
-     */
+    /** @return class-string */
     public function getClassName(): string
     {
         return $this->className;
     }
 
-    /**
-     * @param class-string $className
-     */
+    /** @param class-string $className */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -47,7 +43,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
      *
      * @return mixed[]
      */
-    public function find($id): ?array
+    public function find($id): array|null
     {
         $identifier = $this->getIdentifier();
 
@@ -62,9 +58,7 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         return $this->findOneBy($criteria);
     }
 
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     protected function getIdentifier(): array
     {
         return $this->objectManager

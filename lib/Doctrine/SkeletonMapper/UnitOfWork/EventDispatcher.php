@@ -23,7 +23,7 @@ class EventDispatcher
 
     public function __construct(
         ObjectManagerInterface $objectManager,
-        EventManager $eventManager
+        EventManager $eventManager,
     ) {
         $this->objectManager = $objectManager;
         $this->eventManager  = $eventManager;
@@ -55,9 +55,7 @@ class EventDispatcher
         $class->invokeLifecycleCallbacks($eventName, $object, $args);
     }
 
-    /**
-     * @param object[] $objects
-     */
+    /** @param object[] $objects */
     public function dispatchObjectsLifecycleCallbacks(string $eventName, array $objects): void
     {
         foreach ($objects as $object) {
@@ -69,13 +67,11 @@ class EventDispatcher
     {
         $this->dispatchEvent(
             Events::preFlush,
-            new Event\PreFlushEventArgs($this->objectManager)
+            new Event\PreFlushEventArgs($this->objectManager),
         );
     }
 
-    /**
-     * @param object[] $objects
-     */
+    /** @param object[] $objects */
     public function dispatchPreFlushLifecycleCallbacks(array $objects): void
     {
         $this->dispatchObjectsLifecycleCallbacks(Events::preFlush, $objects);
@@ -85,7 +81,7 @@ class EventDispatcher
     {
         $this->dispatchEvent(
             Events::onFlush,
-            new Event\OnFlushEventArgs($this->objectManager)
+            new Event\OnFlushEventArgs($this->objectManager),
         );
     }
 
@@ -93,34 +89,30 @@ class EventDispatcher
     {
         $this->dispatchEvent(
             Events::postFlush,
-            new Event\PostFlushEventArgs($this->objectManager)
+            new Event\PostFlushEventArgs($this->objectManager),
         );
     }
 
-    public function dispatchOnClearEvent(?string $className): void
+    public function dispatchOnClearEvent(string|null $className): void
     {
         $this->dispatchEvent(
             Events::onClear,
-            new Event\OnClearEventArgs($this->objectManager, $className)
+            new Event\OnClearEventArgs($this->objectManager, $className),
         );
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function dispatchPreRemove($object): void
     {
         $this->dispatchObjectLifecycleCallback(Events::preRemove, $object);
 
         $this->dispatchEvent(
             Events::preRemove,
-            new LifecycleEventArgs($object, $this->objectManager)
+            new LifecycleEventArgs($object, $this->objectManager),
         );
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function dispatchPreUpdate($object, ChangeSet $changeSet): void
     {
         $args = [$changeSet];
@@ -131,21 +123,19 @@ class EventDispatcher
             new PreUpdateEventArgs(
                 $object,
                 $this->objectManager,
-                $changeSet
-            )
+                $changeSet,
+            ),
         );
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function dispatchPrePersist($object): void
     {
         $this->dispatchObjectLifecycleCallback(Events::prePersist, $object);
 
         $this->dispatchEvent(
             Events::prePersist,
-            new LifecycleEventArgs($object, $this->objectManager)
+            new LifecycleEventArgs($object, $this->objectManager),
         );
     }
 
@@ -160,28 +150,24 @@ class EventDispatcher
 
         $this->dispatchEvent(
             Events::preLoad,
-            new PreLoadEventArgs($object, $this->objectManager, $data)
+            new PreLoadEventArgs($object, $this->objectManager, $data),
         );
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function dispatchPostLoad($object): void
     {
         $this->dispatchLifecycleEvent(Events::postLoad, $object);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function dispatchLifecycleEvent(string $eventName, $object): void
     {
         $this->dispatchObjectLifecycleCallback($eventName, $object);
 
         $this->dispatchEvent(
             $eventName,
-            new LifecycleEventArgs($object, $this->objectManager)
+            new LifecycleEventArgs($object, $this->objectManager),
         );
     }
 }

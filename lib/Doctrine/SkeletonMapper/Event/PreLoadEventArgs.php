@@ -21,6 +21,7 @@ class PreLoadEventArgs extends LifecycleEventArgs
     public function __construct($object, ObjectManagerInterface $objectManager, array &$data)
     {
         parent::__construct($object, $objectManager);
+
         $this->data = &$data;
     }
 

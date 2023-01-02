@@ -34,9 +34,7 @@ class ObjectRepository extends BasicObjectRepository
         return ['_id' => $data['_id']];
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function merge($object): void
     {
         assert($object instanceof User);

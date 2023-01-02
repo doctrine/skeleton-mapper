@@ -22,7 +22,7 @@ class Persister
     public function __construct(
         UnitOfWork $unitOfWork,
         EventDispatcher $eventDispatcher,
-        ObjectIdentityMap $objectIdentityMap
+        ObjectIdentityMap $objectIdentityMap,
     ) {
         $this->unitOfWork        = $unitOfWork;
         $this->eventDispatcher   = $eventDispatcher;

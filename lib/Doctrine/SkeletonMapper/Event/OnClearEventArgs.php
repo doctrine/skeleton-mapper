@@ -14,20 +14,4 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
  */
 class OnClearEventArgs extends BaseOnClearEventArgs
 {
-    /**
-     * Returns the name of the object class that is cleared, or null if all
-     * are cleared.
-     */
-    public function getObjectClass(): ?string
-    {
-        return $this->getEntityClass();
-    }
-
-    /**
-     * Returns whether this event clears all objects.
-     */
-    public function clearsAllObjects(): bool
-    {
-        return $this->clearsAllEntities();
-    }
 }

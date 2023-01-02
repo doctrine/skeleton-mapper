@@ -14,24 +14,16 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
  */
 interface ClassMetadataInterface extends ClassMetadata
 {
-    /**
-     * @param mixed[] $identifier
-     */
+    /** @param mixed[] $identifier */
     public function setIdentifier(array $identifier): void;
 
-    /**
-     * @param string[] $identifierFieldNames
-     */
+    /** @param string[] $identifierFieldNames */
     public function setIdentifierFieldNames(array $identifierFieldNames): void;
 
-    /**
-     * @param mixed[] $mapping
-     */
+    /** @param mixed[] $mapping */
     public function mapField(array $mapping): void;
 
-    /**
-     * @return mixed[][]
-     */
+    /** @return mixed[][] */
     public function getFieldMappings(): array;
 
     public function hasLifecycleCallbacks(string $eventName): bool;
@@ -40,7 +32,7 @@ interface ClassMetadataInterface extends ClassMetadata
      * @param object       $object
      * @param mixed[]|null $arguments
      */
-    public function invokeLifecycleCallbacks(string $event, $object, ?array $arguments = null): void;
+    public function invokeLifecycleCallbacks(string $event, $object, array|null $arguments = null): void;
 
     public function addLifecycleCallback(string $callback, string $event): void;
 }

@@ -10,9 +10,7 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
+/** @group unit */
 class BasicObjectDataRepositoryTest extends TestCase
 {
     /** @var ObjectManagerInterface|MockObject */
@@ -48,16 +46,14 @@ class BasicObjectDataRepositoryTest extends TestCase
 
         $this->objectDataRepository = new TestBasicObjectDataRepository(
             $this->objectManager,
-            'TestClassName'
+            'TestClassName',
         );
     }
 }
 
 class TestBasicObjectDataRepository extends BasicObjectDataRepository
 {
-    /**
-     * @return string[][]
-     */
+    /** @return string[][] */
     public function findAll(): array
     {
         return [['username' => 'jwage']];
@@ -71,9 +67,9 @@ class TestBasicObjectDataRepository extends BasicObjectDataRepository
      */
     public function findBy(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
     ): array {
         return [['username' => 'jwage']];
     }

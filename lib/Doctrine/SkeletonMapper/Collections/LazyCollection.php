@@ -24,9 +24,7 @@ class LazyCollection extends AbstractLazyCollection
         $this->callback = $callback;
     }
 
-    /**
-     * @return Collection<TKey,T>
-     */
+    /** @return Collection<TKey,T> */
     public function getCollection(): Collection
     {
         $this->initialize();

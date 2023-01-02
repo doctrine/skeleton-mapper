@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-/**
- * @template T of object
- */
+/** @template T of object */
 interface ClassMetadataInstantiatorInterface
 {
     /**

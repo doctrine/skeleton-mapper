@@ -9,9 +9,7 @@ use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
+/** @group unit */
 class BasicObjectHydratorTest extends TestCase
 {
     /** @var ObjectManagerInterface */
@@ -43,9 +41,7 @@ class HydratableObject implements HydratableInterface
     /** @var mixed[] */
     public $data;
 
-    /**
-     * @param mixed[] $data
-     */
+    /** @param mixed[] $data */
     public function hydrate(array $data, ObjectManagerInterface $objectManager): void
     {
         $this->data = $data;

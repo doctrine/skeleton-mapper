@@ -16,15 +16,14 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /** @var ChangeSet */
     private $objectChangeSet;
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function __construct(
         $object,
         ObjectManagerInterface $objectManager,
-        ChangeSet $changeSet
+        ChangeSet $changeSet,
     ) {
         parent::__construct($object, $objectManager);
+
         $this->objectChangeSet = $changeSet;
     }
 

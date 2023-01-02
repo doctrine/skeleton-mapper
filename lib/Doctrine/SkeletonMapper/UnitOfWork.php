@@ -52,14 +52,12 @@ class UnitOfWork implements PropertyChangedListener
     /** @var ChangeSets */
     private $objectChangeSets;
 
-    /**
-     * @phpstan-param ObjectPersisterFactoryInterface<object> $objectPersisterFactory
-     */
+    /** @phpstan-param ObjectPersisterFactoryInterface<object> $objectPersisterFactory */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ObjectPersisterFactoryInterface $objectPersisterFactory,
         ObjectIdentityMap $objectIdentityMap,
-        EventManager $eventManager
+        EventManager $eventManager,
     ) {
         $this->objectManager          = $objectManager;
         $this->objectPersisterFactory = $objectPersisterFactory;
@@ -67,28 +65,24 @@ class UnitOfWork implements PropertyChangedListener
 
         $this->eventDispatcher = new EventDispatcher(
             $objectManager,
-            $eventManager
+            $eventManager,
         );
         $this->persister       = new Persister(
             $this,
             $this->eventDispatcher,
-            $this->objectIdentityMap
+            $this->objectIdentityMap,
         );
 
         $this->objectChangeSets = new ChangeSets();
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function merge($object): void
     {
         $this->getObjectRepository($object)->merge($object);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function persist($object): void
     {
         if ($this->isScheduledForPersist($object)) {
@@ -106,9 +100,7 @@ class UnitOfWork implements PropertyChangedListener
         $object->addPropertyChangedListener($this);
     }
 
-    /**
-     * @param object $object The instance to update
-     */
+    /** @param object $object The instance to update */
     public function update($object): void
     {
         if ($this->isScheduledForUpdate($object)) {
@@ -117,15 +109,13 @@ class UnitOfWork implements PropertyChangedListener
 
         $this->eventDispatcher->dispatchPreUpdate(
             $object,
-            $this->getObjectChangeSet($object)
+            $this->getObjectChangeSet($object),
         );
 
         $this->objectsToUpdate[spl_object_hash($object)] = $object;
     }
 
-    /**
-     * @param object $object The object instance to remove.
-     */
+    /** @param object $object The object instance to remove. */
     public function remove($object): void
     {
         if ($this->isScheduledForRemove($object)) {
@@ -137,7 +127,7 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectsToRemove[spl_object_hash($object)] = $object;
     }
 
-    public function clear(?string $objectName = null): void
+    public function clear(string|null $objectName = null): void
     {
         $this->objectIdentityMap->clear($objectName);
 
@@ -149,25 +139,19 @@ class UnitOfWork implements PropertyChangedListener
         $this->eventDispatcher->dispatchOnClearEvent($objectName);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function detach($object): void
     {
         $this->objectIdentityMap->detach($object);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function refresh($object): void
     {
         $this->getObjectRepository($object)->refresh($object);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function contains($object): bool
     {
         return $this->objectIdentityMap->contains($object)
@@ -192,7 +176,7 @@ class UnitOfWork implements PropertyChangedListener
         $objects = array_merge(
             $this->objectsToPersist,
             $this->objectsToUpdate,
-            $this->objectsToRemove
+            $this->objectsToRemove,
         );
         $this->eventDispatcher->dispatchPreFlushLifecycleCallbacks($objects);
 
@@ -210,49 +194,37 @@ class UnitOfWork implements PropertyChangedListener
         $this->objectChangeSets = new ChangeSets();
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function isScheduledForPersist($object): bool
     {
         return isset($this->objectsToPersist[spl_object_hash($object)]);
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     public function getObjectsToPersist(): array
     {
         return $this->objectsToPersist;
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function isScheduledForUpdate($object): bool
     {
         return isset($this->objectsToUpdate[spl_object_hash($object)]);
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     public function getObjectsToUpdate(): array
     {
         return $this->objectsToUpdate;
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function isScheduledForRemove($object): bool
     {
         return isset($this->objectsToRemove[spl_object_hash($object)]);
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     public function getObjectsToRemove(): array
     {
         return $this->objectsToRemove;
@@ -280,7 +252,7 @@ class UnitOfWork implements PropertyChangedListener
 
         $this->objectChangeSets->addObjectChange(
             $object,
-            new Change($propertyName, $oldValue, $newValue)
+            new Change($propertyName, $oldValue, $newValue),
         );
     }
 

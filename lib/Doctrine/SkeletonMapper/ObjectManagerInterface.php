@@ -13,9 +13,7 @@ use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
  */
 interface ObjectManagerInterface extends BaseObjectManagerInterface
 {
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function update($object): void;
 
     /**

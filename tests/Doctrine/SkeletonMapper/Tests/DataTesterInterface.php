@@ -6,14 +6,10 @@ namespace Doctrine\SkeletonMapper\Tests;
 
 interface DataTesterInterface
 {
-    /**
-     * @return mixed[]
-     */
-    public function find(int $id): ?array;
+    /** @return mixed[] */
+    public function find(int $id): array|null;
 
-    /**
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function set(int $id, string $key, $value): void;
 
     public function count(): int;

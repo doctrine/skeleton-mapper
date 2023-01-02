@@ -27,7 +27,7 @@ class ArrayObjectPersister extends BasicObjectPersister
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,
-        string $className
+        string $className,
     ) {
         parent::__construct($objectManager, $className);
 
@@ -77,9 +77,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         return $objectData;
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function removeObject($object): void
     {
         $class      = $this->getClassMetadata();
@@ -88,9 +86,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         unset($this->objects[$identifier[$class->getIdentifier()[0]]]);
     }
 
-    /**
-     * @phpstan-param ClassMetadataInterface<T> $class
-     */
+    /** @phpstan-param ClassMetadataInterface<T> $class */
     private function generateNextId(ClassMetadataInterface $class): int
     {
         $ids = [];

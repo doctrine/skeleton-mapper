@@ -25,9 +25,7 @@ class ObjectIdentityMap
         $this->objectRepositoryFactory = $objectRepositoryFactory;
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function contains($object): bool
     {
         $className = $object::class;
@@ -73,7 +71,7 @@ class ObjectIdentityMap
         $this->identityMap[$object::class][$serialized] = $object;
     }
 
-    public function clear(?string $objectName = null): void
+    public function clear(string|null $objectName = null): void
     {
         if ($objectName !== null) {
             unset($this->identityMap[$objectName]);
@@ -82,9 +80,7 @@ class ObjectIdentityMap
         }
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function detach($object): void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);

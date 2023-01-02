@@ -22,15 +22,14 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
     public function __construct(
         ObjectManagerInterface $objectManager,
         DataSource $dataSource,
-        string $className
+        string $className,
     ) {
         parent::__construct($objectManager, $className);
+
         $this->dataSource = $dataSource;
     }
 
-    /**
-     * @return mixed[][]
-     */
+    /** @return mixed[][] */
     public function findAll(): array
     {
         return $this->getSourceRows();
@@ -44,9 +43,9 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      */
     public function findBy(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
     ): array {
         $rows = [];
 
@@ -74,7 +73,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[]|null
      */
-    public function findOneBy(array $criteria): ?array
+    public function findOneBy(array $criteria): array|null
     {
         foreach ($this->getSourceRows() as $row) {
             if ($this->matches($criteria, $row)) {
@@ -112,7 +111,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[][] $rows
      */
-    private function slice(array $rows, ?int $limit, ?int $offset): array
+    private function slice(array $rows, int|null $limit, int|null $offset): array
     {
         if ($limit === null) {
             $limit = count($rows);
@@ -125,9 +124,7 @@ class DataSourceObjectDataRepository extends BasicObjectDataRepository
         return array_slice($rows, $offset, $limit);
     }
 
-    /**
-     * @return mixed[][]
-     */
+    /** @return mixed[][] */
     private function getSourceRows(): array
     {
         if ($this->sourceRows === null) {

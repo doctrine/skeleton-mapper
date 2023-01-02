@@ -176,7 +176,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectRepositoryFactory   = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
         $this->objectPersisterFactory    = new SkeletonMapper\Persister\ObjectPersisterFactory();
         $this->objectIdentityMap         = new SkeletonMapper\ObjectIdentityMap(
-            $this->objectRepositoryFactory
+            $this->objectRepositoryFactory,
         );
 
         // user class metadata
@@ -188,7 +188,7 @@ abstract class BaseImplementationTest extends TestCase
 
         $this->classMetadataFactory->setMetadataFor(
             User::class,
-            $this->userClassMetadata
+            $this->userClassMetadata,
         );
 
         $this->objectManager = new SkeletonMapper\ObjectManager(
@@ -196,11 +196,11 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectPersisterFactory,
             $this->objectIdentityMap,
             $this->classMetadataFactory,
-            $this->eventManager
+            $this->eventManager,
         );
 
         $this->basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator(
-            $this->objectManager
+            $this->objectManager,
         );
         $this->unitOfWork          = $this->objectManager->getUnitOfWork();
     }
@@ -209,28 +209,28 @@ abstract class BaseImplementationTest extends TestCase
     {
         $this->objectRepositoryFactory->addObjectRepository(
             User::class,
-            $this->userRepository
+            $this->userRepository,
         );
         $this->objectRepositoryFactory->addObjectRepository(
             Profile::class,
-            $this->profileRepository
+            $this->profileRepository,
         );
         $this->objectRepositoryFactory->addObjectRepository(
             Group::class,
-            $this->groupRepository
+            $this->groupRepository,
         );
 
         $this->objectPersisterFactory->addObjectPersister(
             User::class,
-            $this->userPersister
+            $this->userPersister,
         );
         $this->objectPersisterFactory->addObjectPersister(
             Profile::class,
-            $this->profilePersister
+            $this->profilePersister,
         );
         $this->objectPersisterFactory->addObjectPersister(
             Group::class,
-            $this->groupPersister
+            $this->groupPersister,
         );
     }
 
@@ -596,7 +596,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, ['username' => new Change('username', 'jwage', 'changed')]),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $this->objectManager->flush();
@@ -604,7 +604,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, []),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $user2 = $this->objectManager->find(User::class, 1);
@@ -618,7 +618,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, []),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->flush();
@@ -635,7 +635,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, ['username' => new Change('username', 'another', 'changed')]),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->flush();
@@ -650,7 +650,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, ['username' => new Change('username', 'changed', 'testing')]),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->clear();
@@ -658,7 +658,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, []),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $user3 = $this->objectManager->find(User::class, 3);
@@ -866,7 +866,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            User::class
+            User::class,
         );
     }
 
@@ -878,7 +878,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            Profile::class
+            Profile::class,
         );
     }
 
@@ -890,7 +890,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            Group::class
+            Group::class,
         );
     }
 
@@ -905,9 +905,7 @@ class EventTester
     /** @var string[] */
     public $called = [];
 
-    /**
-     * @param mixed[] $arguments
-     */
+    /** @param mixed[] $arguments */
     public function __call(string $method, array $arguments): void
     {
         $this->called[] = $method;

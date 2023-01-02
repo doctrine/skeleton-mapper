@@ -32,9 +32,7 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
      */
     public function getObjectIdentifierFromData(array $data): array;
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function merge($object): void;
 
     /**
@@ -50,8 +48,6 @@ interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
      */
     public function create(string $className);
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function refresh($object): void;
 }

@@ -11,8 +11,6 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
  */
 interface HydratableInterface
 {
-    /**
-     * @param mixed[] $data
-     */
+    /** @param mixed[] $data */
     public function hydrate(array $data, ObjectManagerInterface $objectManager): void;
 }

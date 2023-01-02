@@ -11,17 +11,13 @@ class ChangeSets
     /** @var ChangeSet[] */
     private $changeSets = [];
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function addObjectChange($object, Change $change): void
     {
         $this->getObjectChangeSet($object)->addChange($change);
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function getObjectChangeSet($object): ChangeSet
     {
         $oid = spl_object_hash($object);

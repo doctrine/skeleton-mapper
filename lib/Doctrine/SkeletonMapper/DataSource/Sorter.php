@@ -25,9 +25,7 @@ class Sorter
     /** @var int[] */
     private $orders;
 
-    /**
-     * @param string[] $orderBy
-     */
+    /** @param string[] $orderBy */
     public function __construct(array $orderBy)
     {
         if ($orderBy === []) {
@@ -85,7 +83,7 @@ class Sorter
 
         throw new InvalidArgumentException(sprintf(
             '$order value of %s is not accepted. Only a value of asc or desc is allowed.',
-            $order
+            $order,
         ));
     }
 

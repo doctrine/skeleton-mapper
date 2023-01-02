@@ -6,9 +6,6 @@ namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 class ChangeSet
 {
-    /** @var object */
-    private $object;
-
     /** @var Change[] */
     private $changes = [];
 
@@ -16,15 +13,12 @@ class ChangeSet
      * @param object   $object
      * @param Change[] $changes
      */
-    public function __construct($object, array $changes = [])
+    public function __construct(private $object, array $changes = [])
     {
-        $this->object  = $object;
         $this->changes = $changes;
     }
 
-    /**
-     * @return object
-     */
+    /** @return object */
     public function getObject()
     {
         return $this->object;
@@ -35,9 +29,7 @@ class ChangeSet
         $this->changes[$change->getPropertyName()] = $change;
     }
 
-    /**
-     * @return Change[]
-     */
+    /** @return Change[] */
     public function getChanges(): array
     {
         return $this->changes;
@@ -48,7 +40,7 @@ class ChangeSet
         return isset($this->changes[$fieldName]);
     }
 
-    public function getFieldChange(string $fieldName): ?Change
+    public function getFieldChange(string $fieldName): Change|null
     {
         return $this->changes[$fieldName] ?? null;
     }

@@ -40,9 +40,7 @@ class BasicObjectRepository extends ObjectRepository
         return $identifier;
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function merge($object): void
     {
         throw new BadMethodCallException('Not implemented.');

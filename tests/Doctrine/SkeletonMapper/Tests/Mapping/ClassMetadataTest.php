@@ -11,9 +11,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ClassMetadataTest extends TestCase
 {
     /** @var ClassMetadata<object> */
@@ -133,7 +131,7 @@ class ClassMetadataTest extends TestCase
                 'fieldName' => 'groups',
                 'targetObject' => 'Test',
                 'type' => 'many',
-            ]
+            ],
         );
 
         self::assertFalse($this->class->hasField('groups'));
@@ -290,9 +288,7 @@ class ClassMetadataTestModel
     /** @var LifecycleEventArgs|true */
     public $testEventCalled;
 
-    /**
-     * @param LifecycleEventArgs|true $args
-     */
+    /** @param LifecycleEventArgs|true $args */
     public function testEvent($args = null): void
     {
         if ($args !== null) {

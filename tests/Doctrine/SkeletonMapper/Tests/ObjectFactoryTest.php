@@ -8,9 +8,7 @@ use Doctrine\SkeletonMapper\ObjectFactory;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ObjectFactoryTest extends TestCase
 {
     public function testCreate(): void

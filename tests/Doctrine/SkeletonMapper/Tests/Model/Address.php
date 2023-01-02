@@ -55,7 +55,7 @@ class Address
     /**
      * Gets the value of address2.
      */
-    public function getAddress2(): ?string
+    public function getAddress2(): string|null
     {
         return $this->address2;
     }

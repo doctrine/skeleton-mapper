@@ -6,8 +6,6 @@ namespace Doctrine\SkeletonMapper\DataSource;
 
 interface DataSource
 {
-    /**
-     * @return mixed[][]
-     */
+    /** @return mixed[][] */
     public function getSourceRows(): array;
 }

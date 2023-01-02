@@ -34,7 +34,7 @@ class BasicObjectHydrator extends ObjectHydrator
             throw new InvalidArgumentException(sprintf(
                 'Class %s does not implement %s.',
                 $object::class,
-                HydratableInterface::class
+                HydratableInterface::class,
             ));
         }
 

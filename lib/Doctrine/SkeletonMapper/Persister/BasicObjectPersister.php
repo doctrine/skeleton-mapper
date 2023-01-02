@@ -29,9 +29,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     /** @var ClassMetadataInterface<T> */
     protected $class;
 
-    /**
-     * @phpstan-param class-string<T> $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function __construct(ObjectManagerInterface $objectManager, string $className)
     {
         $this->objectManager = $objectManager;
@@ -43,9 +41,7 @@ abstract class BasicObjectPersister extends ObjectPersister
         return $this->className;
     }
 
-    /**
-     * @phpstan-return ClassMetadataInterface<T>
-     */
+    /** @phpstan-return ClassMetadataInterface<T> */
     public function getClassMetadata(): ClassMetadataInterface
     {
         if ($this->class === null) {
@@ -66,7 +62,7 @@ abstract class BasicObjectPersister extends ObjectPersister
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(
-                sprintf('%s must implement PersistableInterface.', $object::class)
+                sprintf('%s must implement PersistableInterface.', $object::class),
             );
         }
 

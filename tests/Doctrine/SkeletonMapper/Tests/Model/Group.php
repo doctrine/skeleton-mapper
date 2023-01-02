@@ -21,7 +21,7 @@ class Group extends BaseObject
     /** @var string|null */
     private $name;
 
-    public function __construct(?string $name = null)
+    public function __construct(string|null $name = null)
     {
         $this->name = $name;
     }
@@ -62,7 +62,7 @@ class Group extends BaseObject
         $this->id = $id;
     }
 
-    public function getName(): ?string
+    public function getName(): string|null
     {
         return $this->name;
     }

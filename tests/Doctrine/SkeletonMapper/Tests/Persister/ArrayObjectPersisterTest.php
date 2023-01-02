@@ -14,9 +14,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ArrayObjectPersisterTest extends TestCase
 {
     /** @var ObjectManagerInterface|MockObject */
@@ -112,24 +110,20 @@ class ArrayObjectPersisterTest extends TestCase
         $this->persister = new ArrayObjectPersister(
             $this->objectManager,
             $this->objects,
-            $this->testClassName
+            $this->testClassName,
         );
     }
 }
 
 class ArrayObjectPersisterTestModel implements PersistableInterface
 {
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function preparePersistChangeSet(): array
     {
         return ['username' => 'jwage'];
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function prepareUpdateChangeSet(ChangeSet $changeSet): array
     {
         $changes = [];

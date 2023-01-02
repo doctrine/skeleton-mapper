@@ -9,9 +9,7 @@ use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ObjectRepositoryFactoryTest extends TestCase
 {
     /** @var ObjectRepositoryFactory */

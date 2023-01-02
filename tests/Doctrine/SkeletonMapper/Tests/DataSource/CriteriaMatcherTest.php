@@ -13,7 +13,7 @@ class CriteriaMatcherTest extends TestCase
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['username' => 'jwage'],
-            ['username' => 'jwage']
+            ['username' => 'jwage'],
         );
 
         self::assertTrue($criteriaMatcher->matches());
@@ -23,7 +23,7 @@ class CriteriaMatcherTest extends TestCase
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['username' => 'jwage'],
-            ['username' => 'jonwage']
+            ['username' => 'jonwage'],
         );
 
         self::assertFalse($criteriaMatcher->matches());
@@ -33,7 +33,7 @@ class CriteriaMatcherTest extends TestCase
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['projects' => ['$contains' => 'dbal']],
-            ['projects' => ['orm', 'dbal']]
+            ['projects' => ['orm', 'dbal']],
         );
 
         self::assertTrue($criteriaMatcher->matches());
@@ -43,7 +43,7 @@ class CriteriaMatcherTest extends TestCase
     {
         $criteriaMatcher = new CriteriaMatcher(
             ['projects' => ['$contains' => 'mongodb-odm']],
-            ['projects' => ['orm', 'dbal']]
+            ['projects' => ['orm', 'dbal']],
         );
 
         self::assertFalse($criteriaMatcher->matches());

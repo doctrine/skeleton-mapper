@@ -18,8 +18,6 @@ interface ObjectPersisterFactoryInterface
      */
     public function getPersister(string $className): ObjectPersisterInterface;
 
-    /**
-     * @phpstan-return array<ObjectPersisterInterface<T>>
-     */
+    /** @phpstan-return array<ObjectPersisterInterface<T>> */
     public function getPersisters(): array;
 }

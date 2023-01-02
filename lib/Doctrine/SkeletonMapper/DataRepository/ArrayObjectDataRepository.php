@@ -19,15 +19,14 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
     public function __construct(
         ObjectManagerInterface $objectManager,
         ArrayCollection $objects,
-        string $className
+        string $className,
     ) {
         parent::__construct($objectManager, $className);
+
         $this->objects = $objects;
     }
 
-    /**
-     * @return mixed[][]
-     */
+    /** @return mixed[][] */
     public function findAll(): array
     {
         return $this->objects->toArray();
@@ -41,9 +40,9 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
      */
     public function findBy(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
     ): array {
         $objects = [];
 
@@ -73,7 +72,7 @@ class ArrayObjectDataRepository extends BasicObjectDataRepository
      *
      * @return mixed[]|null
      */
-    public function findOneBy(array $criteria): ?array
+    public function findOneBy(array $criteria): array|null
     {
         foreach ($this->objects as $object) {
             $matches = true;

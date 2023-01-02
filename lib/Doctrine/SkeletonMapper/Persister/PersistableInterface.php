@@ -11,13 +11,9 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
  */
 interface PersistableInterface
 {
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     public function preparePersistChangeSet(): array;
 
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     public function prepareUpdateChangeSet(ChangeSet $changeSet): array;
 }

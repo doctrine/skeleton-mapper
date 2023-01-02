@@ -17,9 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ObjectRepositoryTest extends TestCase
 {
     /** @var ObjectManagerInterface|MockObject */
@@ -191,7 +189,7 @@ class ObjectRepositoryTest extends TestCase
             $this->objectFactory,
             $this->hydrator,
             $this->eventManager,
-            ArrayObject::class
+            ArrayObject::class,
         );
     }
 }
@@ -202,9 +200,7 @@ class ObjectRepositoryTest extends TestCase
  */
 class TestObjectRepository extends ObjectRepository
 {
-    /**
-     * @return ClassMetadataInterface<object>
-     */
+    /** @return ClassMetadataInterface<object> */
     public function getClassMetadata(): ClassMetadataInterface
     {
         return $this->class;
@@ -230,9 +226,7 @@ class TestObjectRepository extends ObjectRepository
         return ['id' => 1];
     }
 
-    /**
-     * @param object $object
-     */
+    /** @param object $object */
     public function merge($object): void
     {
     }

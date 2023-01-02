@@ -36,7 +36,7 @@ class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
     {
         if (! isset($this->repositories[$className])) {
             throw new InvalidArgumentException(
-                sprintf('ObjectRepository with class name %s was not found', $className)
+                sprintf('ObjectRepository with class name %s was not found', $className),
             );
         }
 

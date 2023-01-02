@@ -23,9 +23,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
      */
     private $classes = [];
 
-    /**
-     * @phpstan-param ClassMetadataInstantiatorInterface<object> $classMetadataInstantiator
-     */
+    /** @phpstan-param ClassMetadataInstantiatorInterface<object> $classMetadataInstantiator */
     public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
     {
         $this->classMetadataInstantiator = $classMetadataInstantiator;

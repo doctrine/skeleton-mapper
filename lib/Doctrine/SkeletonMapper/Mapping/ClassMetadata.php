@@ -50,26 +50,20 @@ class ClassMetadata implements ClassMetadataInterface
     /** @var ReflectionProperty[] */
     public $reflFields = [];
 
-    /**
-     * @phpstan-param class-string<T> $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function __construct(string $className)
     {
         $this->name      = $className;
         $this->reflClass = new ReflectionClass($className);
     }
 
-    /**
-     * @param mixed[] $identifier
-     */
+    /** @param mixed[] $identifier */
     public function setIdentifier(array $identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param string[] $identifierFieldNames
-     */
+    /** @param string[] $identifierFieldNames */
     public function setIdentifierFieldNames(array $identifierFieldNames): void
     {
         $this->identifierFieldNames = $identifierFieldNames;
@@ -180,11 +174,11 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getAssociationTargetClass($assocName): ?string
+    public function getAssociationTargetClass($assocName): string|null
     {
         if (! isset($this->associationMappings[$assocName])) {
             throw new InvalidArgumentException(
-                sprintf("Association name expected, '%s' is not an association.", $assocName)
+                sprintf("Association name expected, '%s' is not an association.", $assocName),
             );
         }
 
@@ -241,11 +235,11 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function invokeLifecycleCallbacks(string $event, $object, ?array $arguments = null): void
+    public function invokeLifecycleCallbacks(string $event, $object, array|null $arguments = null): void
     {
         if (! $object instanceof $this->name) {
             throw new InvalidArgumentException(
-                sprintf('Expected class "%s"; found: "%s"', $this->name, $object::class)
+                sprintf('Expected class "%s"; found: "%s"', $this->name, $object::class),
             );
         }
 
@@ -336,9 +330,7 @@ class ClassMetadata implements ClassMetadataInterface
         throw new BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
 
-    /**
-     * @param mixed[] $mapping
-     */
+    /** @param mixed[] $mapping */
     private function initReflField(array $mapping): void
     {
         if (! $this->reflClass->hasProperty($mapping['fieldName'])) {
