@@ -115,7 +115,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findBy(array $criteria, array|null $orderBy = null, $limit = null, $offset = null): array
+    public function findBy(array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null): array
     {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,

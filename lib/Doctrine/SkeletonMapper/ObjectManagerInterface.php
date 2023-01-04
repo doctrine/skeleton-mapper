@@ -43,5 +43,5 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
      *
      * @template T of object
      */
-    public function getClassMetadata($className): ClassMetadataInterface;
+    public function getClassMetadata(string $className): ClassMetadataInterface;
 }

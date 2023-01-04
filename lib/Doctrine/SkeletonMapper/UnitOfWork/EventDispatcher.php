@@ -97,7 +97,7 @@ class EventDispatcher
     {
         $this->dispatchEvent(
             Events::onClear,
-            new Event\OnClearEventArgs($this->objectManager, $className),
+            new Event\OnClearEventArgs($this->objectManager),
         );
     }
 

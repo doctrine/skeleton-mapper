@@ -6,8 +6,8 @@ namespace Doctrine\SkeletonMapper;
 
 use BadMethodCallException;
 use Doctrine\Common\EventManager;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
-use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
@@ -68,21 +68,16 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * {@inheritDoc}
      *
-     * @psalm-param class-string<T> $className
+     * @psalm-param class-string<object> $className
      *
-     * @psalm-return T|null
-     *
-     * @template T of object
+     * @psalm-return object|null
      */
-    public function find($className, $id)
+    public function find(string $className, $id)
     {
         return $this->getRepository($className)->find($id);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function persist($object): void
+    public function persist(object $object): void
     {
         $this->unitOfWork->persist($object);
     }
@@ -99,42 +94,27 @@ class ObjectManager implements ObjectManagerInterface
         $this->unitOfWork->update($object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function remove($object): void
+    public function remove(object $object): void
     {
         $this->unitOfWork->remove($object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function merge($object): void
+    public function merge(object $object): void
     {
         $this->unitOfWork->merge($object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function clear($objectName = null): void
+    public function clear(): void
     {
-        $this->unitOfWork->clear($objectName);
+        $this->unitOfWork->clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function detach($object): void
+    public function detach(object $object): void
     {
         $this->unitOfWork->detach($object);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function refresh($object): void
+    public function refresh(object $object): void
     {
         $this->unitOfWork->refresh($object);
     }
@@ -152,10 +132,7 @@ class ObjectManager implements ObjectManagerInterface
         return $this->objectRepositoryFactory->getRepository($className);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getClassMetadata($className): ClassMetadataInterface
+    public function getClassMetadata(string $className): ClassMetadataInterface
     {
         return $this->metadataFactory->getMetadataFor($className);
     }
@@ -163,7 +140,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Gets the metadata factory used to gather the metadata of classes.
      *
-     * {@inheritdoc}
+     * @psalm-return ClassMetadataFactory<ClassMetadata<object>>
      */
     public function getMetadataFactory()
     {
@@ -177,7 +154,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * {@inheritDoc}
      */
-    public function initializeObject($obj): void
+    public function initializeObject(object $obj): void
     {
         throw new BadMethodCallException('Not supported.');
     }
@@ -187,7 +164,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * {@inheritDoc}
      */
-    public function contains($object): bool
+    public function contains(object $object): bool
     {
         return $this->unitOfWork->contains($object);
     }

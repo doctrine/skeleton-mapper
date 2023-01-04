@@ -43,11 +43,9 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     public function getMetadataFor($className): ClassMetadata
     {
         if (! isset($this->classes[$className])) {
-            /** @phpstan-var class-string<T> $className */
             $metadata = $this->classMetadataInstantiator->instantiate($className);
 
             if ($metadata->reflClass->implementsInterface('Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface')) {
-                /** @phpstan-var string $className */
                 $className::loadMetadata($metadata);
             }
 

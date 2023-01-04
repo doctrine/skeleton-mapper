@@ -34,7 +34,7 @@ class ClassMetadata implements ClassMetadataInterface
     /** @var string[] */
     public $identifierFieldNames = [];
 
-    /** @var mixed[][] */
+    /** @var string[][] */
     public $fieldMappings = [];
 
     /** var array<string, array{targetObject: class-string|null, type: string, fieldName: string}> */
@@ -100,7 +100,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * The returned structure is an array of the identifier field names.
      *
-     * @return mixed[]
+     * {@inheritdoc}
      */
     public function getIdentifier(): array
     {
@@ -117,18 +117,12 @@ class ClassMetadata implements ClassMetadataInterface
         return $this->reflClass;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isIdentifier($fieldName): bool
+    public function isIdentifier(string $fieldName): bool
     {
         return in_array($fieldName, $this->getIdentifierFieldNames(), true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function hasField($fieldName): bool
+    public function hasField(string $fieldName): bool
     {
         return isset($this->fieldMappings[$fieldName]);
     }
@@ -138,7 +132,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * This array includes identifier fields if present on this class.
      *
-     * @return string[]
+     * {@inheritdoc}
      */
     public function getFieldNames(): array
     {
@@ -163,18 +157,12 @@ class ClassMetadata implements ClassMetadataInterface
         return array_keys($this->associationMappings);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getTypeOfField($fieldName): string
+    public function getTypeOfField(string $fieldName): string
     {
         return $this->fieldMappings[$fieldName]['type'] ?? '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getAssociationTargetClass($assocName): string|null
+    public function getAssociationTargetClass(string $assocName): string|null
     {
         if (! isset($this->associationMappings[$assocName])) {
             throw new InvalidArgumentException(
@@ -188,7 +176,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierValues($object): array
+    public function getIdentifierValues(object $object): array
     {
         $identifier = [];
         foreach ($this->identifierFieldNames as $identifierFieldName) {
@@ -203,7 +191,7 @@ class ClassMetadata implements ClassMetadataInterface
      *
      * Checks whether the class has a mapped association (embed or reference) with the given field name.
      */
-    public function hasAssociation($fieldName): bool
+    public function hasAssociation(string $fieldName): bool
     {
         return isset($this->associationMappings[$fieldName]);
     }
@@ -214,7 +202,7 @@ class ClassMetadata implements ClassMetadataInterface
      * Checks whether the class has a mapped reference or embed for the specified field and
      * is a single valued association.
      */
-    public function isSingleValuedAssociation($fieldName): bool
+    public function isSingleValuedAssociation(string $fieldName): bool
     {
         return isset($this->associationMappings[$fieldName]['type']) &&
             $this->associationMappings[$fieldName]['type'] === 'one';
@@ -226,7 +214,7 @@ class ClassMetadata implements ClassMetadataInterface
      * Checks whether the class has a mapped reference or embed for the specified field and
      * is a collection valued association.
      */
-    public function isCollectionValuedAssociation($fieldName): bool
+    public function isCollectionValuedAssociation(string $fieldName): bool
     {
         return isset($this->associationMappings[$fieldName]['type']) &&
             $this->associationMappings[$fieldName]['type'] === 'many';
@@ -307,7 +295,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * Returns an array of identifier field names numerically indexed.
      *
-     * @return string[]
+     * {@inheritdoc}
      */
     public function getIdentifierFieldNames(): array
     {
@@ -317,7 +305,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function getAssociationMappedByTargetField($fieldName)
+    public function getAssociationMappedByTargetField(string $fieldName)
     {
         throw new BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
@@ -325,7 +313,7 @@ class ClassMetadata implements ClassMetadataInterface
     /**
      * {@inheritDoc}
      */
-    public function isAssociationInverseSide($fieldName)
+    public function isAssociationInverseSide(string $fieldName)
     {
         throw new BadMethodCallException(__METHOD__ . '() is not implemented yet.');
     }
