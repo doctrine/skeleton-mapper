@@ -3,10 +3,8 @@ includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
-    level: 7
+    level: 8
     paths:
       - lib
-#      - tests
     ignoreErrors:
-      - "#ObjectManager::merge\\(\\) should be compatible with return type \\(object\\) of method Doctrine\\\\Persistence\\\\ObjectManager::merge\\(\\)#"
       - "#Type mixed in generic type Doctrine\\\\Common\\\\Collections\\\\ArrayCollection\\<mixed, mixed\\> in PHPDoc tag#"
