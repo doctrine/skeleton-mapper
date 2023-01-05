@@ -13,11 +13,9 @@ use PHPUnit\Framework\TestCase;
 /** @group unit */
 class BasicObjectDataRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
-    /** @var BasicObjectDataRepository */
-    private $objectDataRepository;
+    private BasicObjectDataRepository $objectDataRepository;
 
     public function testGetClassName(): void
     {

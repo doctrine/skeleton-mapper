@@ -16,7 +16,7 @@ use function sprintf;
 class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
 {
     /** @var array<ObjectRepositoryInterface<T>> */
-    private $repositories = [];
+    private array $repositories = [];
 
     /**
      * @phpstan-param class-string<T>                 $className

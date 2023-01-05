@@ -15,18 +15,13 @@ use function serialize;
 class ObjectIdentityMap
 {
     /** @var object[][] */
-    private $identityMap = [];
+    private array $identityMap = [];
 
-    /** @var ObjectRepositoryFactoryInterface */
-    private $objectRepositoryFactory;
-
-    public function __construct(ObjectRepositoryFactoryInterface $objectRepositoryFactory)
+    public function __construct(private ObjectRepositoryFactoryInterface $objectRepositoryFactory)
     {
-        $this->objectRepositoryFactory = $objectRepositoryFactory;
     }
 
-    /** @param object $object */
-    public function contains($object): bool
+    public function contains(object $object): bool
     {
         $className = $object::class;
 
@@ -40,10 +35,8 @@ class ObjectIdentityMap
     /**
      * @param mixed[] $data
      * @psalm-param class-string<object> $className
-     *
-     * @return object|null
      */
-    public function tryGetById(string $className, array $data)
+    public function tryGetById(string $className, array $data): object|null
     {
         $serialized = serialize($this->extractIdentifierFromData($className, $data));
 
@@ -54,11 +47,8 @@ class ObjectIdentityMap
         return null;
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function addToIdentityMap($object, array $data): void
+    /** @param mixed[] $data */
+    public function addToIdentityMap(object $object, array $data): void
     {
         $className = $object::class;
 
@@ -80,8 +70,7 @@ class ObjectIdentityMap
         }
     }
 
-    /** @param object $object */
-    public function detach($object): void
+    public function detach(object $object): void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -94,12 +83,8 @@ class ObjectIdentityMap
         return count($this->identityMap);
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[] $identifier
-     */
-    private function getObjectIdentifier($object): array
+    /** @return mixed[] $identifier */
+    private function getObjectIdentifier(object $object): array
     {
         return $this->objectRepositoryFactory
             ->getRepository($object::class)

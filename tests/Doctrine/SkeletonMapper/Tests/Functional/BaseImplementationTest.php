@@ -28,89 +28,66 @@ use function assert;
 
 abstract class BaseImplementationTest extends TestCase
 {
-    /** @var SkeletonMapper\Hydrator\BasicObjectHydrator */
-    protected $basicObjectHydrator;
+    protected SkeletonMapper\Hydrator\BasicObjectHydrator $basicObjectHydrator;
 
     /** @var SkeletonMapper\Mapping\ClassMetadataFactory<ClassMetadataInterface<User>> */
-    protected $classMetadataFactory;
+    protected SkeletonMapper\Mapping\ClassMetadataFactory $classMetadataFactory;
 
-    /** @var SkeletonMapper\Mapping\ClassMetadataInstantiator */
-    protected $classMetadataInstantiator;
+    protected SkeletonMapper\Mapping\ClassMetadataInstantiator $classMetadataInstantiator;
 
-    /** @var SkeletonMapper\ObjectFactory */
-    protected $objectFactory;
+    protected SkeletonMapper\ObjectFactory $objectFactory;
 
-    /** @var SkeletonMapper\ObjectRepository\ObjectRepositoryFactory */
-    protected $objectRepositoryFactory;
+    protected SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory;
 
-    /** @var SkeletonMapper\Persister\ObjectPersisterFactory */
-    protected $objectPersisterFactory;
+    protected SkeletonMapper\Persister\ObjectPersisterFactory $objectPersisterFactory;
 
-    /** @var SkeletonMapper\ObjectIdentityMap */
-    protected $objectIdentityMap;
+    protected SkeletonMapper\ObjectIdentityMap $objectIdentityMap;
 
-    /** @var EventManager */
-    protected $eventManager;
+    protected EventManager $eventManager;
 
     /** @var ClassMetadataInterface<User> */
-    protected $userClassMetadata;
+    protected ClassMetadataInterface $userClassMetadata;
 
-    /** @var SkeletonMapper\ObjectManager */
-    protected $objectManager;
+    protected SkeletonMapper\ObjectManager $objectManager;
 
-    /** @var UnitOfWork */
-    protected $unitOfWork;
+    protected UnitOfWork $unitOfWork;
 
     /** @var ArrayCollection<int, array{_id: int, username: string, password: string}> */
-    protected $users;
+    protected ArrayCollection $users;
 
     /** @var ArrayCollection<int, Profile> */
-    protected $profiles;
+    protected ArrayCollection $profiles;
 
     /** @var ArrayCollection<int, Group> */
-    protected $groups;
+    protected ArrayCollection $groups;
 
-    /** @var DataTesterInterface */
-    protected $usersTester;
+    protected DataTesterInterface $usersTester;
 
-    /** @var DataTesterInterface */
-    protected $profilesTester;
+    protected DataTesterInterface $profilesTester;
 
-    /** @var DataTesterInterface */
-    protected $groupsTester;
+    protected DataTesterInterface $groupsTester;
 
-    /** @var string */
-    protected $userClassName = User::class;
+    protected string $userClassName = User::class;
 
-    /** @var EventTester */
-    protected $eventTester;
+    protected EventTester $eventTester;
 
-    /** @var ObjectDataRepository */
-    protected $userDataRepository;
+    protected ObjectDataRepository $userDataRepository;
 
-    /** @var UserRepository */
-    protected $userRepository;
+    protected UserRepository $userRepository;
 
-    /** @var ObjectPersister */
-    protected $userPersister;
+    protected ObjectPersister $userPersister;
 
-    /** @var ObjectDataRepository */
-    protected $profileDataRepository;
+    protected ObjectDataRepository $profileDataRepository;
 
-    /** @var ProfileRepository */
-    protected $profileRepository;
+    protected ProfileRepository $profileRepository;
 
-    /** @var ObjectPersister */
-    protected $profilePersister;
+    protected ObjectPersister $profilePersister;
 
-    /** @var ObjectDataRepository */
-    protected $groupDataRepository;
+    protected ObjectDataRepository $groupDataRepository;
 
-    /** @var GroupRepository */
-    protected $groupRepository;
+    protected GroupRepository $groupRepository;
 
-    /** @var ObjectPersister */
-    protected $groupPersister;
+    protected ObjectPersister $groupPersister;
 
     abstract protected function setUpImplementation(): void;
 
@@ -903,7 +880,7 @@ abstract class BaseImplementationTest extends TestCase
 class EventTester
 {
     /** @var string[] */
-    public $called = [];
+    public array $called = [];
 
     /** @param mixed[] $arguments */
     public function __call(string $method, array $arguments): void

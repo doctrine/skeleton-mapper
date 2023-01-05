@@ -12,11 +12,9 @@ use PHPUnit\Framework\TestCase;
 /** @group unit */
 class BasicObjectHydratorTest extends TestCase
 {
-    /** @var ObjectManagerInterface */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
 
-    /** @var BasicObjectHydrator */
-    private $hydrator;
+    private BasicObjectHydrator $hydrator;
 
     public function testHydrate(): void
     {
@@ -39,7 +37,7 @@ class BasicObjectHydratorTest extends TestCase
 class HydratableObject implements HydratableInterface
 {
     /** @var mixed[] */
-    public $data;
+    public array $data;
 
     /** @param mixed[] $data */
     public function hydrate(array $data, ObjectManagerInterface $objectManager): void

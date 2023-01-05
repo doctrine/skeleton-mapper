@@ -22,23 +22,20 @@ use function is_callable;
 
 class User extends BaseObject
 {
-    /** @var int|null */
-    private $id;
+    private int|null $id = null;
 
-    /** @var string */
-    private $username;
+    private string $username = '';
 
-    /** @var string */
-    private $password;
+    private string $password = '';
 
     /** @var callable|Profile */
     private $profile;
 
     /** @var Collection<int, Group> */
-    private $groups;
+    private Collection $groups;
 
     /** @var string[] */
-    public $called = [];
+    public array $called = [];
 
     public function __construct()
     {

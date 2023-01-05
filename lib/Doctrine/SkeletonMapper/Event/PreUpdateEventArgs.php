@@ -13,12 +13,10 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
  */
 class PreUpdateEventArgs extends LifecycleEventArgs
 {
-    /** @var ChangeSet */
-    private $objectChangeSet;
+    private ChangeSet $objectChangeSet;
 
-    /** @param object $object */
     public function __construct(
-        $object,
+        object $object,
         ObjectManagerInterface $objectManager,
         ChangeSet $changeSet,
     ) {
@@ -45,10 +43,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Gets the old value of the changeset of the changed field.
-     *
-     * @return mixed
      */
-    public function getOldValue(string $field)
+    public function getOldValue(string $field): mixed
     {
         $change = $this->objectChangeSet->getFieldChange($field);
 
@@ -61,10 +57,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Gets the new value of the changeset of the changed field.
-     *
-     * @return mixed
      */
-    public function getNewValue(string $field)
+    public function getNewValue(string $field): mixed
     {
         $change = $this->objectChangeSet->getFieldChange($field);
 
@@ -77,10 +71,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
 
     /**
      * Sets the new value of this field.
-     *
-     * @param mixed $value
      */
-    public function setNewValue(string $field, $value): void
+    public function setNewValue(string $field, mixed $value): void
     {
         $change = $this->objectChangeSet->getFieldChange($field);
 

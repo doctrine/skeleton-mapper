@@ -17,29 +17,20 @@ use function max;
  */
 class ArrayObjectPersister extends BasicObjectPersister
 {
-    /** @var ArrayCollection<int|string, mixed> */
-    protected $objects;
-
     /**
      * @param ArrayCollection<int|string, mixed> $objects
      * @param class-string<T>                    $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ArrayCollection $objects,
+        protected ArrayCollection $objects,
         string $className,
     ) {
         parent::__construct($objectManager, $className);
-
-        $this->objects = $objects;
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    public function persistObject($object): array
+    /** @return mixed[] */
+    public function persistObject(object $object): array
     {
         $data = $this->preparePersistChangeSet($object);
 
@@ -54,12 +45,8 @@ class ArrayObjectPersister extends BasicObjectPersister
         return $data;
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    public function updateObject($object, ChangeSet $changeSet): array
+    /** @return mixed[] */
+    public function updateObject(object $object, ChangeSet $changeSet): array
     {
         $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
@@ -77,8 +64,7 @@ class ArrayObjectPersister extends BasicObjectPersister
         return $objectData;
     }
 
-    /** @param object $object */
-    public function removeObject($object): void
+    public function removeObject(object $object): void
     {
         $class      = $this->getClassMetadata();
         $identifier = $this->getObjectIdentifier($object);

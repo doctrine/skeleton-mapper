@@ -18,7 +18,7 @@ interface ObjectDataRepositoryInterface
      *
      * @return mixed[] The objects array of data.
      */
-    public function find($id): array|null;
+    public function find(mixed $id): array|null;
 
     /**
      * Finds all object data in the repository.

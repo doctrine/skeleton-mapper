@@ -17,11 +17,9 @@ use function is_callable;
 
 class Profile extends BaseObject
 {
-    /** @var int */
-    private $id;
+    private int|null $id = null;
 
-    /** @var string */
-    private $name;
+    private string $name = '';
 
     /** @var callable|Address */
     private $address;
@@ -97,11 +95,7 @@ class Profile extends BaseObject
         $this->address = $address;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     */
-    public function addressChanged(string $propName, $oldValue, $newValue): void
+    public function addressChanged(string $propName, mixed $oldValue, mixed $newValue): void
     {
         $this->onPropertyChanged('address', $this->address, $this->address);
     }

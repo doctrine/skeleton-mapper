@@ -97,13 +97,9 @@ class ArrayImplementationTest extends BaseImplementationTest
 
 class ArrayTester implements DataTesterInterface
 {
-    /** @var ArrayCollection<mixed, mixed> */
-    private $objects;
-
     /** @param ArrayCollection<mixed, mixed> $objects */
-    public function __construct(ArrayCollection $objects)
+    public function __construct(private ArrayCollection $objects)
     {
-        $this->objects = $objects;
     }
 
     /** @return mixed[] */
@@ -118,8 +114,7 @@ class ArrayTester implements DataTesterInterface
         return null;
     }
 
-    /** @param mixed $value */
-    public function set(int $id, string $key, $value): void
+    public function set(int $id, string $key, mixed $value): void
     {
         $object             = $this->objects[$id];
         $object[$key]       = $value;

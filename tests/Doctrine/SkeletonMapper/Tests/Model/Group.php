@@ -15,15 +15,10 @@ use function array_map;
 
 class Group extends BaseObject
 {
-    /** @var int */
-    private $id;
+    private int|null $id = null;
 
-    /** @var string|null */
-    private $name;
-
-    public function __construct(string|null $name = null)
+    public function __construct(private string|null $name = null)
     {
-        $this->name = $name;
     }
 
     /**

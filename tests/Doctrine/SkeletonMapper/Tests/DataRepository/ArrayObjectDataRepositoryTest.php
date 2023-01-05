@@ -14,14 +14,12 @@ use PHPUnit\Framework\TestCase;
 /** @group unit */
 class ArrayObjectDataRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
     /** @var ArrayCollection<int, array{username: string}> */
-    private $objects;
+    private ArrayCollection $objects;
 
-    /** @var ArrayObjectDataRepository */
-    private $objectDataRepository;
+    private ArrayObjectDataRepository $objectDataRepository;
 
     public function testFindAll(): void
     {

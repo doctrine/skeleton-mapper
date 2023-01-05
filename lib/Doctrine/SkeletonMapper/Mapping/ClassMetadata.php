@@ -29,26 +29,26 @@ class ClassMetadata implements ClassMetadataInterface
     public $name;
 
     /** @var mixed[] */
-    public $identifier = [];
+    public array $identifier = [];
 
     /** @var string[] */
-    public $identifierFieldNames = [];
+    public array $identifierFieldNames = [];
 
     /** @var string[][] */
-    public $fieldMappings = [];
+    public array $fieldMappings = [];
 
     /** var array<string, array{targetObject: class-string|null, type: string, fieldName: string}> */
     /** @var mixed[][] */
-    public $associationMappings = [];
+    public array $associationMappings = [];
 
     /** @var string[][] */
-    public $lifecycleCallbacks = [];
+    public array $lifecycleCallbacks = [];
 
     /** @var ReflectionClass<object> */
-    public $reflClass;
+    public ReflectionClass $reflClass;
 
     /** @var ReflectionProperty[] */
-    public $reflFields = [];
+    public array $reflFields = [];
 
     /** @phpstan-param class-string<T> $className */
     public function __construct(string $className)
@@ -220,10 +220,7 @@ class ClassMetadata implements ClassMetadataInterface
             $this->associationMappings[$fieldName]['type'] === 'many';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function invokeLifecycleCallbacks(string $event, $object, array|null $arguments = null): void
+    public function invokeLifecycleCallbacks(string $event, object $object, array|null $arguments = null): void
     {
         if (! $object instanceof $this->name) {
             throw new InvalidArgumentException(

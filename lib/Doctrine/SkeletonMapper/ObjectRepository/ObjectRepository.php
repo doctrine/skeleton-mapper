@@ -20,41 +20,21 @@ use InvalidArgumentException;
  */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
-
-    /** @var ObjectDataRepositoryInterface */
-    protected $objectDataRepository;
-
-    /** @var ObjectFactory */
-    protected $objectFactory;
-
-    /** @var ObjectHydratorInterface */
-    protected $objectHydrator;
-
-    /** @var EventManager */
-    protected $eventManager;
-
     /** @phpstan-var class-string<T> */
     protected $className;
 
     /** @var ClassMetadataInterface<T> */
-    protected $class;
+    protected ClassMetadataInterface $class;
 
     /** @phpstan-param class-string<T> $className */
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        ObjectDataRepositoryInterface $objectDataRepository,
-        ObjectFactory $objectFactory,
-        ObjectHydratorInterface $objectHydrator,
-        EventManager $eventManager,
+        protected ObjectManagerInterface $objectManager,
+        protected ObjectDataRepositoryInterface $objectDataRepository,
+        protected ObjectFactory $objectFactory,
+        protected ObjectHydratorInterface $objectHydrator,
+        protected EventManager $eventManager,
         string $className,
     ) {
-        $this->objectManager        = $objectManager;
-        $this->objectDataRepository = $objectDataRepository;
-        $this->objectFactory        = $objectFactory;
-        $this->objectHydrator       = $objectHydrator;
-        $this->eventManager         = $eventManager;
         $this->setClassName($className);
     }
 
@@ -148,8 +128,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
         );
     }
 
-    /** @param object $object */
-    public function refresh($object): void
+    public function refresh(object $object): void
     {
         $data = $this->objectDataRepository
             ->find($this->getObjectIdentifier($object));
@@ -161,21 +140,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
         $this->hydrate($object, $data);
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function hydrate($object, array $data): void
+    /** @param mixed[] $data */
+    public function hydrate(object $object, array $data): void
     {
         $this->objectHydrator->hydrate($object, $data);
     }
 
-    /**
-     * @phpstan-param class-string $className
-     *
-     * @return object
-     */
-    public function create(string $className)
+    /** @phpstan-param class-string $className */
+    public function create(string $className): object
     {
         return $this->objectFactory->create($className);
     }

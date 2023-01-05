@@ -28,11 +28,8 @@ interface ClassMetadataInterface extends ClassMetadata
 
     public function hasLifecycleCallbacks(string $eventName): bool;
 
-    /**
-     * @param object       $object
-     * @param mixed[]|null $arguments
-     */
-    public function invokeLifecycleCallbacks(string $event, $object, array|null $arguments = null): void;
+    /** @param mixed[]|null $arguments */
+    public function invokeLifecycleCallbacks(string $event, object $object, array|null $arguments = null): void;
 
     public function addLifecycleCallback(string $callback, string $event): void;
 }

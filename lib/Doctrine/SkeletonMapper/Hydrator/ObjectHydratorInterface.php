@@ -9,9 +9,6 @@ namespace Doctrine\SkeletonMapper\Hydrator;
  */
 interface ObjectHydratorInterface
 {
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function hydrate($object, array $data): void;
+    /** @param mixed[] $data */
+    public function hydrate(object $object, array $data): void;
 }

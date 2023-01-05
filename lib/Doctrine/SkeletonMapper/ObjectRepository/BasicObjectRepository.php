@@ -12,12 +12,8 @@ use BadMethodCallException;
  */
 class BasicObjectRepository extends ObjectRepository
 {
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    public function getObjectIdentifier($object): array
+    /** @return mixed[] */
+    public function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
             ->getClassMetadata($object::class)
@@ -40,8 +36,7 @@ class BasicObjectRepository extends ObjectRepository
         return $identifier;
     }
 
-    /** @param object $object */
-    public function merge($object): void
+    public function merge(object $object): void
     {
         throw new BadMethodCallException('Not implemented.');
     }

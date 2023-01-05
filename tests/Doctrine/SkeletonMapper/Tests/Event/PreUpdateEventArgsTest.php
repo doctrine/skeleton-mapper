@@ -14,17 +14,13 @@ use stdClass;
 
 class PreUpdateEventArgsTest extends TestCase
 {
-    /** @var ObjectManagerInterface */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
 
-    /** @var stdClass */
-    private $object;
+    private stdClass $object;
 
-    /** @var ChangeSet|MockObject */
-    private $changeSet;
+    private ChangeSet|MockObject $changeSet;
 
-    /** @var PreUpdateEventArgs */
-    private $event;
+    private PreUpdateEventArgs $event;
 
     public function testGetObjectChangeSet(): void
     {

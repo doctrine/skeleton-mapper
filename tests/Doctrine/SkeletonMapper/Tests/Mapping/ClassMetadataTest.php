@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Doctrine\SkeletonMapper\Tests\Mapping;
 
 use BadMethodCallException;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +14,7 @@ use stdClass;
 class ClassMetadataTest extends TestCase
 {
     /** @var ClassMetadata<object> */
-    private $class;
+    private ClassMetadata $class;
 
     public function testMapField(): void
     {
@@ -202,7 +201,6 @@ class ClassMetadataTest extends TestCase
     public function testInvokeLifecycleCallbacksWithoutArguments(): void
     {
         $object = new ClassMetadataTestModel();
-        $data   = ['test'];
 
         $this->class->lifecycleCallbacks['test'] = ['testEvent'];
 
@@ -279,17 +277,15 @@ class ClassMetadataTest extends TestCase
 
 class ClassMetadataTestModel
 {
-    /** @var int */
-    public $id;
+    public int $id;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var LifecycleEventArgs|true */
-    public $testEventCalled;
+    /** @var array<string>|true */
+    public array|bool $testEventCalled;
 
-    /** @param LifecycleEventArgs|true $args */
-    public function testEvent($args = null): void
+    /** @param array<string>|true $args */
+    public function testEvent(array|bool|null $args = null): void
     {
         if ($args !== null) {
             $this->testEventCalled = $args;

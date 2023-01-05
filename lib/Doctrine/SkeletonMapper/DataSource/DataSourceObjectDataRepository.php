@@ -13,20 +13,15 @@ use function usort;
 
 class DataSourceObjectDataRepository extends BasicObjectDataRepository
 {
-    /** @var DataSource */
-    private $dataSource;
-
     /** @var mixed[][]|null */
-    private $sourceRows;
+    private array|null $sourceRows = null;
 
     public function __construct(
         ObjectManagerInterface $objectManager,
-        DataSource $dataSource,
+        private DataSource $dataSource,
         string $className,
     ) {
         parent::__construct($objectManager, $className);
-
-        $this->dataSource = $dataSource;
     }
 
     /** @return mixed[][] */

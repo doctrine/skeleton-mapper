@@ -13,14 +13,11 @@ use stdClass;
 
 class DataSourceObjectDataRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
-    /** @var DataSource|MockObject */
-    private $dataSource;
+    private DataSource|MockObject $dataSource;
 
-    /** @var DataSourceObjectDataRepository */
-    private $dataSourceObjectDataRepository;
+    private DataSourceObjectDataRepository $dataSourceObjectDataRepository;
 
     protected function setUp(): void
     {

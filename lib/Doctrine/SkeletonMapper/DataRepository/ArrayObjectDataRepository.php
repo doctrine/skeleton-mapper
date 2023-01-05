@@ -9,21 +9,16 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class ArrayObjectDataRepository extends BasicObjectDataRepository
 {
-    /** @var ArrayCollection<int|string, mixed> */
-    private $objects;
-
     /**
      * @param ArrayCollection<int|string, mixed> $objects
      * @param class-string                       $className
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ArrayCollection $objects,
+        private ArrayCollection $objects,
         string $className,
     ) {
         parent::__construct($objectManager, $className);
-
-        $this->objects = $objects;
     }
 
     /** @return mixed[][] */

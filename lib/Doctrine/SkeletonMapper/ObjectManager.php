@@ -10,6 +10,7 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
+use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
 use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
 
 /**
@@ -17,40 +18,22 @@ use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactoryInterface;
  */
 class ObjectManager implements ObjectManagerInterface
 {
-    /** @var ObjectRepositoryFactoryInterface */
-    private $objectRepositoryFactory;
+    private UnitOfWork $unitOfWork;
 
-    /** @var ObjectPersisterFactoryInterface<object> */
-    private $objectPersisterFactory;
-
-    /** @var ObjectIdentityMap */
-    private $objectIdentityMap;
-
-    /** @var UnitOfWork */
-    private $unitOfWork;
-
-    /** @var ClassMetadataFactory<ClassMetadata<object>> */
-    private $metadataFactory;
-
-    /** @var EventManager */
-    private $eventManager;
+    private EventManager $eventManager;
 
     /**
      * @param ClassMetadataFactory<ClassMetadata<object>> $metadataFactory
      * @param ObjectPersisterFactoryInterface<object>     $objectPersisterFactory
      */
     public function __construct(
-        ObjectRepositoryFactoryInterface $objectRepositoryFactory,
-        ObjectPersisterFactoryInterface $objectPersisterFactory,
-        ObjectIdentityMap $objectIdentityMap,
-        ClassMetadataFactory $metadataFactory,
+        private ObjectRepositoryFactoryInterface $objectRepositoryFactory,
+        private ObjectPersisterFactoryInterface $objectPersisterFactory,
+        private ObjectIdentityMap $objectIdentityMap,
+        private ClassMetadataFactory $metadataFactory,
         EventManager|null $eventManager = null,
     ) {
-        $this->objectRepositoryFactory = $objectRepositoryFactory;
-        $this->objectPersisterFactory  = $objectPersisterFactory;
-        $this->objectIdentityMap       = $objectIdentityMap;
-        $this->metadataFactory         = $metadataFactory;
-        $this->eventManager            = $eventManager ?? new EventManager();
+        $this->eventManager = $eventManager ?? new EventManager();
 
         $this->unitOfWork = new UnitOfWork(
             $this,
@@ -89,7 +72,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * {@inheritDoc}
      */
-    public function update($object): void
+    public function update(object $object): void
     {
         $this->unitOfWork->update($object);
     }
@@ -124,10 +107,7 @@ class ObjectManager implements ObjectManagerInterface
         $this->unitOfWork->commit();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getRepository($className)
+    public function getRepository(string $className): ObjectRepositoryInterface
     {
         return $this->objectRepositoryFactory->getRepository($className);
     }
@@ -172,10 +152,8 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * @param mixed[] $data
      * @phpstan-param class-string $className
-     *
-     * @return object
      */
-    public function getOrCreateObject(string $className, array $data)
+    public function getOrCreateObject(string $className, array $data): object
     {
         return $this->unitOfWork->getOrCreateObject($className, $data);
     }

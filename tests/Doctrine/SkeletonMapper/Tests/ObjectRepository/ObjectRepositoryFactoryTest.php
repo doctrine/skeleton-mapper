@@ -12,8 +12,7 @@ use PHPUnit\Framework\TestCase;
 /** @group unit */
 class ObjectRepositoryFactoryTest extends TestCase
 {
-    /** @var ObjectRepositoryFactory */
-    private $factory;
+    private ObjectRepositoryFactory $factory;
 
     public function testAddObjectRepository(): void
     {

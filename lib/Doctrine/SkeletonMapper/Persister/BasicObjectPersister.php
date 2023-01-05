@@ -17,23 +17,16 @@ use function sprintf;
  */
 abstract class BasicObjectPersister extends ObjectPersister
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
-
-    /**
-     * @var string
-     * @phpstan-var class-string<T>
-     */
-    protected $className;
+    /** @phpstan-var class-string<T> */
+    protected string $className;
 
     /** @var ClassMetadataInterface<T> */
-    protected $class;
+    protected ClassMetadataInterface|null $class = null;
 
     /** @phpstan-param class-string<T> $className */
-    public function __construct(ObjectManagerInterface $objectManager, string $className)
+    public function __construct(protected ObjectManagerInterface $objectManager, string $className)
     {
-        $this->objectManager = $objectManager;
-        $this->className     = $className;
+        $this->className = $className;
     }
 
     public function getClassName(): string
@@ -54,11 +47,9 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Prepares an object changeset for persistence.
      *
-     * @param object $object
-     *
      * @return mixed[]
      */
-    public function preparePersistChangeSet($object): array
+    public function preparePersistChangeSet(object $object): array
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(
@@ -72,11 +63,9 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Prepares an object changeset for update.
      *
-     * @param object $object
-     *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet($object, ChangeSet $changeSet): array
+    public function prepareUpdateChangeSet(object $object, ChangeSet $changeSet): array
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(sprintf('%s must implement PersistableInterface.', $object::class));
@@ -88,10 +77,9 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Assign identifier to object.
      *
-     * @param object  $object
      * @param mixed[] $identifier
      */
-    public function assignIdentifier($object, array $identifier): void
+    public function assignIdentifier(object $object, array $identifier): void
     {
         if (! $object instanceof IdentifiableInterface) {
             throw new InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', $object::class));
@@ -100,12 +88,8 @@ abstract class BasicObjectPersister extends ObjectPersister
         $object->assignIdentifier($identifier);
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[] $identifier
-     */
-    protected function getObjectIdentifier($object): array
+    /** @return mixed[] $identifier */
+    protected function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
             ->getRepository($object::class)

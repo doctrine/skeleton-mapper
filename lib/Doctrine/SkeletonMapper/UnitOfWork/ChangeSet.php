@@ -6,20 +6,12 @@ namespace Doctrine\SkeletonMapper\UnitOfWork;
 
 class ChangeSet
 {
-    /** @var Change[] */
-    private $changes = [];
-
-    /**
-     * @param object   $object
-     * @param Change[] $changes
-     */
-    public function __construct(private $object, array $changes = [])
+    /** @param Change[] $changes */
+    public function __construct(private object $object, private array $changes = [])
     {
-        $this->changes = $changes;
     }
 
-    /** @return object */
-    public function getObject()
+    public function getObject(): object
     {
         return $this->object;
     }

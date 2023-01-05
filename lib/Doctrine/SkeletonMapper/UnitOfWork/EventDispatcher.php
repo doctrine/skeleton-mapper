@@ -15,18 +15,10 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
 class EventDispatcher
 {
-    /** @var ObjectManagerInterface */
-    private $objectManager;
-
-    /** @var EventManager */
-    private $eventManager;
-
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        EventManager $eventManager,
+        private ObjectManagerInterface $objectManager,
+        private EventManager $eventManager,
     ) {
-        $this->objectManager = $objectManager;
-        $this->eventManager  = $eventManager;
     }
 
     public function dispatchEvent(string $eventName, EventArgs $event): void
@@ -38,11 +30,8 @@ class EventDispatcher
         $this->eventManager->dispatchEvent($eventName, $event);
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $args
-     */
-    public function dispatchObjectLifecycleCallback(string $eventName, $object, array &$args = []): void
+    /** @param mixed[] $args */
+    public function dispatchObjectLifecycleCallback(string $eventName, object $object, array &$args = []): void
     {
         $className = $object::class;
 
@@ -101,8 +90,7 @@ class EventDispatcher
         );
     }
 
-    /** @param object $object */
-    public function dispatchPreRemove($object): void
+    public function dispatchPreRemove(object $object): void
     {
         $this->dispatchObjectLifecycleCallback(Events::preRemove, $object);
 
@@ -112,8 +100,7 @@ class EventDispatcher
         );
     }
 
-    /** @param object $object */
-    public function dispatchPreUpdate($object, ChangeSet $changeSet): void
+    public function dispatchPreUpdate(object $object, ChangeSet $changeSet): void
     {
         $args = [$changeSet];
         $this->dispatchObjectLifecycleCallback(Events::preUpdate, $object, $args);
@@ -128,8 +115,7 @@ class EventDispatcher
         );
     }
 
-    /** @param object $object */
-    public function dispatchPrePersist($object): void
+    public function dispatchPrePersist(object $object): void
     {
         $this->dispatchObjectLifecycleCallback(Events::prePersist, $object);
 
@@ -139,11 +125,8 @@ class EventDispatcher
         );
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function dispatchPreLoad($object, array &$data): void
+    /** @param mixed[] $data */
+    public function dispatchPreLoad(object $object, array &$data): void
     {
         $args = [&$data];
         $this->dispatchObjectLifecycleCallback(Events::preLoad, $object, $args);
@@ -154,14 +137,12 @@ class EventDispatcher
         );
     }
 
-    /** @param object $object */
-    public function dispatchPostLoad($object): void
+    public function dispatchPostLoad(object $object): void
     {
         $this->dispatchLifecycleEvent(Events::postLoad, $object);
     }
 
-    /** @param object $object */
-    public function dispatchLifecycleEvent(string $eventName, $object): void
+    public function dispatchLifecycleEvent(string $eventName, object $object): void
     {
         $this->dispatchObjectLifecycleCallback($eventName, $object);
 

@@ -14,18 +14,14 @@ use Doctrine\SkeletonMapper\Persister\PersistableInterface;
 abstract class BaseObject implements HydratableInterface, PersistableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged, Identifiable
 {
     /** @var PropertyChangedListener[] */
-    private $listeners = [];
+    private array $listeners = [];
 
     public function addPropertyChangedListener(PropertyChangedListener $listener): void
     {
         $this->listeners[] = $listener;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     */
-    protected function onPropertyChanged(string $propName, $oldValue, $newValue): void
+    protected function onPropertyChanged(string $propName, mixed $oldValue, mixed $newValue): void
     {
         if ($this->listeners === []) {
             return;

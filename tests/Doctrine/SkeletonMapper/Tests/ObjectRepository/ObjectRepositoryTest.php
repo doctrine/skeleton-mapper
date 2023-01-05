@@ -20,26 +20,21 @@ use stdClass;
 /** @group unit */
 class ObjectRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
-    /** @var ObjectDataRepositoryInterface|MockObject */
-    private $objectDataRepository;
+    private ObjectDataRepositoryInterface|MockObject $objectDataRepository;
 
-    /** @var ObjectFactory|MockObject */
-    private $objectFactory;
+    private ObjectFactory|MockObject $objectFactory;
 
-    /** @var ObjectHydratorInterface|MockObject */
-    private $hydrator;
+    private ObjectHydratorInterface|MockObject $hydrator;
 
-    /** @var EventManager|MockObject */
-    private $eventManager;
+    private EventManager|MockObject $eventManager;
 
     /** @phpstan-var ClassMetadataInterface<object>|MockObject */
     private $classMetadata;
 
     /** @var TestObjectRepository<object> */
-    private $repository;
+    private TestObjectRepository $repository;
 
     public function testGetClassName(): void
     {
@@ -206,12 +201,8 @@ class TestObjectRepository extends ObjectRepository
         return $this->class;
     }
 
-    /**
-     * @param object $object
-     *
-     * @return int[]
-     */
-    public function getObjectIdentifier($object): array
+    /** @return int[] */
+    public function getObjectIdentifier(object $object): array
     {
         return ['id' => 1];
     }
@@ -226,8 +217,7 @@ class TestObjectRepository extends ObjectRepository
         return ['id' => 1];
     }
 
-    /** @param object $object */
-    public function merge($object): void
+    public function merge(object $object): void
     {
     }
 }

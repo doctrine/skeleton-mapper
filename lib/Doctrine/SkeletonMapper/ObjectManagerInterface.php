@@ -13,19 +13,17 @@ use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryInterface;
  */
 interface ObjectManagerInterface extends BaseObjectManagerInterface
 {
-    /** @param object $object */
-    public function update($object): void;
+    public function update(object $object): void;
 
     /**
      * @param mixed[] $data
      * @phpstan-param class-string<T> $className
      *
-     * @return object|null
      * @psalm-return T|null
      *
      * @template T of object
      */
-    public function getOrCreateObject(string $className, array $data);
+    public function getOrCreateObject(string $className, array $data): object|null;
 
     public function getUnitOfWork(): UnitOfWork;
 
@@ -34,7 +32,7 @@ interface ObjectManagerInterface extends BaseObjectManagerInterface
      *
      * @return ObjectRepositoryInterface<object>
      */
-    public function getRepository($className);
+    public function getRepository(string $className): ObjectRepositoryInterface;
 
     /**
      * @param class-string<T> $className

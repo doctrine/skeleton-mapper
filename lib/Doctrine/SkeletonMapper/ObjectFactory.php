@@ -12,20 +12,15 @@ use Doctrine\Instantiator\Instantiator;
  */
 class ObjectFactory
 {
-    /** @var Instantiator */
-    private $instantiator;
+    private Instantiator $instantiator;
 
     public function __construct()
     {
         $this->instantiator = new Instantiator();
     }
 
-    /**
-     * @phpstan-param class-string $className
-     *
-     * @return object
-     */
-    public function create(string $className)
+    /** @phpstan-param class-string $className */
+    public function create(string $className): object
     {
         return $this->instantiator->instantiate($className);
     }

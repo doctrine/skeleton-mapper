@@ -13,17 +13,9 @@ use function is_array;
 
 abstract class BasicObjectDataRepository extends ObjectDataRepository
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
-
-    /** @var class-string */
-    protected $className;
-
     /** @param class-string $className */
-    public function __construct(ObjectManagerInterface $objectManager, string $className)
+    public function __construct(protected ObjectManagerInterface $objectManager, protected string $className)
     {
-        $this->objectManager = $objectManager;
-        $this->className     = $className;
     }
 
     /** @return class-string */
@@ -38,12 +30,8 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
         $this->className = $className;
     }
 
-    /**
-     * @param mixed $id
-     *
-     * @return mixed[]
-     */
-    public function find($id): array|null
+    /** @return mixed[] */
+    public function find(mixed $id): array|null
     {
         $identifier = $this->getIdentifier();
 
@@ -66,12 +54,8 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
             ->getIdentifier();
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    protected function getObjectIdentifier($object): array
+    /** @return mixed[] */
+    protected function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

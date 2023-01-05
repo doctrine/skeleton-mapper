@@ -10,8 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class ObjectPersisterFactoryTest extends TestCase
 {
-    /** @var ObjectPersisterFactory */
-    private $factory;
+    private ObjectPersisterFactory $factory;
 
     public function testPersisterFactory(): void
     {

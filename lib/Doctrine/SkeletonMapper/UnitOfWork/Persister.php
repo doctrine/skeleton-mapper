@@ -10,23 +10,11 @@ use Doctrine\SkeletonMapper\UnitOfWork;
 
 class Persister
 {
-    /** @var UnitOfWork */
-    private $unitOfWork;
-
-    /** @var EventDispatcher */
-    private $eventDispatcher;
-
-    /** @var ObjectIdentityMap */
-    private $objectIdentityMap;
-
     public function __construct(
-        UnitOfWork $unitOfWork,
-        EventDispatcher $eventDispatcher,
-        ObjectIdentityMap $objectIdentityMap,
+        private UnitOfWork $unitOfWork,
+        private EventDispatcher $eventDispatcher,
+        private ObjectIdentityMap $objectIdentityMap,
     ) {
-        $this->unitOfWork        = $unitOfWork;
-        $this->eventDispatcher   = $eventDispatcher;
-        $this->objectIdentityMap = $objectIdentityMap;
     }
 
     public function executePersists(): void

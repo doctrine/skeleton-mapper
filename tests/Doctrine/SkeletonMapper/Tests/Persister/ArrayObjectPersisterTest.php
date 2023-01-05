@@ -17,14 +17,12 @@ use PHPUnit\Framework\TestCase;
 /** @group unit */
 class ArrayObjectPersisterTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
     /** @var ArrayCollection<int, array<string, mixed>> */
-    private $objects;
+    private ArrayCollection $objects;
 
-    /** @var ArrayObjectPersister */
-    private $persister;
+    private ArrayObjectPersister $persister;
 
     /** @phpstan-var class-string */
     private $testClassName = ArrayObjectPersisterTestModel::class;

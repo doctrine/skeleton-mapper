@@ -9,8 +9,7 @@ interface DataTesterInterface
     /** @return mixed[] */
     public function find(int $id): array|null;
 
-    /** @param mixed $value */
-    public function set(int $id, string $key, $value): void;
+    public function set(int $id, string $key, mixed $value): void;
 
     public function count(): int;
 }

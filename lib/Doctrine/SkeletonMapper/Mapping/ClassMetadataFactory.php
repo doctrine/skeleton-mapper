@@ -21,7 +21,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
      * @var ClassMetadata[]
      * @psalm-var T[]
      */
-    private $classes = [];
+    private array $classes = [];
 
     /** @phpstan-param ClassMetadataInstantiatorInterface<object> $classMetadataInstantiator */
     public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
