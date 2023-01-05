@@ -6,3 +6,13 @@ parameters:
     level: 8
     paths:
       - lib
+    ignoreErrors:
+      -
+        message: "#Method Doctrine\\\\SkeletonMapper\\\\ObjectManager::getClassMetadata\\(\\) should return Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadataInterface\\<T of object\\> but returns Doctrine\\\\Persistence\\\\Mapping\\\\ClassMetadata\\<object\\>#"
+        path: lib/Doctrine/SkeletonMapper/ObjectManager.php
+      -
+        message: "#Property Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadataFactory\\<T of Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata\\>::\\$classes \\(array\\<T of Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata\\>\\) does not accept array\\<Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata\\<object\\>|T of Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata\\>#"
+        path: lib/Doctrine/SkeletonMapper/Mapping/ClassMetadataFactory.php
+      -
+        message: "#Method Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadataFactory::getMetadataFor\\(\\) should return T of Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata but returns Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata\\<object\\>|T of Doctrine\\\\SkeletonMapper\\\\Mapping\\\\ClassMetadata#"
+        path: lib/Doctrine/SkeletonMapper/Mapping/ClassMetadataFactory.php
