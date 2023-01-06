@@ -16,31 +16,23 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class BasicObjectRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
-    /** @var ObjectDataRepositoryInterface|MockObject */
-    private $objectDataRepository;
+    private ObjectDataRepositoryInterface|MockObject $objectDataRepository;
 
-    /** @var ObjectFactory|MockObject */
-    private $objectFactory;
+    private ObjectFactory|MockObject $objectFactory;
 
-    /** @var ObjectHydratorInterface|MockObject */
-    private $hydrator;
+    private ObjectHydratorInterface|MockObject $hydrator;
 
-    /** @var EventManager|MockObject */
-    private $eventManager;
+    private EventManager|MockObject $eventManager;
 
-    /** @var ClassMetadata */
-    private $classMetadata;
+    /** @var ClassMetadata<object> */
+    private ClassMetadata $classMetadata;
 
-    /** @var BasicObjectRepository */
-    private $repository;
+    private BasicObjectRepository $repository;
 
     /** @phpstan-var class-string */
     private $testClassName = BasicObjectRepositoryTestModel::class;
@@ -96,13 +88,12 @@ class BasicObjectRepositoryTest extends TestCase
             $this->objectFactory,
             $this->hydrator,
             $this->eventManager,
-            $this->testClassName
+            $this->testClassName,
         );
     }
 }
 
 class BasicObjectRepositoryTestModel
 {
-    /** @var int */
-    public $id;
+    public int $id;
 }

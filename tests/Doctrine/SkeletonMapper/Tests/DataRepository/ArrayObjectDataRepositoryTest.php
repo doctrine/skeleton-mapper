@@ -11,19 +11,15 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ArrayObjectDataRepositoryTest extends TestCase
 {
-    /** @var ObjectManagerInterface|MockObject */
-    private $objectManager;
+    private ObjectManagerInterface|MockObject $objectManager;
 
-    /** @var ArrayCollection<int, array<string, string>> */
-    private $objects;
+    /** @var ArrayCollection<int, array{username: string}> */
+    private ArrayCollection $objects;
 
-    /** @var ArrayObjectDataRepository */
-    private $objectDataRepository;
+    private ArrayObjectDataRepository $objectDataRepository;
 
     public function testFindAll(): void
     {
@@ -39,7 +35,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
 
         self::assertSame(
             [['username' => 'jwage']],
-            $this->objectDataRepository->findBy($criteria, $orderBy, $limit, $offset)
+            $this->objectDataRepository->findBy($criteria, $orderBy, $limit, $offset),
         );
     }
 
@@ -49,7 +45,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
 
         self::assertSame(
             ['username' => 'jwage'],
-            $this->objectDataRepository->findOneBy($criteria)
+            $this->objectDataRepository->findOneBy($criteria),
         );
     }
 
@@ -64,7 +60,7 @@ class ArrayObjectDataRepositoryTest extends TestCase
         $this->objectDataRepository = new ArrayObjectDataRepository(
             $this->objectManager,
             $this->objects,
-            ArrayObject::class
+            ArrayObject::class,
         );
     }
 }

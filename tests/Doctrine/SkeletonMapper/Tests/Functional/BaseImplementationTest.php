@@ -28,89 +28,66 @@ use function assert;
 
 abstract class BaseImplementationTest extends TestCase
 {
-    /** @var SkeletonMapper\Hydrator\BasicObjectHydrator */
-    protected $basicObjectHydrator;
+    protected SkeletonMapper\Hydrator\BasicObjectHydrator $basicObjectHydrator;
 
-    /** @var SkeletonMapper\Mapping\ClassMetadataFactory */
-    protected $classMetadataFactory;
+    /** @var SkeletonMapper\Mapping\ClassMetadataFactory<ClassMetadataInterface<User>> */
+    protected SkeletonMapper\Mapping\ClassMetadataFactory $classMetadataFactory;
 
-    /** @var SkeletonMapper\Mapping\ClassMetadataInstantiator */
-    protected $classMetadataInstantiator;
+    protected SkeletonMapper\Mapping\ClassMetadataInstantiator $classMetadataInstantiator;
 
-    /** @var SkeletonMapper\ObjectFactory */
-    protected $objectFactory;
+    protected SkeletonMapper\ObjectFactory $objectFactory;
 
-    /** @var SkeletonMapper\ObjectRepository\ObjectRepositoryFactory */
-    protected $objectRepositoryFactory;
+    protected SkeletonMapper\ObjectRepository\ObjectRepositoryFactory $objectRepositoryFactory;
 
-    /** @var SkeletonMapper\Persister\ObjectPersisterFactory */
-    protected $objectPersisterFactory;
+    protected SkeletonMapper\Persister\ObjectPersisterFactory $objectPersisterFactory;
 
-    /** @var SkeletonMapper\ObjectIdentityMap */
-    protected $objectIdentityMap;
+    protected SkeletonMapper\ObjectIdentityMap $objectIdentityMap;
 
-    /** @var EventManager */
-    protected $eventManager;
+    protected EventManager $eventManager;
 
-    /** @var ClassMetadataInterface */
-    protected $userClassMetadata;
+    /** @var ClassMetadataInterface<User> */
+    protected ClassMetadataInterface $userClassMetadata;
 
-    /** @var SkeletonMapper\ObjectManager */
-    protected $objectManager;
+    protected SkeletonMapper\ObjectManager $objectManager;
 
-    /** @var UnitOfWork */
-    protected $unitOfWork;
+    protected UnitOfWork $unitOfWork;
 
-    /** @var ArrayCollection<int, User> */
-    protected $users;
+    /** @var ArrayCollection<int, array{_id: int, username: string, password: string}> */
+    protected ArrayCollection $users;
 
     /** @var ArrayCollection<int, Profile> */
-    protected $profiles;
+    protected ArrayCollection $profiles;
 
     /** @var ArrayCollection<int, Group> */
-    protected $groups;
+    protected ArrayCollection $groups;
 
-    /** @var DataTesterInterface */
-    protected $usersTester;
+    protected DataTesterInterface $usersTester;
 
-    /** @var DataTesterInterface */
-    protected $profilesTester;
+    protected DataTesterInterface $profilesTester;
 
-    /** @var DataTesterInterface */
-    protected $groupsTester;
+    protected DataTesterInterface $groupsTester;
 
-    /** @var string */
-    protected $userClassName = User::class;
+    protected string $userClassName = User::class;
 
-    /** @var EventTester */
-    protected $eventTester;
+    protected EventTester $eventTester;
 
-    /** @var ObjectDataRepository */
-    protected $userDataRepository;
+    protected ObjectDataRepository $userDataRepository;
 
-    /** @var UserRepository */
-    protected $userRepository;
+    protected UserRepository $userRepository;
 
-    /** @var ObjectPersister */
-    protected $userPersister;
+    protected ObjectPersister $userPersister;
 
-    /** @var ObjectDataRepository */
-    protected $profileDataRepository;
+    protected ObjectDataRepository $profileDataRepository;
 
-    /** @var ProfileRepository */
-    protected $profileRepository;
+    protected ProfileRepository $profileRepository;
 
-    /** @var ObjectPersister */
-    protected $profilePersister;
+    protected ObjectPersister $profilePersister;
 
-    /** @var ObjectDataRepository */
-    protected $groupDataRepository;
+    protected ObjectDataRepository $groupDataRepository;
 
-    /** @var GroupRepository */
-    protected $groupRepository;
+    protected GroupRepository $groupRepository;
 
-    /** @var ObjectPersister */
-    protected $groupPersister;
+    protected ObjectPersister $groupPersister;
 
     abstract protected function setUpImplementation(): void;
 
@@ -176,7 +153,7 @@ abstract class BaseImplementationTest extends TestCase
         $this->objectRepositoryFactory   = new SkeletonMapper\ObjectRepository\ObjectRepositoryFactory();
         $this->objectPersisterFactory    = new SkeletonMapper\Persister\ObjectPersisterFactory();
         $this->objectIdentityMap         = new SkeletonMapper\ObjectIdentityMap(
-            $this->objectRepositoryFactory
+            $this->objectRepositoryFactory,
         );
 
         // user class metadata
@@ -188,7 +165,7 @@ abstract class BaseImplementationTest extends TestCase
 
         $this->classMetadataFactory->setMetadataFor(
             User::class,
-            $this->userClassMetadata
+            $this->userClassMetadata,
         );
 
         $this->objectManager = new SkeletonMapper\ObjectManager(
@@ -196,11 +173,11 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectPersisterFactory,
             $this->objectIdentityMap,
             $this->classMetadataFactory,
-            $this->eventManager
+            $this->eventManager,
         );
 
         $this->basicObjectHydrator = new SkeletonMapper\Hydrator\BasicObjectHydrator(
-            $this->objectManager
+            $this->objectManager,
         );
         $this->unitOfWork          = $this->objectManager->getUnitOfWork();
     }
@@ -209,28 +186,28 @@ abstract class BaseImplementationTest extends TestCase
     {
         $this->objectRepositoryFactory->addObjectRepository(
             User::class,
-            $this->userRepository
+            $this->userRepository,
         );
         $this->objectRepositoryFactory->addObjectRepository(
             Profile::class,
-            $this->profileRepository
+            $this->profileRepository,
         );
         $this->objectRepositoryFactory->addObjectRepository(
             Group::class,
-            $this->groupRepository
+            $this->groupRepository,
         );
 
         $this->objectPersisterFactory->addObjectPersister(
             User::class,
-            $this->userPersister
+            $this->userPersister,
         );
         $this->objectPersisterFactory->addObjectPersister(
             Profile::class,
-            $this->profilePersister
+            $this->profilePersister,
         );
         $this->objectPersisterFactory->addObjectPersister(
             Group::class,
-            $this->groupPersister
+            $this->groupPersister,
         );
     }
 
@@ -596,7 +573,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, ['username' => new Change('username', 'jwage', 'changed')]),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $this->objectManager->flush();
@@ -604,7 +581,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, []),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $user2 = $this->objectManager->find(User::class, 1);
@@ -618,7 +595,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, []),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->flush();
@@ -635,7 +612,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, ['username' => new Change('username', 'another', 'changed')]),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->flush();
@@ -650,7 +627,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user3, ['username' => new Change('username', 'changed', 'testing')]),
-            $this->unitOfWork->getObjectChangeSet($user3)
+            $this->unitOfWork->getObjectChangeSet($user3),
         );
 
         $this->objectManager->clear();
@@ -658,7 +635,7 @@ abstract class BaseImplementationTest extends TestCase
 
         self::assertEquals(
             new ChangeSet($user, []),
-            $this->unitOfWork->getObjectChangeSet($user)
+            $this->unitOfWork->getObjectChangeSet($user),
         );
 
         $user3 = $this->objectManager->find(User::class, 3);
@@ -866,7 +843,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            User::class
+            User::class,
         );
     }
 
@@ -878,7 +855,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            Profile::class
+            Profile::class,
         );
     }
 
@@ -890,7 +867,7 @@ abstract class BaseImplementationTest extends TestCase
             $this->objectFactory,
             $this->basicObjectHydrator,
             $this->eventManager,
-            Group::class
+            Group::class,
         );
     }
 
@@ -903,11 +880,9 @@ abstract class BaseImplementationTest extends TestCase
 class EventTester
 {
     /** @var string[] */
-    public $called = [];
+    public array $called = [];
 
-    /**
-     * @param mixed[] $arguments
-     */
+    /** @param mixed[] $arguments */
     public function __call(string $method, array $arguments): void
     {
         $this->called[] = $method;

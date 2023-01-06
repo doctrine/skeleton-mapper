@@ -8,20 +8,12 @@ use function in_array;
 
 class CriteriaMatcher
 {
-    /** @var mixed[] */
-    private $criteria;
-
-    /** @var mixed[] */
-    private $row;
-
     /**
      * @param mixed[] $criteria
      * @param mixed[] $row
      */
-    public function __construct(array $criteria, array $row)
+    public function __construct(private array $criteria, private array $row)
     {
-        $this->criteria = $criteria;
-        $this->row      = $row;
     }
 
     public function matches(): bool
@@ -39,10 +31,7 @@ class CriteriaMatcher
         return $matches;
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function criteriaElementMatches(string $key, $value): bool
+    private function criteriaElementMatches(string $key, mixed $value): bool
     {
         if (isset($value['$contains'])) {
             if ($this->contains($key, $value)) {
@@ -55,18 +44,13 @@ class CriteriaMatcher
         return false;
     }
 
-    /**
-     * @param mixed[] $value
-     */
+    /** @param mixed[] $value */
     private function contains(string $key, array $value): bool
     {
         return isset($this->row[$key]) && in_array($value['$contains'], $this->row[$key], true);
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function equals(string $key, $value): bool
+    private function equals(string $key, mixed $value): bool
     {
         return isset($this->row[$key]) && $this->row[$key] === $value;
     }

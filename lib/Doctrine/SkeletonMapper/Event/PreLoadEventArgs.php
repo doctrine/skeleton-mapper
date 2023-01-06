@@ -12,15 +12,13 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 class PreLoadEventArgs extends LifecycleEventArgs
 {
     /** @var mixed[] */
-    private $data;
+    private array $data;
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data   Array of data to be loaded and hydrated
-     */
-    public function __construct($object, ObjectManagerInterface $objectManager, array &$data)
+    /** @param mixed[] $data Array of data to be loaded and hydrated */
+    public function __construct(object $object, ObjectManagerInterface $objectManager, array &$data)
     {
         parent::__construct($object, $objectManager);
+
         $this->data = &$data;
     }
 

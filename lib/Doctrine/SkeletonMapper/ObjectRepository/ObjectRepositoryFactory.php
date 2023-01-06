@@ -10,22 +10,33 @@ use function sprintf;
 
 /**
  * Class responsible for retrieving ObjectRepository instances.
+ *
+ * @template T of object
  */
 class ObjectRepositoryFactory implements ObjectRepositoryFactoryInterface
 {
-    /** @var ObjectRepositoryInterface[] */
-    private $repositories = [];
+    /** @var array<ObjectRepositoryInterface<T>> */
+    private array $repositories = [];
 
+    /**
+     * @phpstan-param class-string<T>                 $className
+     * @phpstan-param ObjectRepositoryInterface<T>    $objectRepository
+     */
     public function addObjectRepository(string $className, ObjectRepositoryInterface $objectRepository): void
     {
         $this->repositories[$className] = $objectRepository;
     }
 
+    /**
+     * @phpstan-param class-string<T> $className
+     *
+     * @phpstan-return ObjectRepositoryInterface<T>
+     */
     public function getRepository(string $className): ObjectRepositoryInterface
     {
         if (! isset($this->repositories[$className])) {
             throw new InvalidArgumentException(
-                sprintf('ObjectRepository with class name %s was not found', $className)
+                sprintf('ObjectRepository with class name %s was not found', $className),
             );
         }
 

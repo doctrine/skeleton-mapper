@@ -6,27 +6,18 @@ namespace Doctrine\SkeletonMapper\Tests\Model;
 
 class Address
 {
-    /** @var string */
-    private $address1;
+    private string|null $address1 = null;
 
-    /** @var string|null */
-    private $address2;
+    private string|null $address2 = null;
 
-    /** @var string */
-    private $city;
+    private string $city = '';
 
-    /** @var string */
-    private $state;
+    private string $state = '';
 
-    /** @var string */
-    private $zip;
+    private string $zip = '';
 
-    /** @var Profile */
-    private $profile;
-
-    public function __construct(Profile $profile)
+    public function __construct(private Profile $profile)
     {
-        $this->profile = $profile;
     }
 
     /**
@@ -55,7 +46,7 @@ class Address
     /**
      * Gets the value of address2.
      */
-    public function getAddress2(): ?string
+    public function getAddress2(): string|null
     {
         return $this->address2;
     }

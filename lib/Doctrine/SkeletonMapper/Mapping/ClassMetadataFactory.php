@@ -4,28 +4,33 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory as BaseClassMetadataFactory;
 
 /**
  * Class responsible for retrieving ClassMetadata instances.
+ *
+ * @template T of ClassMetadata
+ * @template-implements BaseClassMetadataFactory<T>
  */
 class ClassMetadataFactory implements BaseClassMetadataFactory
 {
-    /** @var ClassMetadataInstantiatorInterface */
+    /** @phpstan-var ClassMetadataInstantiatorInterface<object> */
     private $classMetadataInstantiator;
 
-    /** @var ClassMetadataInterface[] */
-    private $classes = [];
+    /**
+     * @var ClassMetadata[]
+     * @psalm-var T[]
+     */
+    private array $classes = [];
 
+    /** @phpstan-param ClassMetadataInstantiatorInterface<object> $classMetadataInstantiator */
     public function __construct(ClassMetadataInstantiatorInterface $classMetadataInstantiator)
     {
         $this->classMetadataInstantiator = $classMetadataInstantiator;
     }
 
     /**
-     * Returns all mapped classes.
-     *
-     * @return ClassMetadataInterface[] The ClassMetadataInterface instances of all mapped classes.
+     * {@inheritDoc}
      */
     public function getAllMetadata(): array
     {
@@ -33,9 +38,9 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     }
 
     /**
-     * @param string $className
+     * {@inheritDoc}
      */
-    public function getMetadataFor($className): ClassMetadataInterface
+    public function getMetadataFor($className): ClassMetadata
     {
         if (! isset($this->classes[$className])) {
             $metadata = $this->classMetadataInstantiator->instantiate($className);
@@ -59,8 +64,7 @@ class ClassMetadataFactory implements BaseClassMetadataFactory
     }
 
     /**
-     * @param string                 $className
-     * @param ClassMetadataInterface $class
+     * {@inheritDoc}
      */
     public function setMetadataFor($className, $class)
     {

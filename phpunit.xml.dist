@@ -6,15 +6,15 @@
          verbose="true"
          beStrictAboutOutputDuringTests="true"
 >
+    <coverage includeUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./lib</directory>
+        </include>
+    </coverage>
+
     <testsuites>
         <testsuite name="Doctrine SkeletonMapper Test Suite">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory>./lib</directory>
-        </whitelist>
-    </filter>
 </phpunit>

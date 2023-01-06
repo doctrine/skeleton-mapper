@@ -45,7 +45,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectDataRepository(
             $this->objectManager,
             $this->users,
-            User::class
+            User::class,
         );
     }
 
@@ -54,7 +54,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectPersister(
             $this->objectManager,
             $this->users,
-            User::class
+            User::class,
         );
     }
 
@@ -63,7 +63,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectDataRepository(
             $this->objectManager,
             $this->profiles,
-            Profile::class
+            Profile::class,
         );
     }
 
@@ -72,7 +72,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectPersister(
             $this->objectManager,
             $this->profiles,
-            Profile::class
+            Profile::class,
         );
     }
 
@@ -81,7 +81,7 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectDataRepository(
             $this->objectManager,
             $this->groups,
-            Group::class
+            Group::class,
         );
     }
 
@@ -90,28 +90,20 @@ class ArrayImplementationTest extends BaseImplementationTest
         return new ArrayObjectPersister(
             $this->objectManager,
             $this->groups,
-            Group::class
+            Group::class,
         );
     }
 }
 
 class ArrayTester implements DataTesterInterface
 {
-    /** @var ArrayCollection<mixed, mixed> */
-    private $objects;
-
-    /**
-     * @param ArrayCollection<mixed, mixed> $objects
-     */
-    public function __construct(ArrayCollection $objects)
+    /** @param ArrayCollection<mixed, mixed> $objects */
+    public function __construct(private ArrayCollection $objects)
     {
-        $this->objects = $objects;
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function find(int $id): ?array
+    /** @return mixed[] */
+    public function find(int $id): array|null
     {
         foreach ($this->objects as $object) {
             if ($object['_id'] === $id) {
@@ -122,10 +114,7 @@ class ArrayTester implements DataTesterInterface
         return null;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function set(int $id, string $key, $value): void
+    public function set(int $id, string $key, mixed $value): void
     {
         $object             = $this->objects[$id];
         $object[$key]       = $value;

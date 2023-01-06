@@ -6,57 +6,47 @@ namespace Doctrine\SkeletonMapper\DataRepository;
 
 use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use RuntimeException;
+use ValueError;
 
 use function array_combine;
 use function is_array;
 
 abstract class BasicObjectDataRepository extends ObjectDataRepository
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
-
-    /** @var string */
-    protected $className;
-
-    public function __construct(ObjectManagerInterface $objectManager, string $className)
+    /** @param class-string $className */
+    public function __construct(protected ObjectManagerInterface $objectManager, protected string $className)
     {
-        $this->objectManager = $objectManager;
-        $this->className     = $className;
     }
 
+    /** @return class-string */
     public function getClassName(): string
     {
         return $this->className;
     }
 
+    /** @param class-string $className */
     public function setClassName(string $className): void
     {
         $this->className = $className;
     }
 
-    /**
-     * @param mixed $id
-     *
-     * @return mixed[]
-     */
-    public function find($id): ?array
+    /** @return mixed[] */
+    public function find(mixed $id): array|null
     {
         $identifier = $this->getIdentifier();
 
         $identifierValues = is_array($id) ? $id : [$id];
 
-        $criteria = array_combine($identifier, $identifierValues);
-
-        if ($criteria === false) {
+        try {
+            $criteria = array_combine($identifier, $identifierValues);
+        } catch (ValueError) {
             throw new RuntimeException('array_combine failed. Make sure you passed a value for each identifier.');
         }
 
         return $this->findOneBy($criteria);
     }
 
-    /**
-     * @return mixed[]
-     */
+    /** @return mixed[] */
     protected function getIdentifier(): array
     {
         return $this->objectManager
@@ -64,12 +54,8 @@ abstract class BasicObjectDataRepository extends ObjectDataRepository
             ->getIdentifier();
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    protected function getObjectIdentifier($object): array
+    /** @return mixed[] */
+    protected function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
             ->getRepository($this->getClassName())

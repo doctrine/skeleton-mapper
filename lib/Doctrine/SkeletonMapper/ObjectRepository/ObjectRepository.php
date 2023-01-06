@@ -14,62 +14,41 @@ use InvalidArgumentException;
 
 /**
  * Base class for object repositories to extend from.
+ *
+ * @template T of object
+ * @template-implements ObjectRepositoryInterface<T>
  */
 abstract class ObjectRepository implements ObjectRepositoryInterface
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
-
-    /** @var ObjectDataRepositoryInterface */
-    protected $objectDataRepository;
-
-    /** @var ObjectFactory */
-    protected $objectFactory;
-
-    /** @var ObjectHydratorInterface */
-    protected $objectHydrator;
-
-    /** @var EventManager */
-    protected $eventManager;
-
-    /** @phpstan-var class-string */
+    /** @phpstan-var class-string<T> */
     protected $className;
 
-    /** @var ClassMetadataInterface */
-    protected $class;
+    /** @var ClassMetadataInterface<T> */
+    protected ClassMetadataInterface $class;
 
-    /**
-     * @phpstan-param class-string $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        ObjectDataRepositoryInterface $objectDataRepository,
-        ObjectFactory $objectFactory,
-        ObjectHydratorInterface $objectHydrator,
-        EventManager $eventManager,
-        string $className
+        protected ObjectManagerInterface $objectManager,
+        protected ObjectDataRepositoryInterface $objectDataRepository,
+        protected ObjectFactory $objectFactory,
+        protected ObjectHydratorInterface $objectHydrator,
+        protected EventManager $eventManager,
+        string $className,
     ) {
-        $this->objectManager        = $objectManager;
-        $this->objectDataRepository = $objectDataRepository;
-        $this->objectFactory        = $objectFactory;
-        $this->objectHydrator       = $objectHydrator;
-        $this->eventManager         = $eventManager;
         $this->setClassName($className);
     }
 
     /**
      * Returns the class name of the object managed by the repository.
      *
-     * @phpstan-return class-string
+     * @phpstan-return class-string<T>
      */
     public function getClassName(): string
     {
         return $this->className;
     }
 
-    /**
-     * @phpstan-param class-string $className
-     */
+    /** @phpstan-param class-string<T> $className */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -79,14 +58,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param mixed $id The identifier.
+     * {@inheritdoc}
      *
-     * @return object|null The object.
+     * @psalm-return T|null
      */
     public function find($id)
     {
         return $this->getOrCreateObject(
-            $this->objectDataRepository->find($id)
+            $this->objectDataRepository->find($id),
         );
     }
 
@@ -116,13 +95,13 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
+    public function findBy(array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null): array
     {
         $objectsData = $this->objectDataRepository->findBy(
             $criteria,
             $orderBy,
             $limit,
-            $offset
+            $offset,
         );
 
         $objects = [];
@@ -145,14 +124,11 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     public function findOneBy(array $criteria)
     {
         return $this->getOrCreateObject(
-            $this->objectDataRepository->findOneBy($criteria)
+            $this->objectDataRepository->findOneBy($criteria),
         );
     }
 
-    /**
-     * @param object $object
-     */
-    public function refresh($object): void
+    public function refresh(object $object): void
     {
         $data = $this->objectDataRepository
             ->find($this->getObjectIdentifier($object));
@@ -164,21 +140,14 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
         $this->hydrate($object, $data);
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function hydrate($object, array $data): void
+    /** @param mixed[] $data */
+    public function hydrate(object $object, array $data): void
     {
         $this->objectHydrator->hydrate($object, $data);
     }
 
-    /**
-     * @return object
-     *
-     * @phpstan-param class-string $className
-     */
-    public function create(string $className)
+    /** @phpstan-param class-string $className */
+    public function create(string $className): object
     {
         return $this->objectFactory->create($className);
     }
@@ -186,9 +155,9 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
     /**
      * @param mixed[] $data
      *
-     * @return object|null
+     * @psalm-return T|null
      */
-    protected function getOrCreateObject(?array $data = null)
+    protected function getOrCreateObject(array|null $data = null)
     {
         if ($data === null) {
             return null;
@@ -196,7 +165,7 @@ abstract class ObjectRepository implements ObjectRepositoryInterface
 
         return $this->objectManager->getOrCreateObject(
             $this->getClassName(),
-            $data
+            $data,
         );
     }
 }

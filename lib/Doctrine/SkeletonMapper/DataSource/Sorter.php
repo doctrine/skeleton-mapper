@@ -16,18 +16,15 @@ class Sorter
     private const ORDER_ASC  = 'asc';
     private const ORDER_DESC = 'desc';
 
-    /** @var int */
-    private $level = 0;
+    private int $level = 0;
 
     /** @var string[] */
-    private $fields;
+    private array $fields;
 
     /** @var int[] */
-    private $orders;
+    private array $orders;
 
-    /**
-     * @param string[] $orderBy
-     */
+    /** @param string[] $orderBy */
     public function __construct(array $orderBy)
     {
         if ($orderBy === []) {
@@ -85,16 +82,12 @@ class Sorter
 
         throw new InvalidArgumentException(sprintf(
             '$order value of %s is not accepted. Only a value of asc or desc is allowed.',
-            $order
+            $order,
         ));
     }
 
-    /**
-     * @param mixed[] $item
-     *
-     * @return mixed
-     */
-    private function getComparisonField(array $item, string $field)
+    /** @param mixed[] $item */
+    private function getComparisonField(array $item, string $field): mixed
     {
         if (! isset($item[$field])) {
             throw new InvalidArgumentException(sprintf('Unable to find comparison field %s', $field));

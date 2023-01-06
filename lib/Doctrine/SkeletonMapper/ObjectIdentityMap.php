@@ -7,7 +7,6 @@ namespace Doctrine\SkeletonMapper;
 use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactoryInterface;
 
 use function count;
-use function get_class;
 use function serialize;
 
 /**
@@ -16,22 +15,15 @@ use function serialize;
 class ObjectIdentityMap
 {
     /** @var object[][] */
-    private $identityMap = [];
+    private array $identityMap = [];
 
-    /** @var ObjectRepositoryFactoryInterface */
-    private $objectRepositoryFactory;
-
-    public function __construct(ObjectRepositoryFactoryInterface $objectRepositoryFactory)
+    public function __construct(private ObjectRepositoryFactoryInterface $objectRepositoryFactory)
     {
-        $this->objectRepositoryFactory = $objectRepositoryFactory;
     }
 
-    /**
-     * @param object $object
-     */
-    public function contains($object): bool
+    public function contains(object $object): bool
     {
-        $className = get_class($object);
+        $className = $object::class;
 
         $objectIdentifier = $this->getObjectIdentifier($object);
 
@@ -42,10 +34,9 @@ class ObjectIdentityMap
 
     /**
      * @param mixed[] $data
-     *
-     * @return object|null
+     * @psalm-param class-string<object> $className
      */
-    public function tryGetById(string $className, array $data)
+    public function tryGetById(string $className, array $data): object|null
     {
         $serialized = serialize($this->extractIdentifierFromData($className, $data));
 
@@ -56,24 +47,21 @@ class ObjectIdentityMap
         return null;
     }
 
-    /**
-     * @param object  $object
-     * @param mixed[] $data
-     */
-    public function addToIdentityMap($object, array $data): void
+    /** @param mixed[] $data */
+    public function addToIdentityMap(object $object, array $data): void
     {
-        $className = get_class($object);
+        $className = $object::class;
 
         if (! isset($this->identityMap[$className])) {
-            $this->identityMap[get_class($object)] = [];
+            $this->identityMap[$object::class] = [];
         }
 
         $serialized = serialize($this->getObjectIdentifier($object));
 
-        $this->identityMap[get_class($object)][$serialized] = $object;
+        $this->identityMap[$object::class][$serialized] = $object;
     }
 
-    public function clear(?string $objectName = null): void
+    public function clear(string|null $objectName = null): void
     {
         if ($objectName !== null) {
             unset($this->identityMap[$objectName]);
@@ -82,15 +70,12 @@ class ObjectIdentityMap
         }
     }
 
-    /**
-     * @param object $object
-     */
-    public function detach($object): void
+    public function detach(object $object): void
     {
         $objectIdentifier = $this->getObjectIdentifier($object);
 
         $serialized = serialize($objectIdentifier);
-        unset($this->identityMap[get_class($object)][$serialized]);
+        unset($this->identityMap[$object::class][$serialized]);
     }
 
     public function count(): int
@@ -98,22 +83,19 @@ class ObjectIdentityMap
         return count($this->identityMap);
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[] $identifier
-     */
-    private function getObjectIdentifier($object): array
+    /** @return mixed[] $identifier */
+    private function getObjectIdentifier(object $object): array
     {
         return $this->objectRepositoryFactory
-            ->getRepository(get_class($object))
+            ->getRepository($object::class)
             ->getObjectIdentifier($object);
     }
 
     /**
      * @param mixed[] $data
+     * @psalm-param class-string<object> $className
      *
-     * @return mixed[] $identifier
+     * @return mixed[]
      */
     private function extractIdentifierFromData(string $className, array $data): array
     {

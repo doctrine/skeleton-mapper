@@ -22,23 +22,20 @@ use function is_callable;
 
 class User extends BaseObject
 {
-    /** @var int|null */
-    private $id;
+    private int|null $id = null;
 
-    /** @var string */
-    private $username;
+    private string $username = '';
 
-    /** @var string */
-    private $password;
+    private string $password = '';
 
     /** @var callable|Profile */
     private $profile;
 
     /** @var Collection<int, Group> */
-    private $groups;
+    private Collection $groups;
 
     /** @var string[] */
-    public $called = [];
+    public array $called = [];
 
     public function __construct()
     {
@@ -75,7 +72,7 @@ class User extends BaseObject
         ]);
     }
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
@@ -145,17 +142,13 @@ class User extends BaseObject
         $this->onPropertyChanged('groups', $this->groups, $this->groups);
     }
 
-    /**
-     * @return Collection<int, Group>
-     */
+    /** @return Collection<int, Group> */
     public function getGroups(): Collection
     {
         return $this->groups;
     }
 
-    /**
-     * @param mixed[] $arguments
-     */
+    /** @param mixed[] $arguments */
     public function __call(string $method, array $arguments): void
     {
         $this->called[] = $method;
@@ -189,14 +182,14 @@ class User extends BaseObject
             $this->profile = static function () use ($objectManager, $profileData) {
                 return $objectManager->getOrCreateObject(
                     'Doctrine\SkeletonMapper\Tests\Model\Profile',
-                    $profileData
+                    $profileData,
                 );
             };
         } elseif (isset($data['profileId'])) {
             $this->profile = static function () use ($objectManager, $data) {
                 return $objectManager->find(
                     Profile::class,
-                    $data['profileId']
+                    $data['profileId'],
                 );
             };
         }
@@ -206,10 +199,10 @@ class User extends BaseObject
         }
 
         $this->groups = new LazyCollection(static function () use ($objectManager, $data): ArrayCollection {
-            return new ArrayCollection(array_map(static function (int $groupId) use ($objectManager): ?object {
+            return new ArrayCollection(array_map(static function (string $groupId) use ($objectManager): object|null {
                 return $objectManager->find(
                     Group::class,
-                    $groupId
+                    (int) $groupId,
                 );
             }, explode(',', $data['groupIds'])));
         });

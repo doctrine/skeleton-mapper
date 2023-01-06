@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\SkeletonMapper;
 
-/**
- * @codeCoverageIgnore
- */
+/** @codeCoverageIgnore */
 final class Events
 {
     /**

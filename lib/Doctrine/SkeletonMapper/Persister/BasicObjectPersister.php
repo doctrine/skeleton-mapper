@@ -9,24 +9,24 @@ use Doctrine\SkeletonMapper\ObjectManagerInterface;
 use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 use InvalidArgumentException;
 
-use function get_class;
 use function sprintf;
 
+/**
+ * @template T of object
+ * @template-extends ObjectPersister<T>
+ */
 abstract class BasicObjectPersister extends ObjectPersister
 {
-    /** @var ObjectManagerInterface */
-    protected $objectManager;
+    /** @phpstan-var class-string<T> */
+    protected string $className;
 
-    /** @var string */
-    protected $className;
+    /** @var ClassMetadataInterface<T> */
+    protected ClassMetadataInterface|null $class = null;
 
-    /** @var ClassMetadataInterface */
-    protected $class;
-
-    public function __construct(ObjectManagerInterface $objectManager, string $className)
+    /** @phpstan-param class-string<T> $className */
+    public function __construct(protected ObjectManagerInterface $objectManager, string $className)
     {
-        $this->objectManager = $objectManager;
-        $this->className     = $className;
+        $this->className = $className;
     }
 
     public function getClassName(): string
@@ -34,6 +34,7 @@ abstract class BasicObjectPersister extends ObjectPersister
         return $this->className;
     }
 
+    /** @phpstan-return ClassMetadataInterface<T> */
     public function getClassMetadata(): ClassMetadataInterface
     {
         if ($this->class === null) {
@@ -46,15 +47,13 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Prepares an object changeset for persistence.
      *
-     * @param object $object
-     *
      * @return mixed[]
      */
-    public function preparePersistChangeSet($object): array
+    public function preparePersistChangeSet(object $object): array
     {
         if (! $object instanceof PersistableInterface) {
             throw new InvalidArgumentException(
-                sprintf('%s must implement PersistableInterface.', get_class($object))
+                sprintf('%s must implement PersistableInterface.', $object::class),
             );
         }
 
@@ -64,14 +63,12 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Prepares an object changeset for update.
      *
-     * @param object $object
-     *
      * @return mixed[]
      */
-    public function prepareUpdateChangeSet($object, ChangeSet $changeSet): array
+    public function prepareUpdateChangeSet(object $object, ChangeSet $changeSet): array
     {
         if (! $object instanceof PersistableInterface) {
-            throw new InvalidArgumentException(sprintf('%s must implement PersistableInterface.', get_class($object)));
+            throw new InvalidArgumentException(sprintf('%s must implement PersistableInterface.', $object::class));
         }
 
         return $object->prepareUpdateChangeSet($changeSet);
@@ -80,27 +77,22 @@ abstract class BasicObjectPersister extends ObjectPersister
     /**
      * Assign identifier to object.
      *
-     * @param object  $object
      * @param mixed[] $identifier
      */
-    public function assignIdentifier($object, array $identifier): void
+    public function assignIdentifier(object $object, array $identifier): void
     {
         if (! $object instanceof IdentifiableInterface) {
-            throw new InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', get_class($object)));
+            throw new InvalidArgumentException(sprintf('%s must implement IdentifiableInterface.', $object::class));
         }
 
         $object->assignIdentifier($identifier);
     }
 
-    /**
-     * @param object $object
-     *
-     * @return mixed[] $identifier
-     */
-    protected function getObjectIdentifier($object): array
+    /** @return mixed[] $identifier */
+    protected function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
-            ->getRepository(get_class($object))
+            ->getRepository($object::class)
             ->getObjectIdentifier($object);
     }
 }

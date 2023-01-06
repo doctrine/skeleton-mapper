@@ -9,20 +9,14 @@ use function spl_object_hash;
 class ChangeSets
 {
     /** @var ChangeSet[] */
-    private $changeSets = [];
+    private array $changeSets = [];
 
-    /**
-     * @param object $object
-     */
-    public function addObjectChange($object, Change $change): void
+    public function addObjectChange(object $object, Change $change): void
     {
         $this->getObjectChangeSet($object)->addChange($change);
     }
 
-    /**
-     * @param object $object
-     */
-    public function getObjectChangeSet($object): ChangeSet
+    public function getObjectChangeSet(object $object): ChangeSet
     {
         $oid = spl_object_hash($object);
 

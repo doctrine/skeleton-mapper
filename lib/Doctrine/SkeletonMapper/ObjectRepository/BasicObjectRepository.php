@@ -6,19 +6,17 @@ namespace Doctrine\SkeletonMapper\ObjectRepository;
 
 use BadMethodCallException;
 
-use function get_class;
-
+/**
+ * @template T of object
+ * @template-extends ObjectRepository<T>
+ */
 class BasicObjectRepository extends ObjectRepository
 {
-    /**
-     * @param object $object
-     *
-     * @return mixed[]
-     */
-    public function getObjectIdentifier($object): array
+    /** @return mixed[] */
+    public function getObjectIdentifier(object $object): array
     {
         return $this->objectManager
-            ->getClassMetadata(get_class($object))
+            ->getClassMetadata($object::class)
             ->getIdentifierValues($object);
     }
 
@@ -38,10 +36,7 @@ class BasicObjectRepository extends ObjectRepository
         return $identifier;
     }
 
-    /**
-     * @param object $object
-     */
-    public function merge($object): void
+    public function merge(object $object): void
     {
         throw new BadMethodCallException('Not implemented.');
     }

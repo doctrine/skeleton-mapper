@@ -11,17 +11,14 @@ use stdClass;
 
 class PreLoadEventArgsTest extends TestCase
 {
-    /** @var ObjectManagerInterface */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
 
-    /** @var stdClass */
-    private $object;
+    private stdClass $object;
 
     /** @var mixed[] */
-    private $data;
+    private array $data;
 
-    /** @var PreLoadEventArgs */
-    private $event;
+    private PreLoadEventArgs $event;
 
     public function testGetData(): void
     {

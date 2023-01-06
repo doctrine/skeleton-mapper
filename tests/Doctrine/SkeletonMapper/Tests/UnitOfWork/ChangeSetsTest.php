@@ -10,9 +10,7 @@ use Doctrine\SkeletonMapper\UnitOfWork\ChangeSets;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-/**
- * @group unit
- */
+/** @group unit */
 class ChangeSetsTest extends TestCase
 {
     public function testChangeSet(): void
