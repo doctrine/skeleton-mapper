@@ -17,70 +17,13 @@ Installation
 Interfaces
 ==========
 
-The ``ObjectDataRepository`` interface is responsible for reading the the raw data.
+The ``Doctrine\SkeletonMapper\DataRepository\ObjectDataRepositoryInterface`` interface is responsible for reading the the raw data.
 
-.. code-block:: php
+The ``Doctrine\SkeletonMapper\Hydrator\ObjectHydrator`` interface is responsible for hydrating the raw data to an object:
 
-    namespace Doctrine\SkeletonMapper\DataRepository;
+The ``Doctrine\SkeletonMapper\ObjectRepository\ObjectRepository`` interface is responsible for reading objects:
 
-    interface ObjectDataRepositoryInterface
-    {
-        public function find($id);
-        public function findAll();
-        public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
-        public function findOneBy(array $criteria);
-    }
-
-The ``ObjectHydrator`` interface is responsible for hydrating the raw data to an object:
-
-.. code-block:: php
-
-    namespace Doctrine\SkeletonMapper\Hydrator;
-
-    interface ObjectHydratorInterface
-    {
-        public function hydrate($object, array $data);
-    }
-
-The ``ObjectRepository`` interface is responsible for reading objects:
-
-.. code-block:: php
-
-    namespace Doctrine\SkeletonMapper\ObjectRepository;
-
-    use Doctrine\Common\Persistence\ObjectRepository as BaseObjectRepositoryInterface;
-
-    interface ObjectRepositoryInterface extends BaseObjectRepositoryInterface
-    {
-        public function getObjectIdentifier($object);
-        public function getObjectIdentifierFromData(array $data);
-        public function merge($object);
-        public function hydrate($object, array $data);
-        public function create($className);
-
-        // inherited from Doctrine\Common\Persistence\ObjectRepository
-
-        public function find($id);
-        public function findAll();
-        public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
-        public function findOneBy(array $criteria);
-        public function getClassName();
-    }
-
-The ``ObjectPersisterInterface`` interface is responsible for persisting the state of an object to the raw data source:
-
-.. code-block:: php
-
-    namespace Doctrine\SkeletonMapper\Persister;
-
-    interface ObjectPersisterInterface
-    {
-        public function persistObject($object);
-        public function updateObject($object);
-        public function removeObject($object);
-        public function preparePersistChangeSet($object);
-        public function prepareUpdateChangeSet($object, array $changeSet = []);
-    }
+The ``Doctrine\SkeletonMapper\Persister\ObjectPersisterInterface`` interface is responsible for persisting the state of an object to the raw data source:
 
 Example Implementation
 ======================
@@ -94,64 +37,57 @@ Model
 
     class User implements HydratableInterface, IdentifiableInterface, LoadMetadataInterface, NotifyPropertyChanged, PersistableInterface
     {
-        /** @var int */
-        private $id;
+        private int|null $id = null;
 
-        /** @var string */
-        private $username;
+        private string $username = '';
 
-        /** @var string */
-        private $password;
+        private string $password = '';
 
         /** @var PropertyChangedListener[] */
-        private $listeners = [];
+        private array $listeners = [];
 
-        public function getId() : ?int
+        public function getId(): int|null
         {
             return $this->id;
         }
 
-        public function setId(int $id) : void
+        public function setId(int $id): void
         {
             $this->onPropertyChanged('id', $this->id, $id);
 
             $this->id = $id;
         }
 
-        public function getUsername() : string
+        public function getUsername(): string
         {
             return $this->username;
         }
 
-        public function setUsername(string $username) : void
+        public function setUsername(string $username): void
         {
             $this->onPropertyChanged('username', $this->username, $username);
 
             $this->username = $username;
         }
 
-        public function getPassword() : string
+        public function getPassword(): string
         {
             return $this->password;
         }
 
-        public function setPassword(string $password) : void
+        public function setPassword(string $password): void
         {
             $this->onPropertyChanged('password', $this->password, $password);
 
             $this->password = $password;
         }
 
-        public function addPropertyChangedListener(PropertyChangedListener $listener) : void
+        public function addPropertyChangedListener(PropertyChangedListener $listener): void
         {
             $this->listeners[] = $listener;
         }
 
-        /**
-         * @param mixed $oldValue
-         * @param mixed $newValue
-         */
-        protected function onPropertyChanged(string $propName, $oldValue, $newValue) : void
+        private function onPropertyChanged(string $propName, mixed $oldValue, mixed $newValue): void
         {
             if ($this->listeners === []) {
                 return;
@@ -162,7 +98,7 @@ Model
             }
         }
 
-        public static function loadMetadata(ClassMetadataInterface $metadata) : void
+        public static function loadMetadata(ClassMetadataInterface $metadata): void
         {
             $metadata->setIdentifier(['id']);
             $metadata->setIdentifierFieldNames(['id']);
@@ -178,7 +114,7 @@ Model
          *
          * @param mixed[] $data
          */
-        public function hydrate(array $data, ObjectManagerInterface $objectManager) : void
+        public function hydrate(array $data, ObjectManagerInterface $objectManager): void
         {
             if (isset($data['id'])) {
                 $this->id = $data['id'];
@@ -198,7 +134,7 @@ Model
          *
          * @return mixed[]
          */
-        public function preparePersistChangeSet() : array
+        public function preparePersistChangeSet(): array
         {
             $changeSet = [
                 'username' => $this->username,
@@ -215,12 +151,11 @@ Model
         /**
          * @see PersistableInterface
          *
-         *
          * @return mixed[]
          */
-        public function prepareUpdateChangeSet(ChangeSet $changeSet) : array
+        public function prepareUpdateChangeSet(ChangeSet $changeSet): array
         {
-            $changeSet = array_map(function (Change $change) {
+            $changeSet = array_map(static function (Change $change) {
                 return $change->getNewValue();
             }, $changeSet->getChanges());
 
@@ -234,7 +169,7 @@ Model
          *
          * @param mixed[] $identifier
          */
-        public function assignIdentifier(array $identifier) : void
+        public function assignIdentifier(array $identifier): void
         {
             $this->id = $identifier['id'];
         }
@@ -249,38 +184,25 @@ Create all the necessary services for the mapper:
 
     use Doctrine\Common\Collections\ArrayCollection;
     use Doctrine\Common\EventManager;
-    use Doctrine\Common\NotifyPropertyChanged;
-    use Doctrine\Common\PropertyChangedListener;
     use Doctrine\SkeletonMapper\DataRepository\ArrayObjectDataRepository;
     use Doctrine\SkeletonMapper\Hydrator\BasicObjectHydrator;
-    use Doctrine\SkeletonMapper\Hydrator\HydratableInterface;
     use Doctrine\SkeletonMapper\Mapping\ClassMetadata;
     use Doctrine\SkeletonMapper\Mapping\ClassMetadataFactory;
     use Doctrine\SkeletonMapper\Mapping\ClassMetadataInstantiator;
-    use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
-    use Doctrine\SkeletonMapper\Mapping\LoadMetadataInterface;
     use Doctrine\SkeletonMapper\ObjectFactory;
     use Doctrine\SkeletonMapper\ObjectIdentityMap;
     use Doctrine\SkeletonMapper\ObjectManager;
-    use Doctrine\SkeletonMapper\ObjectManagerInterface;
     use Doctrine\SkeletonMapper\ObjectRepository\BasicObjectRepository;
     use Doctrine\SkeletonMapper\ObjectRepository\ObjectRepositoryFactory;
     use Doctrine\SkeletonMapper\Persister\ArrayObjectPersister;
-    use Doctrine\SkeletonMapper\Persister\IdentifiableInterface;
     use Doctrine\SkeletonMapper\Persister\ObjectPersisterFactory;
-    use Doctrine\SkeletonMapper\Persister\PersistableInterface;
-    use Doctrine\SkeletonMapper\UnitOfWork\Change;
-    use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
 
     $eventManager            = new EventManager();
     $classMetadataFactory    = new ClassMetadataFactory(new ClassMetadataInstantiator());
     $objectFactory           = new ObjectFactory();
     $objectRepositoryFactory = new ObjectRepositoryFactory();
     $objectPersisterFactory  = new ObjectPersisterFactory();
-    $objectIdentityMap       = new ObjectIdentityMap(
-        $objectRepositoryFactory,
-        $classMetadataFactory
-    );
+    $objectIdentityMap       = new ObjectIdentityMap($objectRepositoryFactory);
 
     $userClassMetadata = new ClassMetadata(User::class);
     $userClassMetadata->setIdentifier(['id']);
@@ -396,7 +318,7 @@ To implement your data reading, extend the ``BasicObjectDataRepository`` class:
 
 .. code-block:: php
 
-    use Doctrine\Common\Collections\ArrayCollection;
+    use Doctrine\SkeletonMapper\DataRepository\BasicObjectDataRepository;
     use Doctrine\SkeletonMapper\ObjectManagerInterface;
 
     class MyObjectDataRepository extends BasicObjectDataRepository
@@ -428,9 +350,9 @@ To implement your data reading, extend the ``BasicObjectDataRepository`` class:
          */
         public function findBy(
             array $criteria,
-            ?array $orderBy = null,
-            ?int $limit = null,
-            ?int $offset = null
+            array|null $orderBy = null,
+            int|null $limit = null,
+            int|null $offset = null,
         ) : array {
             // get $objectsData
 
@@ -442,7 +364,7 @@ To implement your data reading, extend the ``BasicObjectDataRepository`` class:
          *
          * @return null|mixed[]
          */
-        public function findOneBy(array $criteria) : ?array
+        public function findOneBy(array $criteria): array|null
         {
             // get $objectData
 
@@ -455,11 +377,9 @@ To implement your persistence, extend the ``BasicObjectPersister`` class:
 
 .. code-block:: php
 
-    use Doctrine\Common\Collections\ArrayCollection;
-    use Doctrine\SkeletonMapper\Mapping\ClassMetadataInterface;
     use Doctrine\SkeletonMapper\ObjectManagerInterface;
+    use Doctrine\SkeletonMapper\Persister\BasicObjectPersister;
     use Doctrine\SkeletonMapper\UnitOfWork\ChangeSet;
-    use function max;
 
     class MyObjectPersister extends BasicObjectPersister
     {
@@ -473,11 +393,9 @@ To implement your persistence, extend the ``BasicObjectPersister`` class:
         }
 
         /**
-         * @param object $object
-         *
          * @return mixed[]
          */
-        public function persistObject($object) : array
+        public function persistObject(object $object): array
         {
             $data = $this->preparePersistChangeSet($object);
 
@@ -489,11 +407,9 @@ To implement your persistence, extend the ``BasicObjectPersister`` class:
         }
 
         /**
-         * @param object $object
-         *
          * @return mixed[]
          */
-        public function updateObject($object, ChangeSet $changeSet) : array
+        public function updateObject(object $object, ChangeSet $changeSet): array
         {
             $changeSet = $this->prepareUpdateChangeSet($object, $changeSet);
 
@@ -511,10 +427,7 @@ To implement your persistence, extend the ``BasicObjectPersister`` class:
             return $objectData;
         }
 
-        /**
-         * @param object $object
-         */
-        public function removeObject($object) : void
+        public function removeObject(object $object): void
         {
             $class      = $this->getClassMetadata();
             $identifier = $this->getObjectIdentifier($object);
