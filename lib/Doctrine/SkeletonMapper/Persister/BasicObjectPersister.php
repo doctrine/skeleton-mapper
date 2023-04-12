@@ -17,16 +17,12 @@ use function sprintf;
  */
 abstract class BasicObjectPersister extends ObjectPersister
 {
-    /** @phpstan-var class-string<T> */
-    protected string $className;
-
     /** @var ClassMetadataInterface<T> */
     protected ClassMetadataInterface|null $class = null;
 
     /** @phpstan-param class-string<T> $className */
-    public function __construct(protected ObjectManagerInterface $objectManager, string $className)
+    public function __construct(protected ObjectManagerInterface $objectManager, protected string $className)
     {
-        $this->className = $className;
     }
 
     public function getClassName(): string
